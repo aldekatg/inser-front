@@ -1,0 +1,1 @@
+{"root":["./src/main.ts","./src/vite-env.d.ts","./src/api/auth/index.ts","./src/router/guards.ts","./src/router/router.ts","./src/store/useauthstore.ts","./src/views/auth/useauth.ts","./src/app.vue","./src/views/auth/auth.vue","./src/views/main/main.vue","./auto-imports.d.ts"],"version":"5.8.3"}
