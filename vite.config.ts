@@ -7,7 +7,10 @@ import { NaiveUiResolver } from "unplugin-vue-components/resolvers"
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/inser-front/",
+  base: "./",
+  server: {
+    port: 5137,
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

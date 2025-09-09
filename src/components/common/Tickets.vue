@@ -1,14 +1,6 @@
 <template>
   <div class="tickets-component">
-    <n-space vertical :size="12">
-      <n-data-table
-        :bordered="false"
-        :single-line="false"
-        :columns="columns"
-        :data="data"
-        :pagination="pagination"
-      />
-    </n-space>
+    <base-table :pagination="pagination" :data="data" :columns="columns" />
   </div>
 </template>
 
@@ -21,7 +13,7 @@
   } from "@vicons/ionicons5"
 
   import { defineComponent, h } from "vue"
-  import { router } from "@/router/router.ts"
+  import BaseTable from "@/components/base/BaseTable.vue"
 
   interface RowData {
     key: number
@@ -70,7 +62,7 @@
         },
       },
       {
-        title: "",
+        title: "Действия",
 
         key: "actions",
         fixed: "right",
@@ -121,6 +113,7 @@
   }
 
   export default defineComponent({
+    components: { BaseTable },
     setup() {
       return {
         data: createData(),
@@ -137,8 +130,7 @@
       {
         icon: PencilIcon,
         type: "info",
-        onClick: () =>
-          router.push({ name: "BloodDrawEdit", params: { id: row.key } }),
+        onClick: () => console.log(`Editing row with key: ${row.key}`),
       },
       {
         icon: TrashIcon,
@@ -166,11 +158,6 @@
 </script>
 
 <style scoped lang="scss">
-  :deep(.custom-buttons) {
-    display: flex;
-    flex-direction: row;
-    gap: rem(5);
-  }
   .tickets-component {
     padding: rem(40);
   }

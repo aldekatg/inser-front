@@ -8,7 +8,13 @@ import { router } from "@/router/router.ts"
 import {
   PersonOutline as PersonIcon,
   LogOutOutline as LogoutIcon,
-  TicketOutline as ClipboardIcon,
+  ClipboardOutline as ClipboardIcon,
+  PinOutline as LocationIcon,
+  PersonAddOutline as PersonAddIcon,
+  FileTrayStackedOutline as WareHouseIcon,
+  AlbumsOutline as DictionaryIcon,
+  PeopleOutline as PartnersIcon,
+  BusinessOutline as GasStationIcon,
 } from "@vicons/ionicons5"
 import { useAuthStore } from "@/store/useAuthStore.ts"
 
@@ -37,6 +43,105 @@ export const useNavHook = () => {
         "callCenter",
         "assistant",
       ]),
+    },
+    {
+      label: () =>
+        h(
+          RouterLink,
+          {
+            to: {
+              name: "Gas Stations",
+            },
+          },
+          { default: () => "АЗС" }
+        ),
+      key: "go-to-gas-station",
+      icon: renderIcon(GasStationIcon),
+      show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
+    },
+    {
+      label: () =>
+        h(
+          RouterLink,
+          {
+            to: {
+              name: "Employees",
+            },
+          },
+          { default: () => "Сотрудники" }
+        ),
+      key: "go-to-employees",
+      icon: renderIcon(PersonAddIcon),
+      show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
+    },
+    {
+      label: () =>
+        h(
+          RouterLink,
+          {
+            to: {
+              name: "Tickets",
+            },
+          },
+          { default: () => "Справочник" }
+        ),
+      key: "go-to-dictionary",
+      icon: renderIcon(DictionaryIcon),
+      show: usePermissionsAccess([
+        "superadmin",
+        "admin",
+        "nurse",
+        "doctor",
+        "callCenter",
+        "assistant",
+      ]),
+      children: [
+        {
+          label: () =>
+            h(
+              RouterLink,
+              {
+                to: {
+                  name: "Companies",
+                },
+              },
+              { default: () => "Компании" }
+            ),
+          key: "go-to-companies",
+          icon: renderIcon(PartnersIcon),
+          show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
+        },
+        {
+          label: () =>
+            h(
+              RouterLink,
+              {
+                to: {
+                  name: "Regions",
+                },
+              },
+              { default: () => "Регионы" }
+            ),
+          key: "go-to-regions",
+          icon: renderIcon(LocationIcon),
+          show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
+        },
+        {
+          label: () =>
+            h(
+              RouterLink,
+              {
+                to: {
+                  name: "Warehouses",
+                },
+              },
+              { default: () => "Склады" }
+            ),
+          key: "go-to-warehouse",
+          icon: renderIcon(WareHouseIcon),
+          show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
+        },
+      ],
     },
   ])
 
