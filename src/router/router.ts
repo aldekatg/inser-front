@@ -29,7 +29,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: "/companies",
         name: "Companies",
-        component: () => import("@/components/common/Tickets.vue"),
+        component: () => import("@/components/common/companies/Companies.vue"),
       },
       {
         path: "/regions",

@@ -2,7 +2,7 @@
   <n-modal v-model:show="show">
     <n-card
       style="width: 600px"
-      title="Добавить АЗС"
+      :title="isEdit ? 'Редактирование компании' : 'Создание компании'"
       :bordered="false"
       size="huge"
       role="dialog"

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia"
 import { CompanyType, RegionType } from "@/api/gas-stations/types.ts"
-import { fetchCompanies, fetchRegions } from "@/api/companies"
+import { fetchCompanies, fetchRegions } from "@/api/dictionary"
 
 interface DictionaryState {
   companies: CompanyType[] | null
@@ -34,7 +34,7 @@ export const useDictionaryStore = defineStore("dictionaryStore", {
         this.companies = companiesResponse.payload.items
         this.regions = regionsResponse.payload.items
       } catch (e) {
-        console.error("Error fetching companies:", e)
+        console.error("Error fetching:", e)
       }
     },
   },

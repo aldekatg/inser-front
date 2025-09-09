@@ -33,12 +33,12 @@ export interface GasStationType {
   }
 }
 
-export interface CompaniesPayload extends PaginationType {
+export interface CompaniesResponse extends PaginationType {
   items: CompanyType[]
 }
 
 export interface CompanyType {
-  id: number
+  id?: number
   name: string
   bin: string
 }

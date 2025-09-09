@@ -9,6 +9,8 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     BaseTable: typeof import('./src/components/base/BaseTable.vue')['default']
+    Companies: typeof import('./src/components/common/companies/Companies.vue')['default']
+    CompanyModal: typeof import('./src/components/common/companies/CompanyModal.vue')['default']
     GasStationModal: typeof import('./src/components/common/gas-stations/GasStationModal.vue')['default']
     GasStations: typeof import('./src/components/common/gas-stations/GasStations.vue')['default']
     NButton: typeof import('naive-ui')['NButton']

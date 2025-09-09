@@ -1,5 +1,5 @@
-import { h, ref } from "vue"
-import { NButton, NIcon, NPopconfirm, useMessage } from "naive-ui"
+import { ref } from "vue"
+import { useMessage } from "naive-ui"
 import { PaginationType } from "@/types.ts"
 import {
   createGasStation,
@@ -12,6 +12,7 @@ import {
   PencilSharp as PencilIcon,
   TrashOutline as TrashIcon,
 } from "@vicons/ionicons5"
+import { ActionButtons } from "@/utils"
 
 export function useGasStations() {
   const message = useMessage()
@@ -134,50 +135,12 @@ export function useGasStations() {
       {
         icon: TrashIcon,
         type: "error",
+        popconfirmText: "Вы уверены, что хотите удалить эту заправку?",
         onClick: () => removeGasStation(row.id!),
       },
     ]
 
-    return buttons.map((button: any, _: number) => {
-      if (button.type === "error") {
-        return h(
-          NPopconfirm,
-          {
-            onPositiveClick: () => button.onClick(),
-          },
-          {
-            default: () => "Вы уверены, что хотите удалить эту заправку?",
-            trigger: () =>
-              h(
-                NButton,
-                {
-                  strong: true,
-                  secondary: true,
-                  circle: true,
-                  type: button.type,
-                },
-                {
-                  icon: () => h(NIcon, {}, { default: () => h(button.icon) }),
-                }
-              ),
-          }
-        )
-      }
-
-      return h(
-        NButton,
-        {
-          strong: true,
-          secondary: true,
-          circle: true,
-          type: button.type,
-          onClick: () => button.onClick(),
-        },
-        {
-          icon: () => h(NIcon, null, { default: () => h(button.icon) }),
-        }
-      )
-    })
+    return ActionButtons(buttons)
   }
 
   const closeModal = () => {
