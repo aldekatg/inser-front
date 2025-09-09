@@ -1,7 +1,17 @@
 import { PaginationType } from "@/types.ts"
 
-export interface GasStationPayload extends PaginationType {
+export interface GasStationResponse extends PaginationType {
   items: GasStationType[]
+}
+export interface GasStationPayload {
+  object_number: string
+  address: string
+  region_id: number | null
+  operator_name: string
+  email: string
+  id: number | null
+  company_id: number | null
+  password: string | null
 }
 
 export interface GasStationType {
@@ -11,7 +21,7 @@ export interface GasStationType {
   operator_name: string
   email: string
   company_id: number | null
-  id?: number
+  id: number | null
   company?: {
     bin: string
     name: string

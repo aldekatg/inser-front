@@ -22,15 +22,6 @@
             placeholder="Введите адрес"
           />
         </n-form-item>
-        <n-form-item label="Регион" path="region_id">
-          <n-select
-            v-model:value="props.form.region_id"
-            :options="isRegions"
-            :value-field="'id'"
-            :label-field="'name'"
-            placeholder="Выберите регион"
-          />
-        </n-form-item>
         <n-form-item label="Оператор" path="operator_name">
           <n-input
             v-model:value="props.form.operator_name"
@@ -51,6 +42,23 @@
             :label-field="'name'"
             :options="isCompanies"
             placeholder="Выберите компанию"
+          />
+        </n-form-item>
+        <n-form-item label="Регион" path="region_id">
+          <n-select
+            v-model:value="props.form.region_id"
+            :options="isRegions"
+            :value-field="'id'"
+            :label-field="'name'"
+            placeholder="Выберите регион"
+          />
+        </n-form-item>
+
+        <n-form-item label="Пароль" path="password" v-if="!props.isEdit">
+          <n-input
+            minlength="6"
+            v-model:value="props.form.password"
+            placeholder="Введите пароль"
           />
         </n-form-item>
       </n-form>
@@ -75,7 +83,7 @@
   import { defineProps, defineEmits } from "vue"
   import { useMessage, FormInst } from "naive-ui"
   import { regEmail } from "@/components/common/gas-stations/const.ts"
-  import { GasStationType } from "@/api/gas-stations/types.ts"
+  import { GasStationPayload } from "@/api/gas-stations/types.ts"
   import { useDictionaryStore } from "@/store/useDictionary.ts"
   import { storeToRefs } from "pinia"
 
@@ -84,7 +92,8 @@
 
   const props = defineProps<{
     modelValue: boolean
-    form: GasStationType
+    form: GasStationPayload
+    isEdit: boolean
   }>()
 
   const emit = defineEmits(["save", "cancel"])
@@ -116,6 +125,12 @@
       message: "Имя оператора обязательно",
       trigger: ["blur", "input"],
     },
+    password: {
+      required: !props.isEdit,
+      min: 6,
+      message: "Пароль обязателен",
+      trigger: ["blur", "input"],
+    },
     email: {
       required: true,
       type: "email",
@@ -142,7 +157,9 @@
       props.form.address = ""
       props.form.region_id = null
       props.form.operator_name = ""
+      props.form.password = ""
       props.form.email = ""
+      props.form.id = null
       props.form.company_id = null
     }
   })
