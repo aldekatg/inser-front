@@ -11,6 +11,8 @@ declare module 'vue' {
     BaseTable: typeof import('./src/components/base/BaseTable.vue')['default']
     Companies: typeof import('./src/components/common/companies/Companies.vue')['default']
     CompanyModal: typeof import('./src/components/common/companies/CompanyModal.vue')['default']
+    EmployeeModal: typeof import('./src/components/common/employees/EmployeeModal.vue')['default']
+    Employees: typeof import('./src/components/common/employees/Employees.vue')['default']
     GasStationModal: typeof import('./src/components/common/gas-stations/GasStationModal.vue')['default']
     GasStations: typeof import('./src/components/common/gas-stations/GasStations.vue')['default']
     NButton: typeof import('naive-ui')['NButton']
@@ -38,5 +40,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Tickets: typeof import('./src/components/common/Tickets.vue')['default']
+    WarehouseModal: typeof import('./src/components/common/warehouses/WarehouseModal.vue')['default']
+    Warehouses: typeof import('./src/components/common/warehouses/Warehouses.vue')['default']
   }
 }

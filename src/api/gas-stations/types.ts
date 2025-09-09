@@ -43,6 +43,12 @@ export interface CompanyType {
   bin: string
 }
 
+export interface WarehouseType {
+  id?: number
+  name: string
+  responsible_iin: string
+}
+
 export interface RegionType {
   id?: number
   name: string

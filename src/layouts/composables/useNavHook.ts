@@ -75,16 +75,7 @@ export const useNavHook = () => {
       show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
     },
     {
-      label: () =>
-        h(
-          RouterLink,
-          {
-            to: {
-              name: "Tickets",
-            },
-          },
-          { default: () => "Справочник" }
-        ),
+      label: "Справочник",
       key: "go-to-dictionary",
       icon: renderIcon(DictionaryIcon),
       show: usePermissionsAccess([

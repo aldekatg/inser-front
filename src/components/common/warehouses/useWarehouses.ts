@@ -1,34 +1,34 @@
 import { ref } from "vue"
 import { useMessage } from "naive-ui"
 import {
-  createCompany,
-  deleteCompany,
-  fetchCompanies,
-  updateCompanies,
+  createWarehouse,
+  deleteWarehouse,
+  fetchWarehouses,
+  updateWarehouse,
 } from "@/api/dictionary"
 import { useDictionaryStore } from "@/store/useDictionary.ts"
 import { storeToRefs } from "pinia"
-import { CompanyType } from "@/api/gas-stations/types.ts"
+import { WarehouseType } from "@/api/gas-stations/types.ts"
 import {
   PencilSharp as PencilIcon,
   TrashOutline as TrashIcon,
 } from "@vicons/ionicons5"
 import { ActionButtons } from "@/utils"
 
-export function useCompanies() {
+export function useWarehouses() {
   const isModalOpen = ref(false)
   const store = useDictionaryStore()
-
-  const { isCompanies } = storeToRefs(store)
-
-  const companies = ref<CompanyType[]>(isCompanies?.value || [])
-  const companyForm = ref<CompanyType>({
-    name: "",
-    bin: "",
-  })
   const isLoading = ref(false)
-
   const message = useMessage()
+
+  const { isWarehouses } = storeToRefs(store)
+
+  const warehouses = ref<WarehouseType[]>(isWarehouses?.value || [])
+  const warehouseForm = ref<WarehouseType>({
+    name: "",
+    responsible_iin: "",
+    id: undefined,
+  })
 
   const columns = ref([
     {
@@ -36,33 +36,33 @@ export function useCompanies() {
       key: "name",
     },
     {
-      title: "БИН",
-      key: "bin",
+      title: "Ответственный",
+      key: "responsible_iin",
     },
     {
       title: "Действия",
       key: "actions",
       fixed: "right",
       className: "custom-buttons",
-      render: (row: CompanyType) => renderButtons(row),
+      render: (row: WarehouseType) => renderButtons(row),
     },
   ])
 
-  const renderButtons = (row: CompanyType) => {
+  const renderButtons = (row: WarehouseType) => {
     const buttons = [
       {
         icon: PencilIcon,
         type: "info",
         onClick: () => {
-          companyForm.value = Object.assign({}, row)
+          warehouseForm.value = Object.assign({}, row)
           isModalOpen.value = true
         },
       },
       {
         icon: TrashIcon,
-        popconfirmText: "Вы уверены, что хотите удалить эту компанию?",
+        popconfirmText: "Вы уверены, что хотите удалить этот склад?",
         type: "error",
-        onClick: () => removeCompany(row.id!),
+        onClick: () => removeWarehouse(row.id!),
       },
     ]
 
@@ -71,22 +71,22 @@ export function useCompanies() {
 
   function closeModal() {
     isModalOpen.value = false
-    companyForm.value = {
+    warehouseForm.value = {
       name: "",
-      bin: "",
+      responsible_iin: "",
       id: undefined,
     }
   }
 
-  async function initCompanies() {
+  async function initWarehouses() {
     isLoading.value = true
     try {
-      const response = await fetchCompanies()
+      const response = await fetchWarehouses()
 
       if (response.status === "error")
         throw new Error("Ошибка при загрузке компаний")
 
-      companies.value = response.payload.items
+      warehouses.value = response.payload.items
     } catch (error) {
       console.error("Ошибка при загрузке компаний:", error)
       message.error("Ошибка при загрузке компаний")
@@ -95,22 +95,22 @@ export function useCompanies() {
     }
   }
 
-  async function saveCompany(form: CompanyType) {
+  async function saveWarehouse(form: WarehouseType) {
     let isEdit = form.id !== undefined
     isLoading.value = true
     try {
       let response
       console.log(isEdit)
       if (isEdit) {
-        response = await updateCompanies(form.id!, form)
+        response = await updateWarehouse(form.id!, form)
       } else {
-        response = await createCompany(form)
+        response = await createWarehouse(form)
       }
       if (response.status === "error") throw new Error(response.message || "")
 
       message.success("Компания успешно сохранена")
       closeModal()
-      await initCompanies() // Refresh the list after saving
+      await initWarehouses() // Refresh the list after saving
     } catch (e) {
       console.error(e)
       message.error("Ошибка при сохранении компании")
@@ -120,13 +120,13 @@ export function useCompanies() {
     }
   }
 
-  async function removeCompany(id: number) {
+  async function removeWarehouse(id: number) {
     try {
-      const response = await deleteCompany(id)
+      const response = await deleteWarehouse(id)
       if (response.status === "error") throw new Error(response.message || "")
 
       message.success("Компания успешно удален")
-      await initCompanies() // Refresh the list after deletion
+      await initWarehouses() // Refresh the list after deletion
     } catch (e) {
       console.error(e)
     }
@@ -135,10 +135,10 @@ export function useCompanies() {
   return {
     isLoading,
 
-    companies,
-    companyForm,
-    saveCompany,
-    initCompanies,
+    warehouses,
+    warehouseForm,
+    saveWarehouse,
+    initWarehouses,
     isModalOpen,
     columns,
     closeModal,

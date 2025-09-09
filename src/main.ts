@@ -7,13 +7,16 @@ import VueTelInput from "vue-tel-input"
 import "vue-tel-input/vue-tel-input.css"
 
 const globalOptions = {
-  mode: "international",
-  preferredCountries: ["kz", "us"],
+  mode: "auto",
+  preferredCountries: ["kz"],
   autoFormat: true,
+  defaultCountry: "KZ",
   dropdownOptions: {
     showSearchBox: true,
   },
+
   inputOptions: {
+    maxlength: 15,
     placeholder: "Введите номер телефона",
   },
 }
