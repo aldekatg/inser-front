@@ -33,6 +33,8 @@ declare module 'vue' {
     NModal: typeof import('naive-ui')['NModal']
     NSelect: typeof import('naive-ui')['NSelect']
     NSpace: typeof import('naive-ui')['NSpace']
+    Regions: typeof import('./src/components/common/regions/Regions.vue')['default']
+    RegionsModal: typeof import('./src/components/common/regions/RegionsModal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Tickets: typeof import('./src/components/common/Tickets.vue')['default']

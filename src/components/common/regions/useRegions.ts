@@ -1,31 +1,29 @@
 import { ref } from "vue"
 import { useMessage } from "naive-ui"
 import {
-  createCompany,
-  deleteCompany,
+  createRegion,
   deleteRegion,
-  fetchCompanies,
-  updateCompanies,
+  fetchRegions,
+  updateRegion,
 } from "@/api/dictionary"
 import { useDictionaryStore } from "@/store/useDictionary.ts"
 import { storeToRefs } from "pinia"
-import { CompanyType } from "@/api/gas-stations/types.ts"
+import { RegionType } from "@/api/gas-stations/types.ts"
 import {
   PencilSharp as PencilIcon,
   TrashOutline as TrashIcon,
 } from "@vicons/ionicons5"
 import { ActionButtons } from "@/utils"
 
-export function useCompanies() {
+export function useRegions() {
   const isModalOpen = ref(false)
   const store = useDictionaryStore()
 
-  const { isCompanies } = storeToRefs(store)
-
-  const companies = ref<CompanyType[]>(isCompanies?.value || [])
-  const companyForm = ref<CompanyType>({
+  const { isRegions } = storeToRefs(store)
+  const regions = ref<RegionType[]>(isRegions?.value || [])
+  const regionsForm = ref<RegionType>({
     name: "",
-    bin: "",
+    id: undefined,
   })
   const isLoading = ref(false)
 
@@ -37,25 +35,21 @@ export function useCompanies() {
       key: "name",
     },
     {
-      title: "БИН",
-      key: "bin",
-    },
-    {
       title: "Действия",
       key: "actions",
       fixed: "right",
       className: "custom-buttons",
-      render: (row: CompanyType) => renderButtons(row),
+      render: (row: RegionType) => renderButtons(row),
     },
   ])
 
-  const renderButtons = (row: CompanyType) => {
+  const renderButtons = (row: RegionType) => {
     const buttons = [
       {
         icon: PencilIcon,
         type: "info",
         onClick: () => {
-          companyForm.value = Object.assign({}, row)
+          regionsForm.value = Object.assign({}, row)
           isModalOpen.value = true
         },
       },
@@ -63,7 +57,7 @@ export function useCompanies() {
         icon: TrashIcon,
         popconfirmText: "Вы уверены, что хотите удалить эту компанию?",
         type: "error",
-        onClick: () => removeCompany(row.id!),
+        onClick: () => removeRegion(row.id!),
       },
     ]
 
@@ -72,22 +66,21 @@ export function useCompanies() {
 
   function closeModal() {
     isModalOpen.value = false
-    companyForm.value = {
+    regionsForm.value = {
       name: "",
-      bin: "",
       id: undefined,
     }
   }
 
-  async function initCompanies() {
+  async function initRegions() {
     isLoading.value = true
     try {
-      const response = await fetchCompanies()
+      const response = await fetchRegions()
 
       if (response.status === "error")
         throw new Error("Ошибка при загрузке компаний")
 
-      companies.value = response.payload.items
+      regions.value = response.payload.items
     } catch (error) {
       console.error("Ошибка при загрузке компаний:", error)
       message.error("Ошибка при загрузке компаний")
@@ -96,22 +89,22 @@ export function useCompanies() {
     }
   }
 
-  async function saveCompany(form: CompanyType) {
+  async function saveRegion(form: RegionType) {
     let isEdit = form.id !== undefined
     isLoading.value = true
     try {
       let response
       console.log(isEdit)
       if (isEdit) {
-        response = await updateCompanies(form.id!, form)
+        response = await updateRegion(form.id!, form)
       } else {
-        response = await createCompany(form)
+        response = await createRegion(form)
       }
       if (response.status === "error") throw new Error(response.message || "")
 
       message.success("Компания успешно сохранена")
       closeModal()
-      await initCompanies() // Refresh the list after saving
+      await initRegions()
     } catch (e) {
       console.error(e)
       message.error("Ошибка при сохранении компании")
@@ -121,13 +114,13 @@ export function useCompanies() {
     }
   }
 
-  async function removeCompany(id: number) {
+  async function removeRegion(id: number) {
     try {
-      const response = await deleteCompany(id)
+      const response = await deleteRegion(id)
       if (response.status === "error") throw new Error(response.message || "")
 
-      message.success("Компания успешно удален")
-      await initCompanies() // Refresh the list after deletion
+      message.success("Регион успешно удален")
+      await initRegions() // Refresh the list after deletion
     } catch (e) {
       console.error(e)
     }
@@ -136,10 +129,10 @@ export function useCompanies() {
   return {
     isLoading,
 
-    companies,
-    companyForm,
-    saveCompany,
-    initCompanies,
+    regions,
+    regionsForm,
+    saveRegion,
+    initRegions,
     isModalOpen,
     columns,
     closeModal,

@@ -44,6 +44,6 @@ export interface CompanyType {
 }
 
 export interface RegionType {
-  id: number
+  id?: number
   name: string
 }

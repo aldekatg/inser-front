@@ -34,7 +34,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: "/regions",
         name: "Regions",
-        component: () => import("@/components/common/Tickets.vue"),
+        component: () => import("@/components/common/regions/Regions.vue"),
       },
       {
         path: "/warehouses",
