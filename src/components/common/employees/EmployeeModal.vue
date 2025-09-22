@@ -40,12 +40,18 @@
         <n-form-item label="Почта" path="email">
           <n-input
             v-model:value="props.form.email"
-            type="email"
+            type="text"
             placeholder="Введите email"
           />
         </n-form-item>
         <n-form-item label="Роль" path="role">
-          <n-input v-model:value="props.form.role" placeholder="Введите роль" />
+          <n-select
+            v-model:value="props.form.role"
+            :options="rolesOptions"
+            :value-field="'value'"
+            :label-field="'label'"
+            placeholder="Введите роль"
+          />
         </n-form-item>
         <n-form-item label="Регион" path="region_id">
           <n-select
@@ -105,7 +111,8 @@
   import { regEmail } from "@/components/common/gas-stations/const.ts"
   import { useDictionaryStore } from "@/store/useDictionary.ts"
   import { storeToRefs } from "pinia"
-  import { EmployeePayload } from "@/api/employees/types.ts"
+  import VueTelInput from "vue-tel-input"
+  import { EmployeePayload, EmployeeRoles } from "@/api/employees/types.ts"
 
   const message = useMessage()
   const { isRegions, isWarehouses } = storeToRefs(useDictionaryStore())
@@ -203,6 +210,11 @@
       }
     })
   }
+
+  const rolesOptions = Object.entries(EmployeeRoles).map(([key, value]) => ({
+    label: value,
+    value: key,
+  }))
 </script>
 
 <style lang="scss" scoped>

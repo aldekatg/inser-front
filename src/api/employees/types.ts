@@ -40,3 +40,11 @@ export interface EmployeeResponse {
 export type EmployeeResponseWithPage = PaginationType & {
   items: EmployeeResponse[]
 }
+
+export const EmployeeRoles = {
+  SERVICE_EMPLOYEE: "Сервисный сотрудник",
+  REGIONAL_MANAGER: "Начальник участка",
+  SERVICE_HEAD: "Начальник сервисной службы",
+  DIRECTOR: "Директор",
+  DISPATCHER: "Диспетчер",
+}

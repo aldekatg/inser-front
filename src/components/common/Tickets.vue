@@ -4,16 +4,16 @@
   </div>
 </template>
 
-<script lang="ts">
-  import { DataTableColumns, NIcon } from "naive-ui"
-  import { NButton, NTag } from "naive-ui"
+<script lang="ts" setup>
+  import { DataTableColumns, NButton, NIcon, NTag } from "naive-ui"
   import {
     PencilSharp as PencilIcon,
     TrashOutline as TrashIcon,
   } from "@vicons/ionicons5"
 
-  import { defineComponent, h } from "vue"
+  import { h, computed, reactive, onMounted } from "vue"
   import BaseTable from "@/components/base/BaseTable.vue"
+  import { useDictionaryStore } from "@/store/useDictionary.ts"
 
   interface RowData {
     key: number
@@ -22,6 +22,7 @@
     address: string
     tags: string[]
   }
+  const dictionaryStore = useDictionaryStore()
 
   function createColumns(): DataTableColumns<RowData> {
     return [
@@ -41,7 +42,7 @@
         title: "Тип заявки",
         key: "tags",
         render(row) {
-          const tags = row.tags.map((tagKey) => {
+          return row.tags.map((tagKey) => {
             return h(
               NTag,
               {
@@ -58,7 +59,6 @@
               }
             )
           })
-          return tags
         },
       },
       {
@@ -112,18 +112,21 @@
     ]
   }
 
-  export default defineComponent({
-    components: { BaseTable },
-    setup() {
-      return {
-        data: createData(),
-        columns: createColumns(),
-        pagination: {
-          pageSize: 10,
-        },
-      }
-    },
+  const data = computed(() => createData())
+  const columns = computed(() => createColumns())
+  const pagination = reactive({
+    pageSize: 10,
   })
+
+  onMounted(() => dictionaryStore.initDictionary())
+
+  // {
+  //   data: createData(),
+  //     columns: createColumns(),
+  //   pagination: {
+  //   pageSize: 10,
+  // },
+  // }
 
   const renderButtons = (row: RowData) => {
     const buttons = [

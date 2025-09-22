@@ -8,20 +8,20 @@ export const api = axios.create({
   baseURL: config.BACKEND_URL,
 })
 
-// api.interceptors.request.use(
-//   (config) => {
-//     if (config?.url === "/auth") {
-//       return config
-//     } else {
-//       const dwToken = localStorage.getItem("token")
-//       if (dwToken) config.headers.Authorization = `Bearer ${dwToken}`
-//       return config
-//     }
-//   },
-//   (response) => {
-//     console.log(response)
-//   }
-// )
+api.interceptors.request.use(
+  (config) => {
+    if (config?.url === "/auth") {
+      return config
+    } else {
+      const dwToken = localStorage.getItem("token")
+      if (dwToken) config.headers.Authorization = `Bearer ${dwToken}`
+      return config
+    }
+  },
+  (response) => {
+    console.log(response)
+  }
+)
 
 // const isRefreshing = ref(false)
 

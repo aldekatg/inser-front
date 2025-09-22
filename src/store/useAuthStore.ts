@@ -1,7 +1,8 @@
 import { defineStore } from "pinia"
-import { refreshAccessToken } from "@/api/auth"
-import { router } from "@/router/router.ts"
+// import { refreshAccessToken } from "@/api/auth"
+import { useRouter } from "vue-router"
 
+const router = useRouter()
 interface AuthState {
   user: null
   token: string
@@ -27,16 +28,16 @@ export const useAuthStore = defineStore("authStore", {
       localStorage.setItem("token", token)
       localStorage.setItem("refreshToken", refreshToken)
     },
-    async refreshAccessToken() {
-      try {
-        const newAccessToken = await refreshAccessToken(this.refreshToken)
-        // this.initTokenTimer(newAccessToken)
-        return newAccessToken
-      } catch (error) {
-        console.error("Error refreshing access token:", error)
-        // Выход пользователя из учетной записи или другие действия по вашему усмотрению
-      }
-    },
+    // async refreshAccessToken() {
+    //   try {
+    //     const newAccessToken = await refreshAccessToken(this.refreshToken)
+    //     // this.initTokenTimer(newAccessToken)
+    //     return newAccessToken
+    //   } catch (error) {
+    //     console.error("Error refreshing access token:", error)
+    //     // Выход пользователя из учетной записи или другие действия по вашему усмотрению
+    //   }
+    // },
     async logOut() {
       this.user = null
       this.token = ""

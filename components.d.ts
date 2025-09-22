@@ -9,6 +9,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     BaseTable: typeof import('./src/components/base/BaseTable.vue')['default']
+    BaseTreeSelect: typeof import('./src/components/base/BaseTreeSelect.vue')['default']
     Companies: typeof import('./src/components/common/companies/Companies.vue')['default']
     CompanyModal: typeof import('./src/components/common/companies/CompanyModal.vue')['default']
     EmployeeModal: typeof import('./src/components/common/employees/EmployeeModal.vue')['default']
@@ -33,8 +34,11 @@ declare module 'vue' {
     NMenu: typeof import('naive-ui')['NMenu']
     NMessageProvider: typeof import('naive-ui')['NMessageProvider']
     NModal: typeof import('naive-ui')['NModal']
+    NRadioButton: typeof import('naive-ui')['NRadioButton']
+    NRadioGroup: typeof import('naive-ui')['NRadioGroup']
     NSelect: typeof import('naive-ui')['NSelect']
     NSpace: typeof import('naive-ui')['NSpace']
+    NTreeSelect: typeof import('naive-ui')['NTreeSelect']
     Regions: typeof import('./src/components/common/regions/Regions.vue')['default']
     RegionsModal: typeof import('./src/components/common/regions/RegionsModal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

@@ -1,25 +1,15 @@
 <template>
   <div class="login-container">
     <n-card title="Авторизация" class="card">
-      <n-form
-        :model="formValue"
-        :rules="rules"
-        ref="formRef"
-        :label-width="80"
-      >
-        <n-form-item label="Телефон" path="phone">
-          <n-input-group>
-            <vue-tel-input
-              v-model="formValue.phone"
-              :disabled="loading"
-              class="phone-input"
-            ></vue-tel-input>
-          </n-input-group>
+      <n-form :model="formValue" :rules="rules" ref="formRef" :label-width="80">
+        <n-form-item label="Логин" path="mail">
+          <n-input
+            v-model:value="formValue.mail"
+            placeholder="Введите логин"
+            :disabled="loading"
+          />
         </n-form-item>
-        <n-form-item
-          label="Пароль"
-          path="password"
-        >
+        <n-form-item label="Пароль" path="password">
           <n-input
             type="password"
             v-model:value="formValue.password"
@@ -46,24 +36,13 @@
 <script setup lang="ts">
   import { useAuth } from "@/views/auth/useAuth.ts"
 
-  const {
-    loginHandler,
-    rules,
-    formRef,
-    formValue,
-    loading,
-  } = useAuth()
+  const { loginHandler, rules, formRef, formValue, loading } = useAuth()
 
-  const handleValidateClick = async (
-    e: MouseEvent
-  ) => {
+  const handleValidateClick = async (e: MouseEvent) => {
     e.preventDefault()
     formRef.value?.validate((errors) => {
       if (!errors) {
-        loginHandler(
-          formValue.value.phone,
-          formValue.value.password
-        )
+        loginHandler(formValue.value.mail, formValue.value.password)
       } else {
         console.log(errors)
       }
