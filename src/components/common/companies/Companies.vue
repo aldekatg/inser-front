@@ -36,7 +36,7 @@
 
 <style scoped lang="scss">
   .companies-component {
-    padding: rem(40);
+    padding: rem(20);
 
     &__actions {
       margin-bottom: rem(20);

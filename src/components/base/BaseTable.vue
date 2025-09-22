@@ -6,7 +6,8 @@
       :loading="props.loading"
       :columns="props.columns"
       :data="props.data"
-      :pagination="props.pagination"
+      remote
+      @update:sorter="$emit('update:sorter', $event)"
     />
   </n-space>
 </template>
@@ -17,7 +18,6 @@
     data: any
     columns: any
     loading?: boolean
-    pagination?: any
   }>()
 </script>
 

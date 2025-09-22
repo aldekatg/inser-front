@@ -1,6 +1,6 @@
 import { ref } from "vue"
 import { useMessage } from "naive-ui"
-import { PaginationType } from "@/types.ts"
+import { PaginationType, SortedFieldsType } from "@/types.ts"
 import {
   createGasStation,
   deleteGasStation,
@@ -35,29 +35,41 @@ export function useGasStations() {
     total: 0,
     page: 0,
     per_page: 0,
-    has_next: true,
-    has_prev: true,
+    has_next: false,
+    has_prev: false,
+  })
+
+  const sortedFields = ref<SortedFieldsType>({
+    order_by: "id",
+    desc: false,
+    limit: 10,
+    skip: 0,
   })
 
   const columns = ref([
     {
       title: "Обьект",
+      sorter: "object_number",
       key: "object_number",
     },
     {
       title: "Адрес",
+      sorter: "address",
       key: "address",
     },
     {
       title: "Оператор",
+      sorter: "operator_name",
       key: "operator_name",
     },
     {
       title: "Компания",
+      sorter: "company_name",
       key: "company.name",
     },
     {
       title: "Регион",
+      sorter: "region_name",
       key: "region.name",
     },
     {
@@ -69,14 +81,17 @@ export function useGasStations() {
     },
   ])
 
-  async function initGasStations() {
+  async function initGasStations(sortedFieldsParam?: SortedFieldsType) {
     loading.value = true
     try {
-      const response = await fetchGasStations()
+      const response = await fetchGasStations(
+        sortedFieldsParam || sortedFields.value
+      )
 
       if (response.status === "error") throw new Error(response.message || "")
 
       gasStations.value = response.payload.items
+      pagination.value = { ...response.payload }
     } catch (e) {
       console.error(e)
     } finally {
@@ -156,6 +171,7 @@ export function useGasStations() {
     columns,
     closeModal,
     gasStations,
+    sortedFields,
     pagination,
     loading,
   }

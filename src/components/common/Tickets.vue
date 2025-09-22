@@ -162,6 +162,6 @@
 
 <style scoped lang="scss">
   .tickets-component {
-    padding: rem(40);
+    padding: rem(20);
   }
 </style>

@@ -37,7 +37,7 @@
 
 <style scoped lang="scss">
   .employees-component {
-    padding: rem(40);
+    padding: rem(20);
 
     &__actions {
       margin-bottom: rem(20);

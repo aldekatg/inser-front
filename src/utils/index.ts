@@ -1,5 +1,6 @@
 import { h } from "vue"
 import { NButton, NIcon, NPopconfirm } from "naive-ui"
+import { SortedFieldsType } from "@/types.ts"
 
 export function ActionButtons(buttons: any[]) {
   return buttons.map((button: any, _: number) => {
@@ -42,4 +43,19 @@ export function ActionButtons(buttons: any[]) {
       }
     )
   })
+}
+
+export const handleUpdateSorter = (
+  sorter: { columnKey: string; sorter: string; order: string | null },
+  initFunction: (sortedFields: SortedFieldsType) => void,
+  sortedFields: SortedFieldsType
+) => {
+  if (sorter.order) {
+    sortedFields.order_by = sorter.sorter
+    sortedFields.desc = sorter.order === "descend"
+  } else {
+    sortedFields.order_by = "id"
+    sortedFields.desc = false
+  }
+  initFunction(sortedFields)
 }
