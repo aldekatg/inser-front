@@ -71,12 +71,12 @@
             placeholder="Выберите склад"
           />
         </n-form-item>
-        <n-form-item label="Руководителя" path="parent_id">
+        <n-form-item label="Руководитель" path="parent_id">
           <n-select
             v-model:value="props.form.parent_id"
             :options="isParentId"
             :value-field="'id'"
-            :label-field="'name'"
+            :label-field="'full_name'"
             placeholder="Выберите руководителя"
           />
         </n-form-item>
@@ -112,8 +112,10 @@
   import { useDictionaryStore } from "@/store/useDictionary.ts"
   import { storeToRefs } from "pinia"
   import { EmployeePayload, EmployeeRoles } from "@/api/employees/types.ts"
+  import { useEmployees } from "@/components/common/employees/useEmployees.ts"
 
   const message = useMessage()
+  const { employees, initEmployees } = useEmployees()
   const { isRegions, isWarehouses } = storeToRefs(useDictionaryStore())
 
   const props = defineProps<{
@@ -129,10 +131,9 @@
   const formRef = ref<FormInst | null>(null)
   const isSubmitting = ref(false)
 
-  const isParentId = [
-    { id: 0, name: "1" },
-    { id: 1, name: "2" },
-  ]
+  const isParentId = computed(() =>
+    employees.value.filter((emp) => emp.id !== props.form.id)
+  )
 
   const rules = {
     iin: {
@@ -214,6 +215,8 @@
     label: value,
     value: key,
   }))
+
+  onMounted(() => initEmployees())
 </script>
 
 <style lang="scss" scoped>

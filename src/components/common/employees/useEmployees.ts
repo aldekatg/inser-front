@@ -9,7 +9,7 @@ import { ActionButtons } from "@/utils"
 import { useMessage, useNotification } from "naive-ui"
 
 export function useEmployees() {
-  const employees = ref<EmployeeResponse[]>()
+  const employees = ref<EmployeeResponse[]>([])
   const employeeForm = ref<EmployeePayload>({
     iin: "",
     phone: "",

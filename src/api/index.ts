@@ -1,6 +1,8 @@
 import axios from "axios"
 // import { ref } from "vue"
 import { config } from "@/config/config"
+import { useAuthStore } from "@/store/useAuthStore.ts"
+import { refreshAccessToken } from "@/api/auth"
 // import { useAuthStore } from "@/store/useAuthStore"
 // import { refreshAccessToken } from "@/api/auth"
 
@@ -23,46 +25,47 @@ api.interceptors.request.use(
   }
 )
 
-// const isRefreshing = ref(false)
+const isRefreshing = ref(false)
 
-// api.interceptors.response.use(
-//   (response) => response,
-//   async (error) => {
-//     const {
-//       config,
-//       response: { status },
-//     } = error
-//     const originalRequest = config
-//
-//     const authStore = useAuthStore()
-//     console.log("original request", originalRequest)
-//     if (status === 401) {
-//       if (!isRefreshing.value) {
-//         isRefreshing.value = true
-//
-//         const refreshToken = localStorage.getItem("refreshToken")
-//         try {
-//           const response = await refreshAccessToken(refreshToken)
-//           authStore.initAuth(
-//             response.data.accessToken,
-//             response.data.refreshToken
-//           )
-//           originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`
-//           return api(originalRequest)
-//         } catch (err) {
-//           console.log(err)
-//           await authStore.logOut()
-//           return Promise.reject(error)
-//         } finally {
-//           isRefreshing.value = false
-//         }
-//       } else {
-//         return Promise.reject(error)
-//       }
-//     }
-//     return Promise.reject(error)
-//   }
-// )
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const {
+      config,
+      response: { status },
+    } = error
+    const originalRequest = config
+
+    const authStore = useAuthStore()
+    console.log("original request", originalRequest)
+    if (status === 401) {
+      if (!isRefreshing.value) {
+        isRefreshing.value = true
+
+        const refreshToken = localStorage.getItem("refreshToken")
+        try {
+          const response = await refreshAccessToken(refreshToken || "")
+
+          authStore.initAuth(
+            response.payload.access_token,
+            response.payload.refresh_token
+          )
+          originalRequest.headers.Authorization = `Bearer ${response.payload.access_token}`
+          return api(originalRequest)
+        } catch (err) {
+          console.log(err)
+          await authStore.logOut()
+          return Promise.reject(error)
+        } finally {
+          isRefreshing.value = false
+        }
+      } else {
+        return Promise.reject(error)
+      }
+    }
+    return Promise.reject(error)
+  }
+)
 
 export const objectToUrlParams = (params: any) =>
   `?${Object.keys(params)
