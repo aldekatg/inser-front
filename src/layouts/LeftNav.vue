@@ -16,7 +16,11 @@
                 <template #icon>
                   <n-icon><person-circle-icon /></n-icon>
                 </template>
-                {{ EmployeeRoles[authStore.user?.role] }}
+                {{
+                  EmployeeRoles[
+                    authStore.user?.role as keyof typeof EmployeeRoles
+                  ]
+                }}
               </n-button>
             </n-dropdown>
           </n-space>

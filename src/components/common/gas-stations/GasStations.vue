@@ -10,6 +10,7 @@
       @update:sorter="sorterFunc"
     />
     <NPagination
+      v-if="!loading"
       class="pagination"
       :page="pagination.page"
       :item-count="pagination.total"
