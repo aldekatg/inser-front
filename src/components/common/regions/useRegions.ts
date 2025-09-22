@@ -25,7 +25,7 @@ export function useRegions() {
     name: "",
     id: undefined,
   })
-  const isLoading = ref(false)
+  const loading = ref(false)
 
   const message = useMessage()
 
@@ -73,7 +73,7 @@ export function useRegions() {
   }
 
   async function initRegions() {
-    isLoading.value = true
+    loading.value = true
     try {
       const response = await fetchRegions()
 
@@ -85,13 +85,13 @@ export function useRegions() {
       console.error("Ошибка при загрузке компаний:", error)
       message.error("Ошибка при загрузке компаний")
     } finally {
-      isLoading.value = false
+      loading.value = false
     }
   }
 
   async function saveRegion(form: RegionType) {
     let isEdit = form.id !== undefined
-    isLoading.value = true
+    loading.value = true
     try {
       let response
       console.log(isEdit)
@@ -109,7 +109,7 @@ export function useRegions() {
       console.error(e)
       message.error("Ошибка при сохранении компании")
     } finally {
-      isLoading.value = false
+      loading.value = false
       await store.initDictionary() // Обновляем словарь в хранилище
     }
   }
@@ -127,7 +127,7 @@ export function useRegions() {
   }
 
   return {
-    isLoading,
+    loading,
 
     regions,
     regionsForm,

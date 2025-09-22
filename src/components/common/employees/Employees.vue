@@ -5,7 +5,7 @@
         Добавить сотрудника
       </NButton>
     </div>
-    <base-table :data="employees" :columns="columns" />
+    <base-table :data="employees" :columns="columns" :loading="loading" />
   </div>
   <EmployeeModal
     :form="employeeForm"
@@ -25,6 +25,7 @@
     employees,
     employeeForm,
     columns,
+    loading,
     isModalOpen,
     initEmployees,
     closeModal,

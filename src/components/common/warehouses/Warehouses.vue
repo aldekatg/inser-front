@@ -5,7 +5,7 @@
         Добавить склад
       </n-button>
     </div>
-    <base-table :data="warehouses" :columns="columns" />
+    <base-table :data="warehouses" :columns="columns" :loading="loading" />
   </div>
   <warehouse-modal
     :form="warehouseForm"
@@ -24,6 +24,7 @@
   import WarehouseModal from "@/components/common/warehouses/WarehouseModal.vue"
 
   const {
+    loading,
     warehouses,
     warehouseForm,
     saveWarehouse,

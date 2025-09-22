@@ -5,7 +5,7 @@
         Добавить регион
       </n-button>
     </div>
-    <base-table :data="regions" :columns="columns" />
+    <base-table :data="regions" :columns="columns" :loading="loading" />
   </div>
   <RegionsModal
     :form="regionsForm"
@@ -24,6 +24,7 @@
 
   const {
     regions,
+    loading,
     regionsForm,
     initRegions,
     saveRegion,

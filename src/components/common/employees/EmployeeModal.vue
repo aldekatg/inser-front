@@ -111,7 +111,6 @@
   import { regEmail } from "@/components/common/gas-stations/const.ts"
   import { useDictionaryStore } from "@/store/useDictionary.ts"
   import { storeToRefs } from "pinia"
-  import VueTelInput from "vue-tel-input"
   import { EmployeePayload, EmployeeRoles } from "@/api/employees/types.ts"
 
   const message = useMessage()

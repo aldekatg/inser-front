@@ -18,7 +18,7 @@ import { ActionButtons } from "@/utils"
 export function useWarehouses() {
   const isModalOpen = ref(false)
   const store = useDictionaryStore()
-  const isLoading = ref(false)
+  const loading = ref(false)
   const message = useMessage()
 
   const { isWarehouses } = storeToRefs(store)
@@ -79,7 +79,7 @@ export function useWarehouses() {
   }
 
   async function initWarehouses() {
-    isLoading.value = true
+    loading.value = true
     try {
       const response = await fetchWarehouses()
 
@@ -91,13 +91,13 @@ export function useWarehouses() {
       console.error("Ошибка при загрузке компаний:", error)
       message.error("Ошибка при загрузке компаний")
     } finally {
-      isLoading.value = false
+      loading.value = false
     }
   }
 
   async function saveWarehouse(form: WarehouseType) {
     let isEdit = form.id !== undefined
-    isLoading.value = true
+    loading.value = true
     try {
       let response
       console.log(isEdit)
@@ -115,7 +115,7 @@ export function useWarehouses() {
       console.error(e)
       message.error("Ошибка при сохранении компании")
     } finally {
-      isLoading.value = false
+      loading.value = false
       await store.initDictionary() // Обновляем словарь в хранилище
     }
   }
@@ -133,8 +133,7 @@ export function useWarehouses() {
   }
 
   return {
-    isLoading,
-
+    loading,
     warehouses,
     warehouseForm,
     saveWarehouse,

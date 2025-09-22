@@ -10,6 +10,16 @@ export interface EmployeePayload {
   region_id?: number
   warehouse_id?: number
   parent_id?: number
+  region?: {
+    id: number
+    name: string
+  }
+  warehouse?: {
+    id: number
+    name: string
+    guid: string
+    responsible_iin: string
+  }
   password: string
   id?: number | null
 }

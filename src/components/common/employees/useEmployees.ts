@@ -6,7 +6,7 @@ import {
   TrashOutline as TrashIcon,
 } from "@vicons/ionicons5"
 import { ActionButtons } from "@/utils"
-import { useMessage } from "naive-ui"
+import { useMessage, useNotification } from "naive-ui"
 
 export function useEmployees() {
   const employees = ref<EmployeeResponse[]>()
@@ -27,6 +27,7 @@ export function useEmployees() {
   const loading = ref(false)
 
   const message = useMessage()
+  const notification = useNotification()
 
   const columns = ref([
     {
@@ -81,14 +82,16 @@ export function useEmployees() {
 
   const initEmployees = async () => {
     try {
+      loading.value = true
       const response = await fetchEmployees()
-      console.log(response)
       if (response.status === "error") {
         throw new Error("Ошибка при загрузке сотрудников")
       }
       employees.value = response.payload.items
     } catch (error) {
       console.error("Не удалось загрузить сотрудников:", error)
+    } finally {
+      loading.value = false
     }
   }
 
@@ -103,6 +106,7 @@ export function useEmployees() {
       loading.value = true
       let response
       if (isEdit) {
+        console.log("loading")
         response = await updateEmployee(form.id!, form)
       } else {
         response = await createEmployee(form)
@@ -111,14 +115,20 @@ export function useEmployees() {
 
       message.success("Сотрудник успешно сохранен")
       console.log("Сотрудник успешно сохранен")
+      closeModal()
+      await initEmployees()
     } catch (e: any) {
+      console.log(e.response.data.message)
+      if (e.response.data.message)
+        notification.error({
+          content: e.response.data.message,
+        })
+
       if (e?.response?.data?.message === "IIN already exists") {
         message.error("Сотрудник с таким ИИН уже существует")
       }
     } finally {
-      loading.value = false
-      closeModal()
-      await initEmployees() // Refresh the list after saving
+      loading.value = false // Refresh the list after saving
     }
   }
 

@@ -3,7 +3,7 @@
     <div class="gas-stations-component__actions">
       <NButton type="primary" @click="isModalOpen = true">Добавить АЗС</NButton>
     </div>
-    <BaseTable :data="gasStations" :columns="columns" />
+    <BaseTable :data="gasStations" :columns="columns" :loading="loading" />
   </div>
   <GasStationModal
     :is-edit="!!gasStationForm.id"
@@ -23,6 +23,7 @@
 
   const {
     gasStations,
+    loading,
     gasStationForm,
     saveGasStation,
     initGasStations,

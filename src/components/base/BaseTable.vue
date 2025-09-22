@@ -3,6 +3,7 @@
     <n-data-table
       :bordered="true"
       :single-line="true"
+      :loading="props.loading"
       :columns="props.columns"
       :data="props.data"
       :pagination="props.pagination"
@@ -15,6 +16,7 @@
   const props = defineProps<{
     data: any
     columns: any
+    loading?: boolean
     pagination?: any
   }>()
 </script>
