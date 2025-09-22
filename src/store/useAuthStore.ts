@@ -1,8 +1,7 @@
 import { defineStore } from "pinia"
+import { router } from "@/router/router.ts"
 // import { refreshAccessToken } from "@/api/auth"
-import { useRouter } from "vue-router"
 
-const router = useRouter()
 interface AuthState {
   user: null
   token: string
