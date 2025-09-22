@@ -60,10 +60,7 @@
     columnKey: string
     sorter: string
     order: string | null
-  }) => {
-    console.log(sorter)
-    handleUpdateSorter(sorter, initGasStations, sortedFields.value)
-  }
+  }) => handleUpdateSorter(sorter, initGasStations, sortedFields.value)
 
   onMounted(() => initGasStations())
 </script>

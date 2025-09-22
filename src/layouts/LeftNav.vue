@@ -16,7 +16,7 @@
                 <template #icon>
                   <n-icon><person-circle-icon /></n-icon>
                 </template>
-                Ахмедов Тамирлан
+                {{ authStore.user?.role }}
               </n-button>
             </n-dropdown>
           </n-space>
@@ -60,7 +60,10 @@
 
   // helpers
   import { useNavHook } from "@/layouts/composables/useNavHook.ts"
+  import { storeToRefs } from "pinia"
+  import { useAuthStore } from "@/store/useAuthStore.ts"
 
+  const authStore = useAuthStore()
   const { menuOptions, options } = useNavHook()
   const collapsed = ref(false)
 

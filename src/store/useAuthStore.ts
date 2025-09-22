@@ -1,9 +1,14 @@
 import { defineStore } from "pinia"
 import { router } from "@/router/router.ts"
-// import { refreshAccessToken } from "@/api/auth"
+import { jwtDecode } from "jwt-decode"
 
 interface AuthState {
-  user: null
+  user: {
+    type: string
+    role: string
+    exp: number
+    iat: number
+  } | null
   token: string
   refreshToken: string
   tokenTimerId?: NodeJS.Timeout
@@ -23,20 +28,11 @@ export const useAuthStore = defineStore("authStore", {
     initAuth(token: string, refreshToken: string) {
       if (!token) return
       this.token = token
+      this.user = jwtDecode(token)
       this.refreshToken = refreshToken
       localStorage.setItem("token", token)
       localStorage.setItem("refreshToken", refreshToken)
     },
-    // async refreshAccessToken() {
-    //   try {
-    //     const newAccessToken = await refreshAccessToken(this.refreshToken)
-    //     // this.initTokenTimer(newAccessToken)
-    //     return newAccessToken
-    //   } catch (error) {
-    //     console.error("Error refreshing access token:", error)
-    //     // Выход пользователя из учетной записи или другие действия по вашему усмотрению
-    //   }
-    // },
     async logOut() {
       this.user = null
       this.token = ""
