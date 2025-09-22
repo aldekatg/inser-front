@@ -16,7 +16,7 @@
                 <template #icon>
                   <n-icon><person-circle-icon /></n-icon>
                 </template>
-                {{ authStore.user?.role }}
+                {{ EmployeeRoles[authStore.user?.role] }}
               </n-button>
             </n-dropdown>
           </n-space>
@@ -62,6 +62,7 @@
   import { useNavHook } from "@/layouts/composables/useNavHook.ts"
   import { storeToRefs } from "pinia"
   import { useAuthStore } from "@/store/useAuthStore.ts"
+  import { EmployeeRoles } from "../api/employees/types.ts"
 
   const authStore = useAuthStore()
   const { menuOptions, options } = useNavHook()
