@@ -64,7 +64,6 @@
 
   // helpers
   import { useNavHook } from "@/layouts/composables/useNavHook.ts"
-  import { storeToRefs } from "pinia"
   import { useAuthStore } from "@/store/useAuthStore.ts"
   import { EmployeeRoles } from "../api/employees/types.ts"
 
