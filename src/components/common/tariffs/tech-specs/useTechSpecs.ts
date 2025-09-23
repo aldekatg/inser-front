@@ -1,30 +1,33 @@
-import { ref } from "vue"
-import { WorkType } from "@/api/tariffs/types.ts"
-import { PaginationType, SortedFieldsType } from "@/types.ts"
-import {
-  createWorkType,
-  deleteWorkType,
-  fetchWorkTypes,
-  updateWorkType,
-} from "@/api/tariffs"
 import { useMessage } from "naive-ui"
+import { ref } from "vue"
+import { PaginationType, SortedFieldsType } from "@/types.ts"
 import {
   PencilSharp as PencilIcon,
   TrashOutline as TrashIcon,
 } from "@vicons/ionicons5"
 import { ActionButtons } from "@/utils"
+import { TechnicalTasksType } from "@/api/gas-stations/types.ts"
+import {
+  createTechnicalTask,
+  deleteTechnicalTask,
+  fetchTechnicalTasks,
+  updateTechnicalTask,
+} from "@/api/tariffs"
+import { useDictionaryStore } from "@/store/useDictionary.ts"
+import { storeToRefs } from "pinia"
 
-export function useWorkTypes() {
+export function useTechSpecs() {
   const message = useMessage()
+  const { technical_tasks } = storeToRefs(useDictionaryStore())
 
   const isModalOpen = ref(false)
   const loading = ref(false)
-  const workTypes = ref<WorkType[]>([])
-  const workTypeForm = ref<WorkType>({
+  const techTasks = ref<TechnicalTasksType[]>([])
+  const techTaskForm = ref<TechnicalTasksType>({
     code: "",
     description: "",
     id: null,
-    technical_task_id: null,
+    work_types: [],
   })
 
   const pagination = ref<PaginationType>({
@@ -62,19 +65,20 @@ export function useWorkTypes() {
       key: "actions",
       fixed: "right",
       className: "custom-buttons",
-      render: (row: WorkType) => renderButtons(row),
+      render: (row: TechnicalTasksType) => renderButtons(row),
     },
   ])
 
-  async function initWorkTypes(sortedFieldsParam?: SortedFieldsType) {
+  async function initTechTasks(sortedFieldsParam?: SortedFieldsType) {
     loading.value = true
     try {
-      const response = await fetchWorkTypes(
+      const response = await fetchTechnicalTasks(
         sortedFieldsParam || sortedFields.value
       )
       if (response.status === "error") throw new Error(response.message || "")
 
-      workTypes.value = response.payload.items
+      technical_tasks.value = response.payload.items
+      techTasks.value = response.payload.items
       pagination.value = { ...response.payload }
     } catch (e) {
       console.log(e)
@@ -83,11 +87,11 @@ export function useWorkTypes() {
     }
   }
 
-  const removeWorkType = async (id: number) => {
+  const removeTechTask = async (id: number) => {
     loading.value = true
     try {
       // Assuming there's a deleteGasStation API function
-      const response = await deleteWorkType(id)
+      const response = await deleteTechnicalTask(id)
       if (response.status === "error") throw new Error(response.message || "")
 
       message.success("Заправка успешно удалена")
@@ -95,47 +99,47 @@ export function useWorkTypes() {
       console.error(e)
     } finally {
       loading.value = false
-      await initWorkTypes() // Refresh the list after deletion
+      await initTechTasks() // Refresh the list after deletion
     }
   }
 
-  const saveWorkType = async (form: WorkType) => {
+  const saveTechTask = async (form: TechnicalTasksType) => {
     let isEdit = form.id !== null
     loading.value = true
     try {
       let response
       if (isEdit) {
-        response = await updateWorkType(form.id!, form)
+        response = await updateTechnicalTask(form.id!, form)
       } else {
-        response = await createWorkType(form)
+        response = await createTechnicalTask(form)
       }
       if (response.status === "error") throw new Error(response.message || "")
 
-      message.success("Заправка успешно сохранена")
+      message.success("ТЗ успешно сохранено")
     } catch (e) {
       console.error(e)
     } finally {
       loading.value = false
       closeModal()
-      await initWorkTypes() // Refresh the list after saving
+      await initTechTasks() // Refresh the list after saving
     }
   }
 
-  const renderButtons = (row: WorkType) => {
+  const renderButtons = (row: TechnicalTasksType) => {
     const buttons = [
       {
         icon: PencilIcon,
         type: "info",
         onClick: () => {
-          workTypeForm.value = Object.assign({}, row)
+          techTaskForm.value = Object.assign({}, row)
           isModalOpen.value = true
         },
       },
       {
         icon: TrashIcon,
         type: "error",
-        popconfirmText: "Вы уверены, что хотите удалить виды работ?",
-        onClick: () => removeWorkType(row.id!),
+        popconfirmText: "Вы уверены, что хотите удалить ТЗ?",
+        onClick: () => removeTechTask(row.id!),
       },
     ]
 
@@ -147,14 +151,14 @@ export function useWorkTypes() {
   }
 
   return {
-    workTypes,
+    techTasks,
     loading,
-    workTypeForm,
+    techTaskForm,
     sortedFields,
-    initWorkTypes,
+    initTechTasks,
+    removeTechTask,
     pagination,
-    removeWorkType,
-    saveWorkType,
+    saveTechTask,
     isModalOpen,
     columns,
     closeModal,

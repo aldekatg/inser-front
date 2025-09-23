@@ -44,6 +44,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TechnicalSpecs: typeof import('./src/components/common/tariffs/tech-specs/TechnicalSpecs.vue')['default']
+    TechnicalSpecsModal: typeof import('./src/components/common/tariffs/tech-specs/TechnicalSpecsModal.vue')['default']
     Tickets: typeof import('./src/components/common/Tickets.vue')['default']
     WarehouseModal: typeof import('./src/components/common/warehouses/WarehouseModal.vue')['default']
     Warehouses: typeof import('./src/components/common/warehouses/Warehouses.vue')['default']

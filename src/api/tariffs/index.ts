@@ -5,6 +5,7 @@ import {
   WorkType,
   WorkTypeResponse,
 } from "@/api/tariffs/types.ts"
+import { TechnicalTasksType } from "@/api/gas-stations/types.ts"
 
 const URLS = {
   getWorkTypes: "/work-types",
@@ -40,4 +41,24 @@ export const fetchTechnicalTasks = async (sortedFields?: SortedFieldsType) =>
     .get<
       Response<TechnicalTasksTypeResponse>
     >(URLS.getTechnicalTasks + objectToUrlParams(sortedFields || {}))
+    .then((resp) => resp.data)
+
+export const deleteTechnicalTask = async (id: number) =>
+  api
+    .delete<Response<TechnicalTasksType>>(URLS.getTechnicalTasks + `/${id}`)
+    .then((resp) => resp.data)
+
+export const createTechnicalTask = async (body: TechnicalTasksType) =>
+  api
+    .post<Response<TechnicalTasksType>>(URLS.getTechnicalTasks, body)
+    .then((resp) => resp.data)
+
+export const updateTechnicalTask = async (
+  id: number,
+  body: TechnicalTasksType
+) =>
+  api
+    .patch<
+      Response<TechnicalTasksType>
+    >(URLS.getTechnicalTasks + `/${id}`, body)
     .then((resp) => resp.data)

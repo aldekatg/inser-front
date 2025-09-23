@@ -52,7 +52,7 @@ export interface WarehouseType {
 export interface TechnicalTasksType {
   code: string
   description: string
-  id: number
+  id: number | null
   work_types: number[]
 }
 
