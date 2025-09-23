@@ -50,7 +50,6 @@
             :options="rolesOptions"
             :value-field="'value'"
             :label-field="'label'"
-            placeholder="Введите роль"
           />
         </n-form-item>
         <n-form-item label="Регион" path="region_id">
@@ -115,7 +114,7 @@
   import { useEmployees } from "@/components/common/employees/useEmployees.ts"
 
   const message = useMessage()
-  const { employees, initEmployees } = useEmployees()
+  const { employees } = useEmployees()
   const { isRegions, isWarehouses } = storeToRefs(useDictionaryStore())
 
   const props = defineProps<{
@@ -149,7 +148,7 @@
     },
     region_id: {
       type: "number",
-      required: true,
+      required: false,
       message: "Регион обязателен",
       trigger: ["blur", "change"],
     },
@@ -215,8 +214,6 @@
     label: value,
     value: key,
   }))
-
-  onMounted(() => initEmployees())
 </script>
 
 <style lang="scss" scoped>

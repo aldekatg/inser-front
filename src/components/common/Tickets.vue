@@ -118,16 +118,6 @@
     pageSize: 10,
   })
 
-  onMounted(() => dictionaryStore.initDictionary())
-
-  // {
-  //   data: createData(),
-  //     columns: createColumns(),
-  //   pagination: {
-  //   pageSize: 10,
-  // },
-  // }
-
   const renderButtons = (row: RowData) => {
     const buttons = [
       {

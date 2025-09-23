@@ -49,6 +49,13 @@ export interface WarehouseType {
   responsible_iin: string
 }
 
+export interface TechnicalTasksType {
+  code: string
+  description: string
+  id: number
+  work_types: number[]
+}
+
 export interface RegionType {
   id?: number
   name: string

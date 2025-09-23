@@ -47,6 +47,18 @@ const routes: Array<RouteRecordRaw> = [
         name: "Employees",
         component: () => import("@/components/common/employees/Employees.vue"),
       },
+      {
+        path: "/tech-specs",
+        name: "TechnicalSpecs",
+        component: () =>
+          import("@/components/common/tariffs/tech-specs/TechnicalSpecs.vue"),
+      },
+      {
+        path: "/work-types",
+        name: "Jobs",
+        component: () =>
+          import("@/components/common/tariffs/work-types/WorkTypes.vue"),
+      },
     ],
   },
 ]

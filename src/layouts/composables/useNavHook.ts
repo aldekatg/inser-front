@@ -15,6 +15,9 @@ import {
   AlbumsOutline as DictionaryIcon,
   PeopleOutline as PartnersIcon,
   BusinessOutline as GasStationIcon,
+  CashOutline as TariffsIcon,
+  DocumentAttachOutline as OrdersIcon,
+  BuildOutline as JobIcon,
 } from "@vicons/ionicons5"
 import { useAuthStore } from "@/store/useAuthStore.ts"
 
@@ -87,6 +90,51 @@ export const useNavHook = () => {
         "assistant",
       ]),
       children: [
+        {
+          label: "Тарифы",
+          key: "go-to-tariffs",
+          icon: renderIcon(TariffsIcon),
+          show: usePermissionsAccess([
+            "superadmin",
+            "admin",
+            "nurse",
+            "doctor",
+            "callCenter",
+            "assistant",
+          ]),
+          children: [
+            {
+              label: () =>
+                h(
+                  RouterLink,
+                  {
+                    to: {
+                      name: "Jobs",
+                    },
+                  },
+                  { default: () => "Виды работ" }
+                ),
+              key: "go-to-work-types",
+              icon: renderIcon(JobIcon),
+              show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
+            },
+            {
+              label: () =>
+                h(
+                  RouterLink,
+                  {
+                    to: {
+                      name: "TechnicalSpecs",
+                    },
+                  },
+                  { default: () => "ТЗ" }
+                ),
+              key: "go-to-tech-specs",
+              icon: renderIcon(OrdersIcon),
+              show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
+            },
+          ],
+        },
         {
           label: () =>
             h(

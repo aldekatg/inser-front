@@ -1,6 +1,15 @@
 import { ref } from "vue"
-import { createEmployee, fetchEmployees, updateEmployee } from "@/api/employees"
-import { EmployeePayload, EmployeeResponse } from "@/api/employees/types.ts"
+import {
+  createEmployee,
+  deleteEmployee,
+  fetchEmployees,
+  updateEmployee,
+} from "@/api/employees"
+import {
+  EmployeePayload,
+  EmployeeResponse,
+  EmployeeRoles,
+} from "@/api/employees/types.ts"
 import {
   PencilSharp as PencilIcon,
   TrashOutline as TrashIcon,
@@ -61,6 +70,8 @@ export function useEmployees() {
       title: "Роль",
       sorter: "role",
       key: "role",
+      render: (row: EmployeePayload) =>
+        EmployeeRoles[row.role as keyof typeof EmployeeRoles],
     },
     {
       title: "Регион",
@@ -94,7 +105,7 @@ export function useEmployees() {
       {
         icon: TrashIcon,
         type: "error",
-        popconfirmText: "Вы уверены, что хотите удалить эту заправку?",
+        popconfirmText: "Вы уверены, что хотите удалить эту сотрудника?",
         onClick: () => removeEmployee(row.id!),
       },
     ]
@@ -121,8 +132,18 @@ export function useEmployees() {
   }
 
   const removeEmployee = async (id: number) => {
-    // Логика удаления сотрудника по id
-    console.log(`Удаление сотрудника с id: ${id}`)
+    loading.value = true
+    try {
+      const response = await deleteEmployee(id)
+      if (response.status === "error") throw new Error(response.message || "")
+
+      message.success("Сотрудник успешно удален")
+    } catch (e) {
+      console.error(e)
+    } finally {
+      loading.value = false
+      await initEmployees(sortedFields.value) // Refresh the list after deletion
+    }
   }
 
   const saveEmployee = async (form: EmployeePayload) => {

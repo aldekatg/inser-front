@@ -13,13 +13,13 @@
         <n-form-item label="Название" path="name">
           <n-input
             v-model:value="props.form.name"
-            placeholder="Введите название компании"
+            placeholder="Введите название региона"
           />
         </n-form-item>
-        <n-form-item label="Номер объекта" path="bin">
+        <n-form-item label="БИН" path="bin">
           <n-input
             v-model:value="props.form.bin"
-            placeholder="Введите BIN"
+            placeholder="Введите БИН"
             maxlength="12"
           />
         </n-form-item>

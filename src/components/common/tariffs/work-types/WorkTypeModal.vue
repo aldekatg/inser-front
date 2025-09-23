@@ -2,7 +2,7 @@
   <n-modal v-model:show="show">
     <n-card
       style="width: 600px"
-      :title="isEdit ? 'Редактирование склада' : 'Создание склада'"
+      :title="isEdit ? 'Редактирование компании' : 'Создание компании'"
       :bordered="false"
       size="huge"
       role="dialog"
@@ -10,17 +10,25 @@
     >
       <template #header-extra>Заполните поля</template>
       <n-form :model="props.form" :rules="rules" ref="formRef">
-        <n-form-item label="Название" path="name">
+        <n-form-item label="Код" path="code">
           <n-input
-            v-model:value="props.form.name"
-            placeholder="Введите название склада"
+            v-model:value="props.form.code"
+            placeholder="Введите номер"
           />
         </n-form-item>
-        <n-form-item label="Введите ИИН ответственного" path="responsible_iin">
+        <n-form-item label="Описание" path="description">
           <n-input
-            v-model:value="props.form.responsible_iin"
-            placeholder="Введите ИИН"
-            maxlength="12"
+            v-model:value="props.form.description"
+            type="textarea"
+            placeholder="Введите описание"
+          />
+        </n-form-item>
+        <n-form-item label="Выберите ТЗ" path="description">
+          <n-select
+            v-model:value="props.form.technical_task_id"
+            :options="isTechTasks"
+            :value-field="'id'"
+            :label-field="'code'"
           />
         </n-form-item>
       </n-form>
@@ -43,46 +51,52 @@
 <script setup lang="ts">
   import { ref, computed } from "vue"
   import { defineProps, defineEmits } from "vue"
-  import { FormInst, useMessage } from "naive-ui"
-  import { WarehouseType } from "@/api/gas-stations/types.ts"
+  import { useMessage, FormInst } from "naive-ui"
+  import { WorkType } from "@/api/tariffs/types.ts"
+  import { storeToRefs } from "pinia"
+  import { useDictionaryStore } from "@/store/useDictionary.ts"
+
+  const message = useMessage()
+  const { isTechTasks } = storeToRefs(useDictionaryStore())
 
   const props = defineProps<{
     modelValue: boolean
-    form: WarehouseType
+    form: WorkType
     isEdit: boolean
   }>()
 
   const emit = defineEmits(["save", "cancel"])
 
-  const message = useMessage()
   const show = computed(() => props.modelValue)
 
   const formRef = ref<FormInst | null>(null)
   const isSubmitting = ref(false)
 
   const rules = {
-    name: {
+    code: {
       required: true,
-      message: "Название обязательно",
+      message: "Номер обязателен",
       trigger: ["blur", "input"],
     },
-    responsible_iin: {
+    description: {
       required: true,
-      message: "ИИН обязателен",
+      message: "Описание обязательно",
       trigger: ["blur", "input"],
     },
   }
 
   watch(show, (newVal) => {
     if (!newVal) {
-      props.form.responsible_iin = ""
-      props.form.name = ""
+      props.form.code = ""
+      props.form.id = null
+      props.form.description = ""
     }
   })
 
   const handleSubmit = (e: MouseEvent) => {
     e.preventDefault()
     formRef.value?.validate(async (errors) => {
+      console.log(errors)
       if (!errors) {
         isSubmitting.value = true
         emit("save", props.form)

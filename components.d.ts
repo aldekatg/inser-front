@@ -16,6 +16,7 @@ declare module 'vue' {
     Employees: typeof import('./src/components/common/employees/Employees.vue')['default']
     GasStationModal: typeof import('./src/components/common/gas-stations/GasStationModal.vue')['default']
     GasStations: typeof import('./src/components/common/gas-stations/GasStations.vue')['default']
+    Jobs: typeof import('./src/components/common/tariffs/jobs/Jobs.vue')['default']
     NButton: typeof import('naive-ui')['NButton']
     NCard: typeof import('naive-ui')['NCard']
     NConfigProvider: typeof import('naive-ui')['NConfigProvider']
@@ -42,8 +43,11 @@ declare module 'vue' {
     RegionsModal: typeof import('./src/components/common/regions/RegionsModal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    TechnicalSpecs: typeof import('./src/components/common/tariffs/tech-specs/TechnicalSpecs.vue')['default']
     Tickets: typeof import('./src/components/common/Tickets.vue')['default']
     WarehouseModal: typeof import('./src/components/common/warehouses/WarehouseModal.vue')['default']
     Warehouses: typeof import('./src/components/common/warehouses/Warehouses.vue')['default']
+    WorkTypeModal: typeof import('./src/components/common/tariffs/work-types/WorkTypeModal.vue')['default']
+    WorkTypes: typeof import('./src/components/common/tariffs/work-types/WorkTypes.vue')['default']
   }
 }

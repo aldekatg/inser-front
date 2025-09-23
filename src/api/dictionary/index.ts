@@ -14,11 +14,11 @@ const URLS = {
 }
 
 // Companies
-export const fetchCompanies = async (sortedFieldsParam: SortedFieldsType) =>
+export const fetchCompanies = async (sortedFieldsParam?: SortedFieldsType) =>
   api
     .get<
       Response<CompaniesResponse>
-    >(URLS.getCompanies + objectToUrlParams(sortedFieldsParam))
+    >(URLS.getCompanies + objectToUrlParams(sortedFieldsParam || {}))
     .then((resp) => resp.data)
 
 export const createCompany = async (body: CompanyType) =>

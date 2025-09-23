@@ -22,6 +22,16 @@
 </script>
 
 <style scoped lang="scss">
+  :deep(.n-data-table td) {
+    max-height: rem(60);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  :deep(.n-data-table th) {
+    min-width: rem(100);
+  }
+
   :deep(.custom-buttons) {
     display: flex;
     flex-direction: row;
