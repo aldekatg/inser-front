@@ -21,7 +21,9 @@
   const refreshToken = localStorage.getItem("refreshToken")
   authStore.initAuth(token as string, refreshToken as string)
 
-  onMounted(() => dictionaryStore.initDictionary())
+  onMounted(() => {
+    if (authStore.isUserAuthorized) dictionaryStore.initDictionary()
+  })
 </script>
 
 <style scoped></style>

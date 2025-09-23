@@ -27,6 +27,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.pagination {
+  margin-top: rem(20);
+  display: flex;
+  justify-content: flex-end;
+}
+
 .action-buttons {
   display: flex;
   gap: rem(10);

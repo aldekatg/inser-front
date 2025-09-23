@@ -14,6 +14,7 @@ import {
   TrashOutline as TrashIcon,
 } from "@vicons/ionicons5"
 import { ActionButtons } from "@/utils"
+import { PaginationType, SortedFieldsType } from "@/types.ts"
 
 export function useCompanies() {
   const isModalOpen = ref(false)
@@ -30,13 +31,30 @@ export function useCompanies() {
 
   const message = useMessage()
 
+  const pagination = ref<PaginationType>({
+    total: 0,
+    page: 0,
+    per_page: 0,
+    has_next: false,
+    has_prev: false,
+  })
+
+  const sortedFields = ref<SortedFieldsType>({
+    order_by: "id",
+    desc: false,
+    limit: 10,
+    skip: 0,
+  })
+
   const columns = ref([
     {
       title: "Название",
+      sorter: "name",
       key: "name",
     },
     {
       title: "БИН",
+      sorter: "bin",
       key: "bin",
     },
     {
@@ -78,15 +96,18 @@ export function useCompanies() {
     }
   }
 
-  async function initCompanies() {
+  async function initCompanies(sortedFieldsParam?: SortedFieldsType) {
     isLoading.value = true
     try {
-      const response = await fetchCompanies()
+      const response = await fetchCompanies(
+        sortedFieldsParam || sortedFields.value
+      )
 
       if (response.status === "error")
         throw new Error("Ошибка при загрузке компаний")
 
       companies.value = response.payload.items
+      pagination.value = { ...response.payload }
     } catch (error) {
       console.error("Ошибка при загрузке компаний:", error)
       message.error("Ошибка при загрузке компаний")
@@ -133,7 +154,9 @@ export function useCompanies() {
   }
 
   return {
-    isLoading,
+    loading: isLoading,
+    pagination,
+    sortedFields,
 
     companies,
     companyForm,

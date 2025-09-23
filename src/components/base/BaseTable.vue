@@ -25,6 +25,16 @@
   :deep(.custom-buttons) {
     display: flex;
     flex-direction: row;
+    justify-content: center;
     gap: rem(5);
+  }
+
+  :deep(.n-data-table .n-scrollbar-container) {
+    max-height: calc(100vh - 220px); /* или 70vh чтобы занимало 70% экрана */
+    overflow-y: auto; /* включаем скролл */
+  }
+
+  :deep(.n-data-table .n-data-table-table) {
+    table-layout: fixed; /* чтобы колонки не «прыгали» */
   }
 </style>

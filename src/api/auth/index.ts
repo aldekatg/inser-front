@@ -4,11 +4,12 @@ import { AuthPayload } from "@/api/auth/type.ts"
 
 const URLS = {
   login: "/auth/employee/login",
+  refresh: "/auth/refresh",
 }
 
 export async function refreshAccessToken(refreshToken: string) {
   return api
-    .post<Response<AuthPayload>>(URLS.login, { refreshToken })
+    .post<Response<AuthPayload>>(URLS.refresh, { refreshToken })
     .then((resp) => resp.data)
 }
 export const login = (email: string, password: string) =>

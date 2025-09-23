@@ -7,6 +7,7 @@ import {
 } from "@vicons/ionicons5"
 import { ActionButtons } from "@/utils"
 import { useMessage, useNotification } from "naive-ui"
+import { PaginationType, SortedFieldsType } from "@/types.ts"
 
 export function useEmployees() {
   const employees = ref<EmployeeResponse[]>([])
@@ -23,6 +24,22 @@ export function useEmployees() {
     password: "",
     id: null,
   })
+
+  const pagination = ref<PaginationType>({
+    total: 0,
+    page: 0,
+    per_page: 0,
+    has_next: false,
+    has_prev: false,
+  })
+
+  const sortedFields = ref<SortedFieldsType>({
+    order_by: "id",
+    desc: false,
+    limit: 10,
+    skip: 0,
+  })
+
   const isModalOpen = ref(false)
   const loading = ref(false)
 
@@ -32,22 +49,27 @@ export function useEmployees() {
   const columns = ref([
     {
       title: "Имя",
+      sorter: "full_name",
       key: "full_name",
     },
     {
       title: "ИИН",
+      sorter: "iin",
       key: "iin",
     },
     {
       title: "Роль",
+      sorter: "role",
       key: "role",
     },
     {
       title: "Регион",
+      sorter: "region_name",
       key: "region.name",
     },
     {
       title: "Склад",
+      sorter: "warehouse_name",
       key: "warehouse.name",
     },
     {
@@ -80,14 +102,17 @@ export function useEmployees() {
     return ActionButtons(buttons)
   }
 
-  const initEmployees = async () => {
+  const initEmployees = async (sortedFieldsParam?: SortedFieldsType) => {
     try {
       loading.value = true
-      const response = await fetchEmployees()
+      const response = await fetchEmployees(
+        sortedFieldsParam || sortedFields.value
+      )
       if (response.status === "error") {
         throw new Error("Ошибка при загрузке сотрудников")
       }
       employees.value = response.payload.items
+      pagination.value = { ...response.payload }
     } catch (error) {
       console.error("Не удалось загрузить сотрудников:", error)
     } finally {
@@ -153,6 +178,8 @@ export function useEmployees() {
     loading,
     columns,
     employees,
+    pagination,
+    sortedFields,
     employeeForm,
     isModalOpen,
     closeModal,

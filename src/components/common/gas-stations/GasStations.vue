@@ -63,25 +63,10 @@
     order: string | null
   }) => handleUpdateSorter(sorter, initGasStations, sortedFields.value)
 
-  onMounted(() => initGasStations())
+  onMounted(() => initGasStations(sortedFields.value))
 </script>
 
 <style scoped lang="scss">
-  :deep(.n-data-table .n-scrollbar-container) {
-    max-height: calc(100vh - 220px); /* или 70vh чтобы занимало 70% экрана */
-    overflow-y: auto; /* включаем скролл */
-  }
-
-  :deep(.n-data-table .n-data-table-table) {
-    table-layout: fixed; /* чтобы колонки не «прыгали» */
-  }
-
-  .pagination {
-    margin-top: rem(20);
-    display: flex;
-    justify-content: flex-end;
-  }
-
   .gas-stations-component {
     padding: rem(20);
 

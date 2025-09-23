@@ -1,5 +1,5 @@
-import { api } from "@/api"
-import { Response } from "@/types.ts"
+import { api, objectToUrlParams } from "@/api"
+import { Response, SortedFieldsType } from "@/types.ts"
 import {
   CompaniesResponse,
   CompanyType,
@@ -14,9 +14,11 @@ const URLS = {
 }
 
 // Companies
-export const fetchCompanies = async () =>
+export const fetchCompanies = async (sortedFieldsParam: SortedFieldsType) =>
   api
-    .get<Response<CompaniesResponse>>(URLS.getCompanies)
+    .get<
+      Response<CompaniesResponse>
+    >(URLS.getCompanies + objectToUrlParams(sortedFieldsParam))
     .then((resp) => resp.data)
 
 export const createCompany = async (body: CompanyType) =>
