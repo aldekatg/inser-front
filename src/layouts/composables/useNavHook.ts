@@ -109,13 +109,13 @@ export const useNavHook = () => {
                   RouterLink,
                   {
                     to: {
-                      name: "Jobs",
+                      name: "TechnicalSpecs",
                     },
                   },
-                  { default: () => "Виды работ" }
+                  { default: () => "ТЗ" }
                 ),
-              key: "go-to-work-types",
-              icon: renderIcon(JobIcon),
+              key: "go-to-tech-specs",
+              icon: renderIcon(OrdersIcon),
               show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
             },
             {
@@ -124,13 +124,13 @@ export const useNavHook = () => {
                   RouterLink,
                   {
                     to: {
-                      name: "TechnicalSpecs",
+                      name: "Jobs",
                     },
                   },
-                  { default: () => "ТЗ" }
+                  { default: () => "Виды работ" }
                 ),
-              key: "go-to-tech-specs",
-              icon: renderIcon(OrdersIcon),
+              key: "go-to-work-types",
+              icon: renderIcon(JobIcon),
               show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
             },
           ],
