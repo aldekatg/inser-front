@@ -16,7 +16,6 @@ declare module 'vue' {
     Employees: typeof import('./src/components/common/employees/Employees.vue')['default']
     GasStationModal: typeof import('./src/components/common/gas-stations/GasStationModal.vue')['default']
     GasStations: typeof import('./src/components/common/gas-stations/GasStations.vue')['default']
-    Jobs: typeof import('./src/components/common/tariffs/jobs/Jobs.vue')['default']
     NButton: typeof import('naive-ui')['NButton']
     NCard: typeof import('naive-ui')['NCard']
     NConfigProvider: typeof import('naive-ui')['NConfigProvider']

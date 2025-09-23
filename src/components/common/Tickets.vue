@@ -11,9 +11,8 @@
     TrashOutline as TrashIcon,
   } from "@vicons/ionicons5"
 
-  import { h, computed, reactive, onMounted } from "vue"
+  import { h, computed, reactive } from "vue"
   import BaseTable from "@/components/base/BaseTable.vue"
-  import { useDictionaryStore } from "@/store/useDictionary.ts"
 
   interface RowData {
     key: number
@@ -22,7 +21,6 @@
     address: string
     tags: string[]
   }
-  const dictionaryStore = useDictionaryStore()
 
   function createColumns(): DataTableColumns<RowData> {
     return [
