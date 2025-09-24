@@ -26,7 +26,7 @@ export function useEmployees() {
     email: "",
     full_name: "",
     role: "",
-    is_active: false,
+    is_active: true,
     region_id: undefined,
     warehouse_id: undefined,
     parent_id: undefined,
