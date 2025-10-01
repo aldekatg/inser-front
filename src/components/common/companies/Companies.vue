@@ -1,5 +1,6 @@
 <template>
   <div class="companies-component">
+    <h1>Компании</h1>
     <div class="companies-component__actions">
       <NButton type="primary" @click="isModalOpen = true">
         Добавить компанию
@@ -71,7 +72,7 @@
     padding: rem(20);
 
     &__actions {
-      margin-bottom: rem(20);
+      margin: rem(20) 0;
     }
   }
 </style>

@@ -9,7 +9,7 @@ const URLS = {
 
 export async function refreshAccessToken(refreshToken: string) {
   return api
-    .post<Response<AuthPayload>>(URLS.refresh, { refreshToken })
+    .post<Response<AuthPayload>>(URLS.refresh, { refresh_token: refreshToken })
     .then((resp) => resp.data)
 }
 export const login = (email: string, password: string) =>

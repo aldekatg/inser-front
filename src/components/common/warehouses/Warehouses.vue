@@ -1,5 +1,6 @@
 <template>
   <div class="warehouse-component">
+    <h1>Склад</h1>
     <div class="warehouse-component__actions">
       <n-button type="primary" @click="isModalOpen = true">
         Добавить склад
@@ -42,7 +43,7 @@
     padding: rem(20);
 
     &__actions {
-      margin-bottom: rem(20);
+      margin: rem(20) 0;
     }
   }
 </style>

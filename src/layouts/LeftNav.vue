@@ -8,7 +8,7 @@
           style="padding: 0 22px 0 22px"
         >
           <n-space>
-            <n-image src="/logo.svg" :height="64" />
+            <n-image src="/logo.jpg" alt="Logo of company" :height="64" />
           </n-space>
           <n-space>
             <n-dropdown :options="options">
@@ -16,11 +16,7 @@
                 <template #icon>
                   <n-icon><person-circle-icon /></n-icon>
                 </template>
-                {{
-                  EmployeeRoles[
-                    authStore.user?.role as keyof typeof EmployeeRoles
-                  ]
-                }}
+                {{ authStore.user?.name }}
               </n-button>
             </n-dropdown>
           </n-space>
@@ -65,11 +61,10 @@
   // helpers
   import { useNavHook } from "@/layouts/composables/useNavHook.ts"
   import { useAuthStore } from "@/store/useAuthStore.ts"
-  import { EmployeeRoles } from "../api/employees/types.ts"
 
   const authStore = useAuthStore()
   const { menuOptions, options } = useNavHook()
-  const collapsed = ref(false)
+  const collapsed = ref(true)
 
   // const contentRef = ref<LayoutInst | null>(null)
   const mainContentBodyRef = ref<LayoutInst | null>(null)
@@ -96,18 +91,18 @@
 </script>
 <style lang="scss" scoped>
   :deep(
-    .n-menu
-      .n-menu-item-content.n-menu-item-content--selected
-      .n-menu-item-content__icon
+    .n-menu,
+    .n-menu-item-content.n-menu-item-content--selected,
+    .n-menu-item-content__icon
   ) {
     color: #0085ff !important;
   }
   :deep(
     .n-menu-item-content:not(
         .n-menu-item-content--disabled
-      ).n-menu-item-content--selected
-      .n-menu-item-content-header
-      a
+      ).n-menu-item-content--selected,
+    .n-menu-item-content-header,
+    a
   ) {
     color: #0085ff !important;
   }

@@ -1,5 +1,6 @@
 <template>
   <div class="gas-stations-component">
+    <h1>АЗС</h1>
     <div class="gas-stations-component__actions">
       <NButton type="primary" @click="isModalOpen = true">Добавить АЗС</NButton>
     </div>
@@ -71,7 +72,7 @@
     padding: rem(20);
 
     &__actions {
-      margin-bottom: rem(20);
+      margin: rem(20) 0;
     }
   }
 </style>

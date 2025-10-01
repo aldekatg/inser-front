@@ -2,10 +2,10 @@
   <n-space vertical :size="12">
     <n-data-table
       :bordered="true"
-      :single-line="true"
-      :loading="props.loading"
-      :columns="props.columns"
-      :data="props.data"
+      :single-line="singleLine"
+      :loading="loading"
+      :columns="columns"
+      :data="data"
       remote
       @update:sorter="$emit('update:sorter', $event)"
     />
@@ -14,10 +14,16 @@
 <script setup lang="ts">
   import { defineProps } from "vue"
 
-  const props = defineProps<{
+  const {
+    data,
+    columns,
+    loading = false,
+    singleLine = true,
+  } = defineProps<{
     data: any
     columns: any
     loading?: boolean
+    singleLine?: boolean
   }>()
 </script>
 
@@ -27,9 +33,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-  :deep(.n-data-table th) {
-    min-width: rem(100);
   }
 
   :deep(.custom-buttons) {

@@ -1,5 +1,6 @@
 <template>
   <div class="jobs-component">
+    <h1>Виды работ</h1>
     <div class="jobs-component__actions">
       <n-button type="primary" @click="isModalOpen = true">
         Добавить вид работы
@@ -72,7 +73,7 @@
     padding: rem(20);
 
     &__actions {
-      margin-bottom: rem(20);
+      margin: rem(20) 0;
     }
   }
 </style>

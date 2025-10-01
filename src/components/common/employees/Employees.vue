@@ -1,5 +1,6 @@
 <template>
   <div class="employees-component">
+    <h1>Сотрудники</h1>
     <div class="employees-component__actions">
       <NButton type="primary" @click="isModalOpen = true">
         Добавить сотрудника
@@ -71,7 +72,7 @@
     padding: rem(20);
 
     &__actions {
-      margin-bottom: rem(20);
+      margin: rem(20) 0;
     }
   }
 </style>

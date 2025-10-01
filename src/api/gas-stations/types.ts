@@ -22,6 +22,7 @@ export interface GasStationType {
   email: string
   company_id: number | null
   id: number | null
+  sl_level: number | null
   company?: {
     bin: string
     name: string

@@ -6,6 +6,7 @@ interface AuthState {
   user: {
     type: string
     role: string
+    name: string
     exp: number
     iat: number
   } | null

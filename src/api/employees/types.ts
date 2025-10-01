@@ -20,6 +20,18 @@ export interface EmployeePayload {
     guid: string
     responsible_iin: string
   }
+  parent?: {
+    iin: string
+    phone: string
+    email: string
+    full_name: string
+    role: string
+    is_active: boolean
+    region_id: number
+    warehouse_id: number
+    parent_id: number
+    id: number
+  }
   password: string
   id?: number | null
 }
@@ -44,6 +56,18 @@ export interface EmployeeResponse {
     name: string
     guid: string
     responsible_iin: string
+  }
+  parent: {
+    iin: string
+    phone: string
+    email: string
+    full_name: string
+    role: string
+    is_active: boolean
+    region_id: number
+    warehouse_id: number
+    parent_id: number
+    id: number
   }
 }
 

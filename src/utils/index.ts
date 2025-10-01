@@ -59,3 +59,22 @@ export const handleUpdateSorter = (
   }
   initFunction(sortedFields)
 }
+
+// DD.MM.YYYY
+export function dateStr(date: string): string {
+  if (date) {
+    const splitted = date.split(/[-T.Z]/)
+    return `${splitted[2]}.${splitted[1]}.${splitted[0]}`
+  } else {
+    return "..."
+  }
+}
+// DD.MM.YYYY HH:MM
+export function dateTime(date: string): string {
+  if (date) {
+    const splitted = date.split(/[-T.Z]/)
+    return `${splitted[2]}.${splitted[1]}.${splitted[0]} ${splitted[3]}`
+  } else {
+    return "..."
+  }
+}

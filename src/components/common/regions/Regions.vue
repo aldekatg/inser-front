@@ -1,5 +1,6 @@
 <template>
   <div class="region-component">
+    <h1>Регионы</h1>
     <div class="region-component__actions">
       <n-button type="primary" @click="isModalOpen = true">
         Добавить регион
@@ -41,7 +42,7 @@
     padding: rem(20);
 
     &__actions {
-      margin-bottom: rem(20);
+      margin: rem(20) 0;
     }
   }
 </style>
