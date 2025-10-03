@@ -11,11 +11,11 @@ const URLS = {
 }
 
 // Companies
-export const fetchEmployees = async (sortedFields: SortedFieldsType) =>
+export const fetchEmployees = async (sortedFields?: SortedFieldsType) =>
   api
     .get<
       Response<EmployeeResponseWithPage>
-    >(URLS.getEmployees + objectToUrlParams(sortedFields))
+    >(URLS.getEmployees + objectToUrlParams(sortedFields || {}))
     .then((resp) => resp.data)
 
 export const createEmployee = async (body: EmployeePayload) =>

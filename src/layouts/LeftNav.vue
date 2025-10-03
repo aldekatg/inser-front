@@ -61,6 +61,7 @@
   // helpers
   import { useNavHook } from "@/layouts/composables/useNavHook.ts"
   import { useAuthStore } from "@/store/useAuthStore.ts"
+  import { router } from "@/router/router.ts"
 
   const authStore = useAuthStore()
   const { menuOptions, options } = useNavHook()

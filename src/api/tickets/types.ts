@@ -11,6 +11,7 @@ export interface TicketDetails {
   status: string
   criticality: string
   ticket_type: string
+  ticket_number: string | null
   submitted_at: string
   technical_tasks_preview: string[]
   technical_tasks_details: TechnicalTaskDetail[]
@@ -37,6 +38,42 @@ export interface TicketDetails {
   closed_via_qr_at: string
   escalation_timeout_minutes: number
   escalation_due_at: string
+}
+
+export interface TicketCreatePayload {
+  gas_station_id: number | null
+  status: string
+  criticality: string
+  ticket_type: string
+  ticket_number: string | null
+  submitted_at: string | number | Date
+  technical_tasks_preview: string[]
+  technical_tasks_details: TechnicalTaskDetail[]
+  content: string
+  employee_id: number | null
+  materials: Record<string, any>
+}
+
+export interface TicketUpdatePayload {
+  gas_station_id: number
+  status: string
+  criticality: string
+  ticket_type: string
+  submitted_at: string
+  planned_finish_at: string
+  closed_at: string
+  technical_tasks_preview: string[]
+  technical_tasks_details: TechnicalTaskDetail[]
+  content: string
+  employee_id: number
+  comment: string
+  service_sheet_number: string
+  ticket_number: string
+  diagnostic_result: string
+  work_started_at: string
+  work_finished_at: string
+  work_result: string
+  materials: Record<string, any>
 }
 
 export interface TechnicalTaskDetail {

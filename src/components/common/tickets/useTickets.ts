@@ -31,6 +31,11 @@ export function useTickets() {
       key: "criticality",
     },
     {
+      title: "Дата создания",
+      key: "created_at",
+      render: (row: TicketDetails) => dateTime(row.created_at),
+    },
+    {
       title: "Дата подачи",
       key: "submitted_at",
       render: (row: TicketDetails) => dateTime(row.submitted_at),

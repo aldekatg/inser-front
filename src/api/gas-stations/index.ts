@@ -10,11 +10,11 @@ const URLS = {
   getGasStations: "/gas-stations",
 }
 
-export const fetchGasStations = async (sortedFields: SortedFieldsType) =>
+export const fetchGasStations = async (sortedFields?: SortedFieldsType) =>
   api
     .get<
       Response<GasStationResponse>
-    >(URLS.getGasStations + objectToUrlParams(sortedFields))
+    >(URLS.getGasStations + objectToUrlParams(sortedFields || {}))
     .then((resp) => resp.data)
 
 export const createGasStation = async (body: GasStationPayload) =>

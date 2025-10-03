@@ -28,11 +28,9 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: "/tickets/:id(\\d+)",
-        name: "TicketDetails",
+        name: "TicketEdit",
         component: () =>
-          import(
-            "@/components/common/tickets/ticket-details/TicketDetails.vue"
-          ),
+          import("@/components/common/tickets/ticket-details/TicketEdit.vue"),
       },
       {
         path: "/gas-stations",

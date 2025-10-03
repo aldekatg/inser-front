@@ -2,7 +2,7 @@
   <div class="tickets-component">
     <h1>Заявки</h1>
     <div class="tickets-component__actions">
-      <NButton type="primary">Добавить заявку</NButton>
+      <NButton type="primary" @click="createNewTicket">Добавить заявку</NButton>
     </div>
     <base-table
       :data="data"
@@ -26,6 +26,9 @@
   import { onMounted } from "vue"
   import { useTickets } from "@/components/common/tickets/useTickets.ts"
   import BaseTable from "@/components/base/BaseTable.vue"
+  import { useRouter } from "vue-router"
+
+  const router = useRouter()
 
   const { data, columns, pagination, sortedFields, loading, initTickets } =
     useTickets()
@@ -38,12 +41,23 @@
     initTickets(sortedFields.value)
   }
 
+  const createNewTicket = () => {
+    router.push({ name: "TicketCreate" })
+  }
+
   onMounted(() => initTickets(sortedFields.value))
 </script>
 
 <style scoped lang="scss">
   .tickets-component {
     padding: rem(20);
+
+    &__header {
+      display: flex;
+      align-items: flex-start;
+      gap: rem(15);
+      margin-bottom: rem(20);
+    }
 
     &__actions {
       margin: rem(20) 0;
