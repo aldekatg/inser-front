@@ -1,28 +1,40 @@
 import { ref } from "vue"
 import { useMessage } from "naive-ui"
 import { fetchTicketById } from "@/api/tickets"
-import { TicketCreatePayload, TicketDetails } from "@/api/tickets/types.ts"
-import { StatusType, TicketCriticality, TicketSource } from "@/utils/types.ts"
+import { TicketDetails, TicketUpdatePayload } from "@/api/tickets/types.ts"
 
 export function useTicketDetailsHelper() {
   const ticketInfo = ref<TicketDetails>()
   const loading = ref(false)
 
   const message = useMessage()
-  const formValue = ref<TicketCreatePayload>({
+  const formValue = ref<TicketUpdatePayload>({
     gas_station_id: null,
-    status: "" as StatusType,
-    criticality: "" as TicketCriticality,
-    ticket_type: "" as TicketSource,
-    ticket_number: "",
-    submitted_at: new Date(),
+    status: "",
+    criticality: "",
+    ticket_type: "",
+    submitted_at: new Date().getTime(),
     technical_tasks_preview: [],
     technical_tasks_details: [],
     content: "",
     employee_id: null,
-    materials: [],
+    materials: {},
+    id: null,
+    guid: "",
+    comment: null,
+    service_sheet_number: null,
+    ticket_number: null,
+    diagnostic_result: null,
+    created_at: "",
+    updated_at: "",
+    planned_finish_at: "",
+    closed_at: null,
+    work_started_at: "",
+    work_finished_at: "",
+    work_result: null,
+    escalation_timeout_minutes: 0,
+    escalation_due_at: "",
   })
-
   const rules = {
     ticket_number: {
       required: true,
@@ -77,19 +89,7 @@ export function useTicketDetailsHelper() {
         message.error(response.message || "Ошибка при загрузке заявок")
         return
       }
-      formValue.value = {
-        ticket_number: response.payload.ticket_number,
-        gas_station_id: response.payload.gas_station_id,
-        status: response.payload.status,
-        criticality: response.payload.criticality,
-        ticket_type: response.payload.ticket_type,
-        submitted_at: new Date(response.payload.submitted_at).getTime(),
-        technical_tasks_preview: response.payload.technical_tasks_preview,
-        technical_tasks_details: response.payload.technical_tasks_details,
-        content: response.payload.content,
-        employee_id: response.payload.employee_id,
-        materials: response.payload.materials || [],
-      }
+      formValue.value = { ...response.payload }
       ticketInfo.value = response.payload
     } catch (e) {
       console.error("Error in initTicketById:", e)

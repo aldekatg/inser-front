@@ -7,7 +7,7 @@
           style="cursor: pointer"
         />
       </NIcon>
-      <h1>Детали заявки № {{ formValue.ticket_number }}</h1>
+      <h1>Детали заявки № {{ formValue?.ticket_number }}</h1>
     </div>
 
     <ticket-details
@@ -15,11 +15,7 @@
       :loading="loading"
       :ticket="ticketInfo"
       :rules="rules"
-      @save="
-        (data: TicketUpdatePayload) => {
-          console.log('Saved data:', data)
-        }
-      "
+      @save="console.log('Saved data:', $event as TicketUpdatePayload)"
       type="change"
     />
   </div>

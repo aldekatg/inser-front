@@ -1,8 +1,9 @@
 import { PaginationType } from "@/types.ts"
 
-export interface GasStationResponse extends PaginationType {
-  items: GasStationType[]
+export interface ResponseWithPagination<T> extends PaginationType {
+  items: T
 }
+
 export interface GasStationPayload {
   object_number: string
   address: string
@@ -60,4 +61,31 @@ export interface TechnicalTasksType {
 export interface RegionType {
   id?: number
   name: string
+}
+
+export interface ChecklistType {
+  technical_task_id: number
+  description: string
+  id: number
+  items: ChecklistItemsType[]
+}
+
+export interface ChecklistPayload {
+  technical_task_id: number | null
+  description: string
+  id: number | null
+}
+
+export interface ChecklistItemsPayload {
+  checklist_id: number | null
+  code: string
+  description: string
+  id: number | null
+}
+
+export interface ChecklistItemsType {
+  code: string
+  checklist_id: number
+  description: string
+  id: number
 }

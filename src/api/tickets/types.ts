@@ -55,25 +55,31 @@ export interface TicketCreatePayload {
 }
 
 export interface TicketUpdatePayload {
-  gas_station_id: number
+  gas_station_id: number | null
   status: string
   criticality: string
   ticket_type: string
-  submitted_at: string
+  submitted_at: string | number | Date
   planned_finish_at: string
-  closed_at: string
+  closed_at: string | null
   technical_tasks_preview: string[]
   technical_tasks_details: TechnicalTaskDetail[]
   content: string
-  employee_id: number
-  comment: string
-  service_sheet_number: string
-  ticket_number: string
-  diagnostic_result: string
-  work_started_at: string
-  work_finished_at: string
-  work_result: string
+  employee_id: number | null
+  comment: string | null
+  service_sheet_number: string | null
+  ticket_number: string | null
+  diagnostic_result: string | null
+  work_started_at: string | number | Date
+  work_finished_at: string | number | Date
+  work_result: string | null
   materials: Record<string, any>
+  id: number | null
+  guid: string
+  created_at: string | number | Date
+  updated_at: string | number | Date
+  escalation_timeout_minutes: number
+  escalation_due_at: string | number | Date
 }
 
 export interface TechnicalTaskDetail {

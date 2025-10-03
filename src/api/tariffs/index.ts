@@ -5,11 +5,20 @@ import {
   WorkType,
   WorkTypeResponse,
 } from "@/api/tariffs/types.ts"
-import { TechnicalTasksType } from "@/api/gas-stations/types.ts"
+import {
+  ChecklistItemsPayload,
+  ChecklistItemsType,
+  ChecklistPayload,
+  ChecklistType,
+  ResponseWithPagination,
+  TechnicalTasksType,
+} from "@/api/gas-stations/types.ts"
 
 const URLS = {
   getWorkTypes: "/work-types",
   getTechnicalTasks: "/technical-tasks",
+  getChecklists: "/checklists",
+  getChecklistItems: "/checklist-items",
 }
 
 // Work Types
@@ -61,4 +70,51 @@ export const updateTechnicalTask = async (
     .patch<
       Response<TechnicalTasksType>
     >(URLS.getTechnicalTasks + `/${id}`, body)
+    .then((resp) => resp.data)
+
+// Checklists
+export const fetchChecklists = async (sortedFields?: SortedFieldsType) =>
+  api
+    .get<
+      Response<ResponseWithPagination<ChecklistType[]>>
+    >(URLS.getChecklists + objectToUrlParams(sortedFields || {}))
+    .then((resp) => resp.data)
+
+export const fetchChecklistItems = async (sortedFields?: SortedFieldsType) =>
+  api
+    .get<
+      Response<ResponseWithPagination<ChecklistItemsType[]>>
+    >(URLS.getChecklistItems + objectToUrlParams(sortedFields || {}))
+    .then((resp) => resp.data)
+
+export const deleteChecklist = async (id: number) =>
+  api
+    .delete<Response<any>>(URLS.getChecklists + `/${id}`)
+    .then((resp) => resp.data)
+
+export const deleteChecklistItems = async (id: number) =>
+  api
+    .delete<Response<any>>(URLS.getChecklistItems + `/${id}`)
+    .then((resp) => resp.data)
+
+export const createChecklistReq = async (body: ChecklistPayload) =>
+  api
+    .post<Response<ChecklistType>>(URLS.getChecklists, body)
+    .then((resp) => resp.data)
+
+export const createChecklistItemsReq = async (body: ChecklistItemsPayload) =>
+  api
+    .post<Response<ChecklistItemsType>>(URLS.getChecklistItems, body)
+    .then((resp) => resp.data)
+
+export const updateChecklistReq = async (body: ChecklistPayload) =>
+  api
+    .patch<Response<ChecklistType>>(URLS.getChecklists + `/${body.id}`, body)
+    .then((resp) => resp.data)
+
+export const updateChecklistItemsReq = async (body: ChecklistItemsPayload) =>
+  api
+    .patch<
+      Response<ChecklistItemsType>
+    >(URLS.getChecklistItems + `/${body.id}`, body)
     .then((resp) => resp.data)

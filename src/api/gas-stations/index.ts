@@ -2,8 +2,8 @@ import { api, objectToUrlParams } from "@/api"
 import { Response, SortedFieldsType } from "@/types.ts"
 import {
   GasStationPayload,
-  GasStationResponse,
   GasStationType,
+  ResponseWithPagination,
 } from "@/api/gas-stations/types.ts"
 
 const URLS = {
@@ -13,7 +13,7 @@ const URLS = {
 export const fetchGasStations = async (sortedFields?: SortedFieldsType) =>
   api
     .get<
-      Response<GasStationResponse>
+      Response<ResponseWithPagination<GasStationType[]>>
     >(URLS.getGasStations + objectToUrlParams(sortedFields || {}))
     .then((resp) => resp.data)
 

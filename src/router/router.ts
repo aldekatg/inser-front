@@ -71,6 +71,14 @@ const routes: Array<RouteRecordRaw> = [
         component: () =>
           import("@/components/common/tariffs/work-types/WorkTypes.vue"),
       },
+      {
+        path: "/checklists",
+        name: "Checklists",
+        component: () =>
+          import(
+            "@/components/common/tariffs/checklists/ChecklistComponent.vue"
+          ),
+      },
     ],
   },
 ]

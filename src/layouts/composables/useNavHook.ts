@@ -18,6 +18,7 @@ import {
   CashOutline as TariffsIcon,
   DocumentAttachOutline as OrdersIcon,
   BuildOutline as JobIcon,
+  CheckboxOutline,
 } from "@vicons/ionicons5"
 import { useAuthStore } from "@/store/useAuthStore.ts"
 
@@ -131,6 +132,21 @@ export const useNavHook = () => {
                 ),
               key: "go-to-work-types",
               icon: renderIcon(JobIcon),
+              show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
+            },
+            {
+              label: () =>
+                h(
+                  RouterLink,
+                  {
+                    to: {
+                      name: "Checklists",
+                    },
+                  },
+                  { default: () => "Чек-листы" }
+                ),
+              key: "go-to-check-lists",
+              icon: renderIcon(CheckboxOutline),
               show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
             },
           ],

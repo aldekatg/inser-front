@@ -87,18 +87,13 @@
                 label="Номер сервисного листа"
                 path="work_start_at"
               >
-                <n-input
-                  v-model:value="formValue.service_sheet_number"
-                  type="textarea"
-                  :loading="loading"
-                />
+                <n-input type="textarea" :loading="loading" />
               </n-form-item-gi>
               <n-form-item-gi
                 label="Дата и время окончания работ"
                 path="work_end_at"
               >
                 <n-date-picker
-                  v-model:value="formValue.work_end_at"
                   type="datetime"
                   format="dd-MM-yyyy HH:mm:ss"
                   style="width: 100%"
@@ -108,23 +103,13 @@
                 label="Описание выполненных работ"
                 path="work_description"
               >
-                <n-input
-                  v-model:value="formValue.work_description"
-                  type="textarea"
-                  :loading="loading"
-                />
+                <n-input type="textarea" :loading="loading" />
               </n-form-item-gi>
               <n-form-item-gi label="Использованные запчасти" path="used_parts">
-                <n-input
-                  v-model:value="formValue.used_parts"
-                  type="textarea"
-                  :loading="loading"
-                />
+                <n-input type="textarea" :loading="loading" />
               </n-form-item-gi>
               <n-form-item-gi label="Стоимость работ" path="work_cost">
                 <n-input
-                  v-model:value="formValue.work_cost"
-                  type="number"
                   :loading="loading"
                   placeholder="Введите стоимость работ"
                 />
@@ -163,11 +148,12 @@
   } from "@/utils/types.ts"
   import { useAdditionalRequests } from "@/components/common/tickets/ticket-details/composables/useAdditionalRequests.ts"
 
-  const { type, formData, loading, rules } = defineProps<
+  const { type, formData, loading, rules, ticket } = defineProps<
     | {
         type: "create"
         loading: boolean
         rules: any
+        ticket?: null
         formData: TicketCreatePayload
       }
     | {
