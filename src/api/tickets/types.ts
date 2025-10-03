@@ -1,6 +1,7 @@
 import { EmployeeResponse } from "@/api/employees/types.ts"
-import { GasStationType } from "@/api/gas-stations/types.ts"
+import { ChecklistType, GasStationType } from "@/api/gas-stations/types.ts"
 import { PaginationType } from "@/types.ts"
+import { WorkType } from "@/api/tariffs/types.ts"
 
 export interface TicketsResponse extends PaginationType {
   items: TicketDetails[]
@@ -84,19 +85,9 @@ export interface TicketUpdatePayload {
 
 export interface TechnicalTaskDetail {
   code: string
-  equipment: string
+  equipment?: any
   description: string
   id: number | null
-  work_types: {
-    code: string
-    description: string
-    id: number | null
-    technical_task_id: number | null
-  }[]
-  checklists: {
-    technical_task_id: number | null
-    description: string
-    id: number | null
-    items: any[]
-  }[]
+  work_types: WorkType[]
+  checklists?: ChecklistType[]
 }

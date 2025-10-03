@@ -1,6 +1,11 @@
 import { h } from "vue"
 import { NButton, NIcon, NPopconfirm } from "naive-ui"
 import { SortedFieldsType } from "@/types.ts"
+import {
+  StatusType,
+  TicketCriticality,
+  TicketStatusDictionary,
+} from "@/utils/types.ts"
 
 export function ActionButtons(buttons: any[]) {
   return buttons.map((button: any, _: number) => {
@@ -78,3 +83,14 @@ export function dateTime(date: string): string {
     return "..."
   }
 }
+
+export const criticalityOptions = Object.entries(TicketCriticality).map(
+  ([_, value]) => ({
+    label: TicketStatusDictionary.TicketCriticality[value],
+    value,
+  })
+)
+export const statusOptions = Object.entries(StatusType).map(([_, value]) => ({
+  label: TicketStatusDictionary.StatusType[value],
+  value,
+}))

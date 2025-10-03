@@ -7,7 +7,7 @@
             <n-form-item-gi label="Номер заявки" path="ticket_number">
               <n-input
                 v-model:value="formValue.ticket_number"
-                disabled
+                :loading="loading"
                 placeholder="Введите номер заявки"
               />
             </n-form-item-gi>
@@ -30,7 +30,7 @@
                 :options="optionsOfGasStations"
                 filterable
                 @focus="getGasStations"
-                :loading="loading"
+                :loading="customLoading.gasStationLoading"
                 :value-field="'id'"
                 :label-field="'object_number'"
               />
@@ -42,7 +42,7 @@
                 :options="optionsOfEmployee"
                 filterable
                 @focus="getEmployee"
-                :loading="selectLoading"
+                :loading="customLoading.employeeLoading"
                 :value-field="'id'"
                 :label-field="'full_name'"
               />
@@ -72,14 +72,25 @@
             </n-form-item-gi>
           </n-grid>
         </section>
+        <n-divider />
 
-        <section>
-          <n-h2>Техническое задание</n-h2>
-          <BaseTreeSelect />
+        <section id="technical-tasks">
+          <div class="technical-tasks">
+            <n-h2>Техническое задание</n-h2>
+            <n-switch v-model:value="isEditModeTZ">
+              <template #checked>Редактировать</template>
+              <template #unchecked>Просмотр</template>
+            </n-switch>
+          </div>
+          <technical-tasks-tree
+            @update:selected-keys="getSelectedTasks"
+            :is-edit-mode="isEditModeTZ"
+            :preselected="formValue.technical_tasks_details"
+          />
         </section>
+        <n-divider />
 
         <section v-if="isUpdateForm" id="service-list">
-          <n-divider />
           <n-h2 @click="collapseSL = !collapseSL">Сервисный лист</n-h2>
           <n-collapse-transition :show="collapseSL">
             <n-grid :y-gap="12" :x-gap="12" cols="1 500:2 800:3">
@@ -116,7 +127,6 @@
               </n-form-item-gi>
             </n-grid>
           </n-collapse-transition>
-          <n-divider />
         </section>
       </n-form>
 
@@ -135,18 +145,15 @@
 </template>
 
 <script lang="ts" setup>
+  import TechnicalTasksTree from "@/components/common/tickets/ticket-details/sections/TechnicalTasksTree.vue"
   import {
+    TechnicalTaskDetail,
     TicketCreatePayload,
     TicketDetails,
     TicketUpdatePayload,
   } from "@/api/tickets/types.ts"
-  import BaseTreeSelect from "@/components/base/BaseTreeSelect.vue"
-  import {
-    StatusType,
-    TicketCriticality,
-    TicketStatusDictionary,
-  } from "@/utils/types.ts"
   import { useAdditionalRequests } from "@/components/common/tickets/ticket-details/composables/useAdditionalRequests.ts"
+  import { criticalityOptions, statusOptions } from "@/utils"
 
   const { type, formData, loading, rules, ticket } = defineProps<
     | {
@@ -173,14 +180,16 @@
   const {
     getGasStations,
     optionsOfGasStations,
-    selectLoading,
+    customLoading,
     optionsOfEmployee,
     getEmployee,
   } = useAdditionalRequests()
 
   const formValue = ref<TicketCreatePayload | TicketUpdatePayload>(formData)
-
   const collapseSL = ref<boolean>(true)
+  const isEditModeTZ = ref<boolean>(
+    !formValue.value.technical_tasks_details.length
+  )
 
   const computedEmployeeId = computed({
     get: () =>
@@ -204,23 +213,15 @@
     },
   })
 
-  const criticalityOptions = Object.entries(TicketCriticality).map(
-    ([_, value]) => ({
-      label: TicketStatusDictionary.TicketCriticality[value],
-      value,
-    })
-  )
+  const isUpdateForm = computed(() => type === "change")
 
-  const statusOptions = Object.entries(StatusType).map(([_, value]) => ({
-    label: TicketStatusDictionary.StatusType[value],
-    value,
-  }))
+  function getSelectedTasks(selected: TechnicalTaskDetail[]) {
+    formValue.value.technical_tasks_details = selected
+  }
 
   function saveTicket() {
     emit("save", formValue.value)
   }
-
-  const isUpdateForm = computed(() => type === "change")
 
   watch(
     () => formData,
@@ -243,6 +244,13 @@
       gap: rem(10);
       margin: rem(20) 0;
     }
+  }
+
+  .technical-tasks {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    margin-bottom: rem(10);
   }
 
   .skeleton-styles {

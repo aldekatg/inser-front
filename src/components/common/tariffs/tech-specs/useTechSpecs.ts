@@ -6,7 +6,6 @@ import {
   TrashOutline as TrashIcon,
 } from "@vicons/ionicons5"
 import { ActionButtons } from "@/utils"
-import { TechnicalTasksType } from "@/api/gas-stations/types.ts"
 import {
   createTechnicalTask,
   deleteTechnicalTask,
@@ -15,6 +14,7 @@ import {
 } from "@/api/tariffs"
 import { useDictionaryStore } from "@/store/useDictionary.ts"
 import { storeToRefs } from "pinia"
+import { TechnicalTaskDetail } from "@/api/tickets/types.ts"
 
 export function useTechSpecs() {
   const message = useMessage()
@@ -22,8 +22,8 @@ export function useTechSpecs() {
 
   const isModalOpen = ref(false)
   const loading = ref(false)
-  const techTasks = ref<TechnicalTasksType[]>([])
-  const techTaskForm = ref<TechnicalTasksType>({
+  const techTasks = ref<TechnicalTaskDetail[]>([])
+  const techTaskForm = ref<TechnicalTaskDetail>({
     code: "",
     description: "",
     id: null,
@@ -65,7 +65,7 @@ export function useTechSpecs() {
       key: "actions",
       fixed: "right",
       className: "custom-buttons",
-      render: (row: TechnicalTasksType) => renderButtons(row),
+      render: (row: TechnicalTaskDetail) => renderButtons(row),
     },
   ])
 
@@ -103,7 +103,7 @@ export function useTechSpecs() {
     }
   }
 
-  const saveTechTask = async (form: TechnicalTasksType) => {
+  const saveTechTask = async (form: TechnicalTaskDetail) => {
     let isEdit = form.id !== null
     loading.value = true
     try {
@@ -125,7 +125,7 @@ export function useTechSpecs() {
     }
   }
 
-  const renderButtons = (row: TechnicalTasksType) => {
+  const renderButtons = (row: TechnicalTaskDetail) => {
     const buttons = [
       {
         icon: PencilIcon,

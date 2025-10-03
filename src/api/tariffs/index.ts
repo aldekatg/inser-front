@@ -11,8 +11,8 @@ import {
   ChecklistPayload,
   ChecklistType,
   ResponseWithPagination,
-  TechnicalTasksType,
 } from "@/api/gas-stations/types.ts"
+import { TechnicalTaskDetail } from "@/api/tickets/types.ts"
 
 const URLS = {
   getWorkTypes: "/work-types",
@@ -54,21 +54,21 @@ export const fetchTechnicalTasks = async (sortedFields?: SortedFieldsType) =>
 
 export const deleteTechnicalTask = async (id: number) =>
   api
-    .delete<Response<TechnicalTasksType>>(URLS.getTechnicalTasks + `/${id}`)
+    .delete<Response<TechnicalTaskDetail>>(URLS.getTechnicalTasks + `/${id}`)
     .then((resp) => resp.data)
 
-export const createTechnicalTask = async (body: TechnicalTasksType) =>
+export const createTechnicalTask = async (body: TechnicalTaskDetail) =>
   api
-    .post<Response<TechnicalTasksType>>(URLS.getTechnicalTasks, body)
+    .post<Response<TechnicalTaskDetail>>(URLS.getTechnicalTasks, body)
     .then((resp) => resp.data)
 
 export const updateTechnicalTask = async (
   id: number,
-  body: TechnicalTasksType
+  body: TechnicalTaskDetail
 ) =>
   api
     .patch<
-      Response<TechnicalTasksType>
+      Response<TechnicalTaskDetail>
     >(URLS.getTechnicalTasks + `/${id}`, body)
     .then((resp) => resp.data)
 

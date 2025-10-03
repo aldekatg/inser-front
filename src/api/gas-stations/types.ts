@@ -20,6 +20,7 @@ export interface GasStationType {
   address: string
   region_id: number | null
   operator_name: string
+  guid: string
   email: string
   company_id: number | null
   id: number | null
@@ -49,13 +50,6 @@ export interface WarehouseType {
   id?: number
   name: string
   responsible_iin: string
-}
-
-export interface TechnicalTasksType {
-  code: string
-  description: string
-  id: number | null
-  work_types: number[]
 }
 
 export interface RegionType {

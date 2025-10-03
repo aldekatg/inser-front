@@ -9,11 +9,15 @@ export function useAdditionalRequests() {
 
   const optionsOfGasStations = ref<GasStationType[]>([])
   const optionsOfEmployee = ref<EmployeeResponse[]>([])
-  const selectLoading = ref(false)
+  const customLoading = reactive({
+    gasStationLoading: false,
+    employeeLoading: false,
+  })
 
   async function getGasStations() {
-    selectLoading.value = true
+    customLoading.gasStationLoading = true
     try {
+      if (optionsOfGasStations.value.length) return
       const response = await fetchGasStations()
       if (response.status === "error") {
         message.error(response.message || "Ошибка при загрузке АЗС")
@@ -23,13 +27,14 @@ export function useAdditionalRequests() {
     } catch (e) {
       console.error("Error in getGasStations:", e)
     } finally {
-      selectLoading.value = false
+      customLoading.gasStationLoading = false
     }
   }
 
   const getEmployee = async () => {
     try {
-      selectLoading.value = true
+      customLoading.employeeLoading = true
+      if (optionsOfEmployee.value.length) return
       const response = await fetchEmployees()
       if (response.status === "error") {
         throw new Error("Ошибка при загрузке сотрудников")
@@ -38,12 +43,12 @@ export function useAdditionalRequests() {
     } catch (error) {
       console.error("Не удалось загрузить сотрудников:", error)
     } finally {
-      selectLoading.value = false
+      customLoading.employeeLoading = false
     }
   }
 
   return {
-    selectLoading,
+    customLoading,
     getGasStations,
     optionsOfGasStations,
     optionsOfEmployee,

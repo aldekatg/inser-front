@@ -1,5 +1,5 @@
 import { PaginationType } from "@/types.ts"
-import { TechnicalTasksType } from "@/api/gas-stations/types.ts"
+import { TechnicalTaskDetail } from "@/api/tickets/types.ts"
 
 export interface WorkType {
   code: string
@@ -13,5 +13,5 @@ export interface WorkTypeResponse extends PaginationType {
 }
 
 export interface TechnicalTasksTypeResponse extends PaginationType {
-  items: TechnicalTasksType[]
+  items: TechnicalTaskDetail[]
 }

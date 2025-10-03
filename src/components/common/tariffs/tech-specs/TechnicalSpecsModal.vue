@@ -44,12 +44,12 @@
   import { ref, computed } from "vue"
   import { defineProps, defineEmits } from "vue"
   import { useMessage, FormInst } from "naive-ui"
-  import { TechnicalTasksType } from "@/api/gas-stations/types.ts"
+  import { TechnicalTaskDetail } from "@/api/tickets/types.ts"
 
   const message = useMessage()
   const props = defineProps<{
     modelValue: boolean
-    form: TechnicalTasksType
+    form: TechnicalTaskDetail
     isEdit: boolean
   }>()
 

@@ -2,17 +2,17 @@ import { defineStore } from "pinia"
 import {
   CompanyType,
   RegionType,
-  TechnicalTasksType,
   WarehouseType,
 } from "@/api/gas-stations/types.ts"
 import { fetchCompanies, fetchRegions, fetchWarehouses } from "@/api/dictionary"
 import { fetchTechnicalTasks } from "@/api/tariffs"
+import { TechnicalTaskDetail } from "@/api/tickets/types.ts"
 
 interface DictionaryState {
   companies: CompanyType[] | null
   regions: RegionType[] | null
   warehouses: WarehouseType[] | null
-  technical_tasks: TechnicalTasksType[] | null
+  technical_tasks: TechnicalTaskDetail[] | null
 }
 
 export const useDictionaryStore = defineStore("dictionaryStore", {

@@ -2,12 +2,18 @@ import { ref } from "vue"
 import { useMessage } from "naive-ui"
 import { fetchTicketById } from "@/api/tickets"
 import { TicketDetails, TicketUpdatePayload } from "@/api/tickets/types.ts"
+import { fetchChecklistItems, fetchChecklists } from "@/api/tariffs"
+import { ChecklistItemsType, ChecklistType } from "@/api/gas-stations/types.ts"
 
 export function useTicketDetailsHelper() {
+  const message = useMessage()
+
   const ticketInfo = ref<TicketDetails>()
   const loading = ref(false)
 
-  const message = useMessage()
+  const checklists = ref<ChecklistType[]>()
+  const checklistItems = ref<ChecklistItemsType[]>()
+
   const formValue = ref<TicketUpdatePayload>({
     gas_station_id: null,
     status: "",
@@ -97,11 +103,37 @@ export function useTicketDetailsHelper() {
       loading.value = false
     }
   }
+
+  async function initCheckLists() {
+    loading.value = true
+    try {
+      const [checklistResponse, checklistItemsResponse] = await Promise.all([
+        fetchChecklists(),
+        fetchChecklistItems(),
+      ])
+
+      if (
+        checklistResponse.status === "error" ||
+        checklistItemsResponse.status === "error"
+      ) {
+        message.error("Ошибка обработки чеклистов")
+      }
+
+      checklists.value = checklistResponse.payload.items
+      checklistItems.value = checklistItemsResponse.payload.items
+    } catch (e) {
+    } finally {
+      loading.value = false
+    }
+  }
   return {
     ticketInfo,
     formValue,
     rules,
     loading,
+    checklists,
+    checklistItems,
     initTicketById,
+    initCheckLists,
   }
 }

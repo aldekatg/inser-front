@@ -14,6 +14,8 @@
       :form-data="formValue"
       :loading="loading"
       :ticket="ticketInfo"
+      :checklists="checklists"
+      :checklistItems="checklistItems"
       :rules="rules"
       @save="console.log('Saved data:', $event as TicketUpdatePayload)"
       type="change"
@@ -32,11 +34,20 @@
 
   const route = useRoute()
 
-  const { rules, loading, formValue, ticketInfo, initTicketById } =
-    useTicketDetailsHelper()
+  const {
+    rules,
+    loading,
+    formValue,
+    ticketInfo,
+    initTicketById,
+    checklists,
+    checklistItems,
+    initCheckLists,
+  } = useTicketDetailsHelper()
 
   onMounted(() => {
     initTicketById(route.params.id)
+    initCheckLists()
   })
 </script>
 
