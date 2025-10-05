@@ -40,6 +40,7 @@
             :collapsed-icon-size="22"
             :collapsed="collapsed"
             :options="menuOptions"
+            :value="activeKey"
           />
         </n-layout-sider>
         <n-layout ref="mainContentBodyRef" @scroll="onScrollHandler">
@@ -69,6 +70,17 @@
   // const contentRef = ref<LayoutInst | null>(null)
   const mainContentBodyRef = ref<LayoutInst | null>(null)
   const route = useRoute()
+
+  const activeKey = ref<string | null>(null)
+
+  watch(
+    () => route.name,
+    (name) => {
+      console.log(name)
+      activeKey.value = (name as string) ?? null
+    },
+    { immediate: true }
+  )
 
   watch(
     () => route.path,

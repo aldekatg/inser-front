@@ -37,7 +37,7 @@ export const useNavHook = () => {
           },
           { default: () => "Заявки" }
         ),
-      key: "go-back-tickets",
+      key: "Tickets",
       icon: renderIcon(ClipboardIcon),
       show: usePermissionsAccess([
         "superadmin",
@@ -59,7 +59,7 @@ export const useNavHook = () => {
           },
           { default: () => "АЗС" }
         ),
-      key: "go-to-gas-station",
+      key: "Gas Stations",
       icon: renderIcon(GasStationIcon),
       show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
     },
@@ -74,7 +74,7 @@ export const useNavHook = () => {
           },
           { default: () => "Сотрудники" }
         ),
-      key: "go-to-employees",
+      key: "Employees",
       icon: renderIcon(PersonAddIcon),
       show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
     },
@@ -115,7 +115,7 @@ export const useNavHook = () => {
                   },
                   { default: () => "ТЗ" }
                 ),
-              key: "go-to-tech-specs",
+              key: "TechnicalSpecs",
               icon: renderIcon(OrdersIcon),
               show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
             },
@@ -130,7 +130,7 @@ export const useNavHook = () => {
                   },
                   { default: () => "Виды работ" }
                 ),
-              key: "go-to-work-types",
+              key: "Jobs",
               icon: renderIcon(JobIcon),
               show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
             },
@@ -145,7 +145,7 @@ export const useNavHook = () => {
                   },
                   { default: () => "Чек-листы" }
                 ),
-              key: "go-to-check-lists",
+              key: "Checklists",
               icon: renderIcon(CheckboxOutline),
               show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
             },
@@ -162,7 +162,7 @@ export const useNavHook = () => {
               },
               { default: () => "Компании" }
             ),
-          key: "go-to-companies",
+          key: "Companies",
           icon: renderIcon(PartnersIcon),
           show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
         },
@@ -177,7 +177,7 @@ export const useNavHook = () => {
               },
               { default: () => "Регионы" }
             ),
-          key: "go-to-regions",
+          key: "Regions",
           icon: renderIcon(LocationIcon),
           show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
         },
@@ -192,7 +192,7 @@ export const useNavHook = () => {
               },
               { default: () => "Склады" }
             ),
-          key: "go-to-warehouse",
+          key: "Warehouses",
           icon: renderIcon(WareHouseIcon),
           show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
         },
