@@ -5,7 +5,12 @@
       <NButton type="primary" @click="createNewTicket">Добавить заявку</NButton>
     </div>
 
-    <n-tabs type="segment" animated @update:value="changeSource">
+    <n-tabs
+      type="segment"
+      animated
+      v-model:value="sourceType"
+      @update:value="changeSource"
+    >
       <n-tab-pane name="customer_call" tab="Сервисные">
         <base-table
           :data="data"
@@ -48,9 +53,10 @@
   import { onMounted } from "vue"
   import { useTickets } from "@/components/common/tickets/useTickets.ts"
   import BaseTable from "@/components/base/BaseTable.vue"
-  import { useRouter } from "vue-router"
+  import { useRoute, useRouter } from "vue-router"
 
   const router = useRouter()
+  const route = useRoute()
   const sourceType = ref<"planned" | "customer_call">("customer_call")
 
   const { data, columns, pagination, sortedFields, loading, initTickets } =
@@ -69,6 +75,8 @@
     pagination.value.page = 1
     sortedFields.value.skip = 0
     sortedFields.value.ticket_type = value
+    // обновляем hash без добавления в историю
+    router.replace({ hash: `#${value}` })
     initTickets(sortedFields.value)
   }
 
@@ -76,7 +84,17 @@
     router.push({ name: "TicketCreate" })
   }
 
-  onMounted(() => initTickets(sortedFields.value))
+  onMounted(() => {
+    // читаем hash при загрузке (например, #planned)
+    const hash = (route.hash || "").replace(/^#/, "")
+    if (hash === "planned" || hash === "customer_call") {
+      sourceType.value = hash as typeof sourceType.value
+      sortedFields.value.ticket_type = sourceType.value
+    }
+    // синхронизируем hash c текущим значением
+    router.replace({ hash: `#${sourceType.value}` })
+    initTickets(sortedFields.value)
+  })
 </script>
 
 <style scoped lang="scss">
