@@ -1,12 +1,22 @@
 import { ref } from "vue"
 import { useMessage } from "naive-ui"
-import { fetchTicketById } from "@/api/tickets"
-import { TicketDetails, TicketUpdatePayload } from "@/api/tickets/types.ts"
+import {
+  createTicketReq,
+  fetchTicketById,
+  updateTicketById,
+} from "@/api/tickets"
+import {
+  TicketCreatePayload,
+  TicketDetails,
+  TicketUpdatePayload,
+} from "@/api/tickets/types.ts"
 import { fetchChecklistItems, fetchChecklists } from "@/api/tariffs"
 import { ChecklistItemsType, ChecklistType } from "@/api/gas-stations/types.ts"
+import { useRouter } from "vue-router"
 
 export function useTicketDetailsHelper() {
   const message = useMessage()
+  const router = useRouter()
 
   const ticketInfo = ref<TicketDetails>()
   const loading = ref(false)
@@ -35,15 +45,16 @@ export function useTicketDetailsHelper() {
     updated_at: "",
     planned_finish_at: "",
     closed_at: null,
-    work_started_at: "",
-    work_finished_at: "",
-    work_result: null,
+    work_started_at: new Date().getTime(),
+    work_finished_at: new Date().getTime(),
+    work_result: "",
     escalation_timeout_minutes: 0,
     escalation_due_at: "",
   })
   const rules = {
     ticket_number: {
       required: true,
+      type: "text",
       message: "Номер заявки обязателен",
       trigger: ["blur", "input"],
     },
@@ -126,6 +137,42 @@ export function useTicketDetailsHelper() {
       loading.value = false
     }
   }
+
+  async function updateTicket(ticket: TicketUpdatePayload) {
+    loading.value = true
+    try {
+      const response = await updateTicketById(ticket.id!, ticket)
+      if (response.status === "error") {
+        message.error(response.message || "Ошибка при обновлении заявки")
+        return
+      }
+      message.success("Заявка успешно обновлена")
+      ticketInfo.value = { ...response.payload }
+    } catch (e) {
+      console.error("Error in updateTicket:", e)
+    } finally {
+      loading.value = false
+      await router.push({ name: "Tickets" })
+    }
+  }
+  async function createTicket(ticket: TicketCreatePayload) {
+    loading.value = true
+    try {
+      const response = await createTicketReq(ticket)
+      if (response.status === "error") {
+        message.error(response.message || "Ошибка при cоздании заявки")
+        return
+      }
+      message.success("Заявка успешно создана")
+      ticketInfo.value = { ...response.payload }
+    } catch (e) {
+      console.error("Error in updateTicket:", e)
+    } finally {
+      loading.value = false
+      await router.push({ name: "Tickets" })
+    }
+  }
+
   return {
     ticketInfo,
     formValue,
@@ -133,6 +180,8 @@ export function useTicketDetailsHelper() {
     loading,
     checklists,
     checklistItems,
+    createTicket,
+    updateTicket,
     initTicketById,
     initCheckLists,
   }

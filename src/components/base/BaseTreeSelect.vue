@@ -1,12 +1,17 @@
 <template>
   <div class="tree-component">
-    <n-input v-model:value="pattern" placeholder="Поиск технического задания" />
+    <n-input
+      v-model:value="pattern"
+      placeholder="Поиск технического задания"
+      clearable
+    />
     <n-tree
       block-line
       :checkable="isEdit"
       cascade
       ref="treeRef"
       v-model:checked-keys="checkedKeys"
+      v-model:expanded-keys="expandedKeys"
       :pattern="pattern"
       :data="displayTreeData"
       :show-irrelevant-nodes="false"
@@ -72,6 +77,7 @@
   const pattern = ref("")
   const treeData = computed<TreeOption[]>(() => toTree(props.source))
   const defaultExpanded = ref<string[]>([])
+  const expandedKeys = ref<Array<string | number>>([])
   const treeRef = ref<TreeInst | null>(null)
   const checkedKeys = ref<string[]>([])
   const isEdit = computed(() => props.editMode)
@@ -140,7 +146,16 @@
 
   function onCheck(keys: Array<string | number>) {
     checkedKeys.value = keys as string[]
-    // Ниже — пример сборки исходной структуры с фильтрованными work_types
+
+    // // Сохраняем состояние раскрытых узлов
+    // expandedKeys.value = Array.from(
+    //   new Set([
+    //     ...expandedKeys.value,
+    //     ...keys.filter((k) => String(k).startsWith("tt:")),
+    //   ])
+    // )
+
+    // Формируем результат для эмита
     const selected = new Map<number, SelectedEntry>() // parentId -> { all | set(childIds) }
 
     for (const raw of keys as string[]) {

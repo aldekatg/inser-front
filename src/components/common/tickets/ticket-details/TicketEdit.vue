@@ -17,7 +17,7 @@
       :checklists="checklists"
       :checklistItems="checklistItems"
       :rules="rules"
-      @save="console.log('Saved data:', $event as TicketUpdatePayload)"
+      @update="updateTicket"
       type="change"
     />
   </div>
@@ -41,6 +41,7 @@
     ticketInfo,
     initTicketById,
     checklists,
+    updateTicket,
     checklistItems,
     initCheckLists,
   } = useTicketDetailsHelper()

@@ -2,7 +2,7 @@
   <n-modal v-model:show="show">
     <n-card
       style="width: 600px"
-      :title="isEdit ? 'Редактирование компании' : 'Создание компании'"
+      :title="isEdit ? 'Редактирование АЗС' : 'Создание АЗС'"
       :bordered="false"
       size="huge"
       role="dialog"
@@ -10,6 +10,9 @@
     >
       <template #header-extra>Заполните поля</template>
       <n-form :model="props.form" :rules="rules" ref="formRef">
+        <n-form-item label="GUID" v-if="isEdit">
+          <n-input v-model:value="props.form.guid" readonly disabled />
+        </n-form-item>
         <n-form-item label="Номер объекта" path="object_number">
           <n-input
             v-model:value="props.form.object_number"

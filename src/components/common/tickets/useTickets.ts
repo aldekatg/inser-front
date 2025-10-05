@@ -1,4 +1,4 @@
-import { DataTableColumns, NButton, NIcon, useMessage } from "naive-ui"
+import { DataTableColumns, NButton, NIcon, NTag, useMessage } from "naive-ui"
 import { h, ref } from "vue"
 import { PencilSharp as PencilIcon } from "@vicons/ionicons5"
 import { PaginationType, SortedFieldsType } from "@/types.ts"
@@ -6,6 +6,7 @@ import { fetchTickets } from "@/api/tickets"
 import { TicketDetails } from "@/api/tickets/types.ts"
 import { dateTime } from "@/utils"
 import { useRouter } from "vue-router"
+import { TicketStatusDictionary } from "@/utils/types.ts"
 
 export function useTickets() {
   const message = useMessage()
@@ -25,10 +26,18 @@ export function useTickets() {
     {
       title: "Статус",
       key: "status",
+      render: (row: TicketDetails) =>
+        TicketStatusDictionary.StatusType[
+          row.status as keyof typeof TicketStatusDictionary.StatusType
+        ] || row.status,
     },
     {
       title: "Критичность",
       key: "criticality",
+      render: (row: TicketDetails) =>
+        TicketStatusDictionary.TicketCriticality[
+          row.criticality as keyof typeof TicketStatusDictionary.TicketCriticality
+        ] || row.criticality,
     },
     {
       title: "Дата создания",
@@ -53,8 +62,11 @@ export function useTickets() {
     {
       title: "ТЗ",
       key: "technical_task",
+      className: "tz-style",
       render: (row: TicketDetails) => {
-        return row.technical_tasks_preview.join(" ")
+        return row.technical_tasks_preview.map((task) =>
+          h(NTag, { type: "info" }, { default: () => task })
+        )
       },
     },
     {

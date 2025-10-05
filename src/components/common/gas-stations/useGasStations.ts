@@ -24,6 +24,7 @@ export function useGasStations() {
   const gasStationForm = ref<GasStationPayload>({
     object_number: "",
     address: "",
+    guid: "",
     region_id: null,
     password: "",
     operator_name: "",

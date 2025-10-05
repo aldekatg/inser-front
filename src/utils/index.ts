@@ -4,6 +4,7 @@ import { SortedFieldsType } from "@/types.ts"
 import {
   StatusType,
   TicketCriticality,
+  TicketSource,
   TicketStatusDictionary,
 } from "@/utils/types.ts"
 
@@ -92,5 +93,10 @@ export const criticalityOptions = Object.entries(TicketCriticality).map(
 )
 export const statusOptions = Object.entries(StatusType).map(([_, value]) => ({
   label: TicketStatusDictionary.StatusType[value],
+  value,
+}))
+
+export const statusSource = Object.entries(TicketSource).map(([_, value]) => ({
+  label: TicketStatusDictionary.TicketSource[value],
   value,
 }))

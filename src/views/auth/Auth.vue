@@ -4,14 +4,17 @@
       <n-form :model="formValue" :rules="rules" ref="formRef" :label-width="80">
         <n-form-item label="Логин" path="mail">
           <n-input
+            type="text"
             v-model:value="formValue.mail"
             placeholder="Введите логин"
             :disabled="loading"
+            autocomplete="username"
           />
         </n-form-item>
         <n-form-item label="Пароль" path="password">
           <n-input
             type="password"
+            autocomplete="current-password"
             v-model:value="formValue.password"
             placeholder="Введите пароль"
             :disabled="loading"

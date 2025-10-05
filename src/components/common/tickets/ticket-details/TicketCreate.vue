@@ -14,11 +14,7 @@
       :form-data="formValue"
       :loading="loading"
       :rules="rules"
-      @save="
-        (data: TicketCreatePayload) => {
-          console.log('Saved data:', data)
-        }
-      "
+      @create="createTicket($event as TicketCreatePayload)"
       type="create"
     />
   </div>
@@ -27,6 +23,7 @@
   import TicketDetails from "@/components/common/tickets/ticket-details/TicketDetails.vue"
   import { ArrowBackCircleOutline } from "@vicons/ionicons5"
   import { TicketCreatePayload } from "@/api/tickets/types.ts"
+  import { useTicketDetailsHelper } from "@/components/common/tickets/ticket-details/composables/useTicketDetailsHelper.ts"
 
   const loading = ref(false)
   const formValue = ref<TicketCreatePayload>({
@@ -35,6 +32,10 @@
     criticality: "",
     ticket_type: "",
     ticket_number: "",
+    comment: "",
+    service_sheet_number: null,
+    diagnostic_result: "",
+    work_result: "",
     submitted_at: new Date().getTime(),
     technical_tasks_preview: [],
     technical_tasks_details: [],
@@ -81,6 +82,8 @@
       trigger: ["blur", "change"],
     },
   }
+
+  const { createTicket } = useTicketDetailsHelper()
 </script>
 
 <style scoped lang="scss">

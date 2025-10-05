@@ -7,6 +7,7 @@
             <n-form-item-gi label="Номер заявки" path="ticket_number">
               <n-input
                 v-model:value="formValue.ticket_number"
+                clearable
                 :loading="loading"
                 placeholder="Введите номер заявки"
               />
@@ -15,13 +16,17 @@
               <n-date-picker
                 v-model:value="formValue.submitted_at"
                 type="datetime"
-                :default-value="Date.now()"
+                :default-value="new Date().getTime()"
                 format="dd-MM-yyyy HH:mm:ss"
                 style="width: 100%"
               />
             </n-form-item-gi>
             <n-form-item-gi label="ФИО подавшего заявку">
-              <n-input :value="ticket?.gas_station.operator_name" disabled />
+              <n-input
+                placeholder="Введите ФИО"
+                :value="ticket?.gas_station.operator_name"
+                :disabled="isUpdateForm"
+              />
             </n-form-item-gi>
             <n-form-item-gi label="АЗС" path="gas_station_id">
               <n-select
@@ -38,7 +43,7 @@
             <n-form-item-gi label="Исполнитель" path="employee_id">
               <n-select
                 v-model:value="computedEmployeeId"
-                :default-value="ticket?.employee.full_name"
+                :default-value="ticket?.employee?.full_name"
                 :options="optionsOfEmployee"
                 filterable
                 @focus="getEmployee"
@@ -58,7 +63,7 @@
             <n-form-item-gi label="Статус" path="status">
               <n-select
                 v-model:value="formValue.status"
-                :options="statusOptions"
+                :options="getStatusOptions"
                 filterable
                 :loading="loading"
               />
@@ -70,6 +75,15 @@
                 :loading="loading"
               />
             </n-form-item-gi>
+            <n-form-item-gi label="Тип заявки">
+              <n-select
+                v-model:value="formValue.ticket_type"
+                :options="statusSource"
+                :default-value="getTicketSource"
+                placeholder="Выберите тип заявки"
+                :disabled="isUpdateForm"
+              />
+            </n-form-item-gi>
           </n-grid>
         </section>
         <n-divider />
@@ -78,8 +92,8 @@
           <div class="technical-tasks">
             <n-h2>Техническое задание</n-h2>
             <n-switch v-model:value="isEditModeTZ">
-              <template #checked>Редактировать</template>
-              <template #unchecked>Просмотр</template>
+              <template #checked>Просмотр</template>
+              <template #unchecked>Редактировать</template>
             </n-switch>
           </div>
           <technical-tasks-tree
@@ -90,43 +104,77 @@
         </section>
         <n-divider />
 
-        <section v-if="isUpdateForm" id="service-list">
-          <n-h2 @click="collapseSL = !collapseSL">Сервисный лист</n-h2>
-          <n-collapse-transition :show="collapseSL">
-            <n-grid :y-gap="12" :x-gap="12" cols="1 500:2 800:3">
-              <n-form-item-gi
-                label="Номер сервисного листа"
-                path="work_start_at"
-              >
-                <n-input type="textarea" :loading="loading" />
-              </n-form-item-gi>
-              <n-form-item-gi
-                label="Дата и время окончания работ"
-                path="work_end_at"
-              >
-                <n-date-picker
-                  type="datetime"
-                  format="dd-MM-yyyy HH:mm:ss"
-                  style="width: 100%"
-                />
-              </n-form-item-gi>
-              <n-form-item-gi
-                label="Описание выполненных работ"
-                path="work_description"
-              >
-                <n-input type="textarea" :loading="loading" />
-              </n-form-item-gi>
-              <n-form-item-gi label="Использованные запчасти" path="used_parts">
-                <n-input type="textarea" :loading="loading" />
-              </n-form-item-gi>
-              <n-form-item-gi label="Стоимость работ" path="work_cost">
-                <n-input
-                  :loading="loading"
-                  placeholder="Введите стоимость работ"
-                />
-              </n-form-item-gi>
-            </n-grid>
-          </n-collapse-transition>
+        <section id="materials" v-if="formValue.technical_tasks_details.length">
+          <n-h2>Использованные материалы</n-h2>
+          <materials
+            :materials="hasMaterials"
+            :guid="formValue.employee?.warehouse?.guid || ''"
+            :selected-tech-tasks="formValue.technical_tasks_details"
+            @update:materials="updateMaterials"
+            :loading="loading"
+          />
+        </section>
+        <n-divider />
+
+        <section id="service-list" v-if="isUpdateForm">
+          <n-h2>Сервисный лист</n-h2>
+          <n-grid :y-gap="12" :x-gap="12" cols="1 500:2 800:3">
+            <n-form-item-gi label="Номер сервисного листа" path="work_start_at">
+              <n-input-number
+                style="width: 100%"
+                clearable
+                placeholder="Введите номер сервисного листа"
+                v-model:value="formValue.service_sheet_number"
+                :loading="loading"
+              />
+            </n-form-item-gi>
+
+            <n-form-item-gi label="Дата начала работ" path="work_started_at">
+              <n-date-picker
+                v-model:value="formValue.work_started_at"
+                type="datetime"
+                :is-date-disabled="(date: Date) => date > new Date()"
+                format="dd-MM-yyyy HH:mm:ss"
+                style="width: 100%"
+              />
+            </n-form-item-gi>
+            <n-form-item-gi
+              label="Дата окончания работ"
+              path="work_finished_at"
+            >
+              <n-date-picker
+                v-model:value="formValue.work_finished_at"
+                type="datetime"
+                :is-date-disabled="(date: Date) => date < new Date()"
+                format="dd-MM-yyyy HH:mm:ss"
+                style="width: 100%"
+              />
+            </n-form-item-gi>
+            <n-form-item-gi label="Комментарий по сотрудника" path="comment">
+              <n-input
+                type="textarea"
+                v-model:value="formValue.comment"
+                :loading="loading"
+              />
+            </n-form-item-gi>
+            <n-form-item-gi
+              label="Результат диагностики"
+              path="diagnostic_result"
+            >
+              <n-input
+                type="textarea"
+                v-model:value="formValue.diagnostic_result"
+                :loading="loading"
+              />
+            </n-form-item-gi>
+            <n-form-item-gi label="Результат работ" path="work_result">
+              <n-input
+                type="textarea"
+                v-model:value="formValue.work_result"
+                :loading="loading"
+              />
+            </n-form-item-gi>
+          </n-grid>
         </section>
       </n-form>
 
@@ -153,7 +201,11 @@
     TicketUpdatePayload,
   } from "@/api/tickets/types.ts"
   import { useAdditionalRequests } from "@/components/common/tickets/ticket-details/composables/useAdditionalRequests.ts"
-  import { criticalityOptions, statusOptions } from "@/utils"
+  import { criticalityOptions, statusOptions, statusSource } from "@/utils"
+  import { StatusType, TicketStatusDictionary } from "@/utils/types.ts"
+  import Materials from "@/components/common/tickets/ticket-details/sections/Materials.vue"
+  import { EmployeeResponse } from "@/api/employees/types.ts"
+  import { MaterialItem } from "@/components/common/tickets/types.ts"
 
   const { type, formData, loading, rules, ticket } = defineProps<
     | {
@@ -173,8 +225,8 @@
   >()
 
   const emit = defineEmits<{
-    (e: "save", data: TicketCreatePayload): void
-    (e: "save", data: TicketUpdatePayload): void
+    (e: "create", data: TicketCreatePayload): void
+    (e: "update", data: TicketUpdatePayload): void
   }>()
 
   const {
@@ -186,10 +238,13 @@
   } = useAdditionalRequests()
 
   const formValue = ref<TicketCreatePayload | TicketUpdatePayload>(formData)
-  const collapseSL = ref<boolean>(true)
-  const isEditModeTZ = ref<boolean>(
-    !formValue.value.technical_tasks_details.length
-  )
+
+  const getStatusOptions = computed(() => {
+    // if (isUpdateForm.value) {
+    //   return statusOptions.filter((status) => status.value !== StatusType.NEW)
+    // }
+    return statusOptions
+  })
 
   const computedEmployeeId = computed({
     get: () =>
@@ -197,8 +252,23 @@
     set: (value) => {
       if (optionsOfEmployee.value.length) {
         formValue.value.employee_id = value as number
+        formValue.value.employee = optionsOfEmployee.value.find(
+          (emp) => emp.id === value
+        ) as EmployeeResponse
       }
     },
+  })
+
+  const hasMaterials = computed(() => {
+    if (formValue.value.materials && formValue.value.materials.length) {
+      return formValue.value.materials.map((material: any) => ({
+        nomenclature_guid: material.nomenclature_guid,
+        nomenclature_name: material.nomenclature_name,
+        assignment_code: material.assignment_code,
+        quantity: material.quantity,
+      }))
+    }
+    return []
   })
 
   const computedGasStationId = computed({
@@ -215,12 +285,42 @@
 
   const isUpdateForm = computed(() => type === "change")
 
+  const isEditModeTZ = ref<boolean>(
+    !!formValue.value.technical_tasks_details.length || !isUpdateForm.value
+  )
+
+  const getTicketSource = computed(() => {
+    if (ticket?.ticket_type) {
+      return (
+        TicketStatusDictionary.TicketSource[
+          ticket?.ticket_type as keyof typeof TicketStatusDictionary.TicketSource
+        ] || "Неизвестно"
+      )
+    }
+    return ""
+  })
+
   function getSelectedTasks(selected: TechnicalTaskDetail[]) {
     formValue.value.technical_tasks_details = selected
   }
 
   function saveTicket() {
-    emit("save", formValue.value)
+    formValue.value.technical_tasks_preview =
+      formValue.value.technical_tasks_details.map((item) => item.code)
+    if (isUpdateForm.value) {
+      emit("update", formValue.value as TicketUpdatePayload)
+    } else {
+      emit("create", formValue.value as TicketCreatePayload)
+    }
+  }
+
+  function updateMaterials(materials: MaterialItem[]) {
+    formValue.value.materials = materials.map((material: MaterialItem) => ({
+      assignment_code: material.assignment_code,
+      nomenclature_name: material.nomenclature_name,
+      nomenclature_guid: material.nomenclature_guid,
+      quantity: material.quantity,
+    }))
   }
 
   watch(

@@ -1,24 +1,31 @@
 <template>
   <div class="tickets-component">
-    <h1>Заявки</h1>
     <div class="tickets-component__actions">
+      <h1>Заявки</h1>
       <NButton type="primary" @click="createNewTicket">Добавить заявку</NButton>
     </div>
-    <base-table
-      :data="data"
-      :single-line="false"
-      :loading="loading"
-      :columns="columns"
-    />
-    <NPagination
-      v-if="!loading"
-      class="pagination"
-      :page="pagination.page"
-      :item-count="pagination.total"
-      :page-size="pagination.per_page"
-      @update:page="onPageChange"
-      show-quick-jumper
-    />
+
+    <n-tabs type="segment" animated>
+      <n-tab-pane name="planned" tab="Плановые">
+        <base-table
+          :data="data"
+          :single-line="false"
+          :loading="loading"
+          :columns="columns"
+        />
+        <NPagination
+          v-if="!loading"
+          class="pagination"
+          :page="pagination.page"
+          :item-count="pagination.total"
+          :page-size="pagination.per_page"
+          @update:page="onPageChange"
+          show-quick-jumper
+        />
+      </n-tab-pane>
+
+      <n-tab-pane name="service" tab="Сервисные">Qilixiang</n-tab-pane>
+    </n-tabs>
   </div>
 </template>
 
@@ -49,6 +56,13 @@
 </script>
 
 <style scoped lang="scss">
+  :deep(.tz-style) {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: rem(10);
+  }
+
   .tickets-component {
     padding: rem(20);
 
@@ -60,6 +74,9 @@
     }
 
     &__actions {
+      display: flex;
+      align-items: stat;
+      justify-content: space-between;
       margin: rem(20) 0;
     }
   }

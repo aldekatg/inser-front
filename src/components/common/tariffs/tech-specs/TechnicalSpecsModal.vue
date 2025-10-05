@@ -2,7 +2,7 @@
   <n-modal v-model:show="show">
     <n-card
       style="width: 600px"
-      :title="isEdit ? 'Редактирование компании' : 'Создание компании'"
+      :title="isEdit ? 'Редактирование ТЗ' : 'Создание ТЗ'"
       :bordered="false"
       size="huge"
       role="dialog"

@@ -22,7 +22,7 @@ export interface TicketDetails {
   id: number
   guid: string
   comment: string
-  service_sheet_number: string
+  service_sheet_number: number | null
   diagnostic_result: string
   created_at: string
   updated_at: string
@@ -52,6 +52,13 @@ export interface TicketCreatePayload {
   technical_tasks_details: TechnicalTaskDetail[]
   content: string
   employee_id: number | null
+  employee: EmployeeResponse | null
+  service_sheet_number: number | null
+  comment: string | null
+  diagnostic_result: string | null
+  work_result: string | null
+  work_started_at?: string | number | Date
+  work_finished_at?: string | number | Date
   materials: Record<string, any>
 }
 
@@ -67,8 +74,9 @@ export interface TicketUpdatePayload {
   technical_tasks_details: TechnicalTaskDetail[]
   content: string
   employee_id: number | null
+  employee: EmployeeResponse | null
   comment: string | null
-  service_sheet_number: string | null
+  service_sheet_number: number | null
   ticket_number: string | null
   diagnostic_result: string | null
   work_started_at: string | number | Date
@@ -90,4 +98,10 @@ export interface TechnicalTaskDetail {
   id: number | null
   work_types: WorkType[]
   checklists?: ChecklistType[]
+}
+
+export interface MaterialResponse {
+  nomenclature_name: string
+  nomenclature_guid: string
+  quantity: number
 }

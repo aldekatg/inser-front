@@ -6,6 +6,7 @@ export interface ResponseWithPagination<T> extends PaginationType {
 
 export interface GasStationPayload {
   object_number: string
+  guid?: string
   address: string
   region_id: number | null
   operator_name: string
