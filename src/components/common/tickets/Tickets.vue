@@ -5,7 +5,24 @@
       <NButton type="primary" @click="createNewTicket">Добавить заявку</NButton>
     </div>
 
-    <n-tabs type="segment" animated>
+    <n-tabs type="segment" animated @update:value="changeSource">
+      <n-tab-pane name="customer_call" tab="Сервисные">
+        <base-table
+          :data="data"
+          :single-line="false"
+          :loading="loading"
+          :columns="columns"
+        />
+        <NPagination
+          v-if="!loading"
+          class="pagination"
+          :page="pagination.page"
+          :item-count="pagination.total"
+          :page-size="pagination.per_page"
+          @update:page="onPageChange"
+          show-quick-jumper
+        />
+      </n-tab-pane>
       <n-tab-pane name="planned" tab="Плановые">
         <base-table
           :data="data"
@@ -23,8 +40,6 @@
           show-quick-jumper
         />
       </n-tab-pane>
-
-      <n-tab-pane name="service" tab="Сервисные">Qilixiang</n-tab-pane>
     </n-tabs>
   </div>
 </template>
@@ -36,6 +51,7 @@
   import { useRouter } from "vue-router"
 
   const router = useRouter()
+  const sourceType = ref<"planned" | "customer_call">("customer_call")
 
   const { data, columns, pagination, sortedFields, loading, initTickets } =
     useTickets()
@@ -45,6 +61,14 @@
     sortedFields.value.skip =
       pagination.value.per_page * pagination.value.page -
       pagination.value.per_page
+    initTickets(sortedFields.value)
+  }
+
+  function changeSource(value: "planned" | "customer_call") {
+    sourceType.value = value
+    pagination.value.page = 1
+    sortedFields.value.skip = 0
+    sortedFields.value.ticket_type = value
     initTickets(sortedFields.value)
   }
 

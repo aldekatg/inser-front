@@ -7,8 +7,13 @@
           align="center"
           style="padding: 0 22px 0 22px"
         >
-          <n-space>
-            <n-image src="/logo.jpg" alt="Logo of company" :height="64" />
+          <n-space @click="goHome" style="cursor: pointer">
+            <n-image
+              style="pointer-events: none"
+              src="/logo.jpg"
+              alt="Logo of company"
+              :height="64"
+            />
           </n-space>
           <n-space>
             <n-dropdown :options="options">
@@ -53,7 +58,7 @@
 
 <script lang="ts" setup>
   import { ref, watch, provide } from "vue"
-  import { useRoute } from "vue-router"
+  import { useRoute, useRouter } from "vue-router"
   import { NIcon, LayoutInst } from "naive-ui"
 
   // icons
@@ -70,6 +75,7 @@
   // const contentRef = ref<LayoutInst | null>(null)
   const mainContentBodyRef = ref<LayoutInst | null>(null)
   const route = useRoute()
+  const router = useRouter()
 
   const activeKey = ref<string | null>(null)
 
@@ -95,6 +101,10 @@
 
   provide("layoutScrollTop", scrollTopRef)
   provide("mainContentBodyRef", mainContentBodyRef)
+
+  function goHome() {
+    router.push({ name: "Home" })
+  }
 
   function onScrollHandler(event: Event) {
     const element = event.target as HTMLElement

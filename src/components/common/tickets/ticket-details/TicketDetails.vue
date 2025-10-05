@@ -102,13 +102,16 @@
             :preselected="formValue.technical_tasks_details"
           />
         </section>
-        <n-divider />
 
-        <section id="materials" v-if="formValue.technical_tasks_details.length">
+        <section
+          id="materials"
+          v-if="formValue.technical_tasks_details.length && isHasWarehouseGuid"
+        >
+          <n-divider />
           <n-h2>Использованные материалы</n-h2>
           <materials
             :materials="hasMaterials"
-            :guid="formValue.employee?.warehouse?.guid || ''"
+            :guid="isHasWarehouseGuid || ''"
             :selected-tech-tasks="formValue.technical_tasks_details"
             @update:materials="updateMaterials"
             :loading="loading"
@@ -244,6 +247,10 @@
     //   return statusOptions.filter((status) => status.value !== StatusType.NEW)
     // }
     return statusOptions
+  })
+
+  const isHasWarehouseGuid = computed(() => {
+    return formValue.value.employee?.warehouse?.guid
   })
 
   const computedEmployeeId = computed({

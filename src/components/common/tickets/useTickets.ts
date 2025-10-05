@@ -101,7 +101,8 @@ export function useTickets() {
     has_next: false,
     has_prev: false,
   })
-  const sortedFields = ref<SortedFieldsType>({
+  const sortedFields = ref({
+    ticket_type: "customer_call",
     order_by: "id",
     desc: false,
     limit: 10,
@@ -121,7 +122,8 @@ export function useTickets() {
       tickets.value = response.payload.items
       pagination.value = { ...response.payload }
     } catch (error) {
-      console.error("Не удалось загрузить сотрудников:", error)
+      message.error("Не удалось загрузить заявки")
+      console.error("Не удалось загрузить заявки:", error)
     } finally {
       loading.value = false
     }

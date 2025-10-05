@@ -17,7 +17,7 @@
         :x-gap="12"
         cols="1 500:2 800:3"
         v-for="(material, mIdx) in tab.materials"
-        :key="mIdx"
+        :key="`${tab.code}-${mIdx}`"
       >
         <n-form-item-gi label="Материалы" path="materials">
           <n-select
@@ -26,16 +26,7 @@
             :loading="materialsLoading"
             value-field="nomenclature_guid"
             label-field="nomenclature_name"
-            @focus="getMaterialFrom1C"
-            @update:value="
-              (val: string, option: MaterialResponse) =>
-                pickMaterials(
-                  val as string,
-                  option as MaterialResponse,
-                  tab,
-                  material
-                )
-            "
+            @update:value="makeOnUpdate(tab, material)"
           />
         </n-form-item-gi>
         <n-form-item-gi
@@ -64,55 +55,78 @@
 </template>
 
 <script setup lang="ts">
-  import { nextTick } from "vue"
+  import { nextTick, toRefs, defineEmits, defineProps } from "vue"
   import type { TabsInst } from "naive-ui"
-  import { MaterialResponse, TechnicalTaskDetail } from "@/api/tickets/types.ts"
+  import { MaterialResponse, TechnicalTaskDetail } from "@/api/tickets/types"
   import { fetchMaterials } from "@/api/tickets"
-  import { MaterialItem, TaskTab } from "@/components/common/tickets/types.ts"
+  import { MaterialItem, TaskTab } from "@/components/common/tickets/types"
 
-  const { selectedTechTasks, guid, loading, materials } = defineProps<{
+  const props = defineProps<{
     materials: MaterialItem[]
     selectedTechTasks: TechnicalTaskDetail[]
     guid: string
     loading?: boolean
   }>()
+  const { materials, selectedTechTasks, guid, loading } = toRefs(props)
 
   const message = useMessage()
-
   const tabsRef = ref<TabsInst | null>(null)
   const tasks = ref<TaskTab[]>([])
   const activeTab = ref<string | null>(null)
   const materialsLoading = ref(false)
+  const isPrefilling = ref(false)
+
+  function createEmptyRow(taskCode: string): MaterialItem {
+    return {
+      nomenclature_guid: "",
+      nomenclature_name: "",
+      assignment_code: taskCode,
+      quantity: 0,
+    }
+  }
+
+  function prefillFromMaterials(): void {
+    if (!tasks.value.length) return
+    isPrefilling.value = true
+
+    const byTask = new Map<string, MaterialItem[]>()
+    for (const m of materials.value ?? []) {
+      const arr = byTask.get(m.assignment_code) || []
+      arr.push({ ...m })
+      byTask.set(m.assignment_code, arr)
+    }
+
+    for (const t of tasks.value) {
+      const rows = byTask.get(t.code)
+      if (rows && rows.length) t.materials = rows.map((r) => ({ ...r }))
+    }
+
+    isPrefilling.value = false
+  }
+
+  watch(materials, () => prefillFromMaterials(), {
+    immediate: true,
+    deep: true,
+  })
 
   watch(
-    () => materials,
-    () => {
-      console.log("materials prop changed", materials)
-    },
-    { immediate: true, deep: true }
-  )
-
-  watch(
-    () => selectedTechTasks,
-    async (list) => {
-      const prev = new Map(tasks.value.map((t) => [t.code, t]))
-      tasks.value = list.map(
-        (task) =>
-          prev.get(task.code) ?? {
-            code: task.code,
-            materials: [
-              {
-                nomenclature_guid: "",
-                nomenclature_name: "",
-                assignment_code: task.code,
-                quantity: 0,
-              },
-            ],
-          }
+    selectedTechTasks,
+    async (list: TechnicalTaskDetail[]) => {
+      const prev = new Map<string, TaskTab>(
+        tasks.value.map((t: TaskTab) => [t.code, t])
       )
+      tasks.value = list
+        .map(
+          (task: TechnicalTaskDetail) =>
+            prev.get(task.code) ?? {
+              code: task.code,
+              materials: [createEmptyRow(task.code)],
+            }
+        )
+        .sort((a, b) => a.code.localeCompare(b.code))
 
       // поддерживаем актуальный активный таб
-      const codes = tasks.value.map((t) => t.code)
+      const codes = tasks.value.map((t: TaskTab) => t.code)
 
       if (!codes.length) {
         activeTab.value = null
@@ -124,8 +138,10 @@
       } else {
         // триггерим перерасчёт линии при удалении/добавлении
         await nextTick(() => tabsRef.value?.syncBarPosition())
-        activeTab.value = activeTab.value
       }
+
+      // префилл, если материалы уже были загружены раньше
+      prefillFromMaterials()
     },
     { immediate: true, deep: true }
   )
@@ -176,31 +192,41 @@
     return Math.max(0, max)
   }
 
-  function addMaterial(tab: any) {
-    tab.materials.push({
-      nomenclature_guid: "",
-      nomenclature_name: "",
-      assignment_code: tab.code,
-      quantity: 0,
-    })
-    syncSelected()
+  function addMaterial(tab: TaskTab): void {
+    const next = [...tab.materials, createEmptyRow(tab.code)]
+    tab.materials = next
   }
 
-  function pickMaterials(
+  function applySelection(
     value: string,
     option: MaterialResponse,
-    _tab: any,
-    materialRow: any
-  ) {
+    tab: TaskTab,
+    materialRow: MaterialItem
+  ): void {
     materialRow.nomenclature_guid = value
-    materialRow.assignment_code = _tab?.code ?? ""
+    materialRow.assignment_code = tab?.code ?? ""
     materialRow.nomenclature_name = option?.nomenclature_name ?? ""
 
     // Пересчитываем лимиты по всем строкам
     syncSelected()
   }
 
+  function onSelect(
+    value: string,
+    option: MaterialResponse,
+    tab: TaskTab,
+    materialRow: MaterialItem
+  ) {
+    applySelection(value, option, tab, materialRow)
+  }
+
+  function makeOnUpdate(tab: TaskTab, materialRow: MaterialItem) {
+    return (val: string, option: MaterialResponse) =>
+      onSelect(val, option, tab, materialRow)
+  }
+
   function syncSelected() {
+    if (isPrefilling.value) return
     const acc: MaterialItem[] = []
     for (const t of tasks.value) {
       for (const m of t.materials) {
@@ -225,7 +251,7 @@
       if (materialOptions.value.length) {
         return
       }
-      const response = await fetchMaterials(guid)
+      const response = await fetchMaterials(guid.value)
 
       if (!response || response.status !== "success" || !response.payload) {
         message.error("Не удалось загрузить материалы из 1С")
@@ -239,4 +265,8 @@
       materialsLoading.value = false
     }
   }
+
+  onMounted(() => {
+    if (guid.value) getMaterialFrom1C()
+  })
 </script>

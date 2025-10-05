@@ -1,11 +1,13 @@
 <template>
-  <n-message-provider>
-    <n-config-provider :date-locale="dateRuRU" :locale="ruRU">
-      <n-notification-provider>
-        <router-view />
-      </n-notification-provider>
-    </n-config-provider>
-  </n-message-provider>
+  <n-loading-bar-provider>
+    <n-message-provider>
+      <n-config-provider :date-locale="dateRuRU" :locale="ruRU">
+        <n-notification-provider>
+          <router-view />
+        </n-notification-provider>
+      </n-config-provider>
+    </n-message-provider>
+  </n-loading-bar-provider>
 </template>
 
 <script setup lang="ts">
