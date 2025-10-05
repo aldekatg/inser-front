@@ -34,6 +34,7 @@ export function useTicketDetailsHelper() {
     technical_tasks_details: [],
     content: "",
     employee_id: null,
+    employee: null,
     materials: {},
     id: null,
     guid: "",

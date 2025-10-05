@@ -202,7 +202,7 @@
   } from "@/api/tickets/types.ts"
   import { useAdditionalRequests } from "@/components/common/tickets/ticket-details/composables/useAdditionalRequests.ts"
   import { criticalityOptions, statusOptions, statusSource } from "@/utils"
-  import { StatusType, TicketStatusDictionary } from "@/utils/types.ts"
+  import { TicketStatusDictionary } from "@/utils/types.ts"
   import Materials from "@/components/common/tickets/ticket-details/sections/Materials.vue"
   import { EmployeeResponse } from "@/api/employees/types.ts"
   import { MaterialItem } from "@/components/common/tickets/types.ts"
