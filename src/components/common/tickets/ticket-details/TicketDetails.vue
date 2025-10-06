@@ -105,7 +105,7 @@
 
         <section
           id="materials"
-          v-if="formValue.technical_tasks_details.length && isHasWarehouseGuid"
+          v-if="formValue.technical_tasks_details?.length && isHasWarehouseGuid"
         >
           <n-divider />
           <n-h2>Использованные материалы</n-h2>
@@ -120,7 +120,7 @@
 
         <section
           id="checkboxes"
-          v-if="formValue.technical_tasks_details.length && isPlannedTicket"
+          v-if="formValue.technical_tasks_details?.length && isPlannedTicket"
         >
           <n-divider />
           <n-h2>Чек-листы</n-h2>
