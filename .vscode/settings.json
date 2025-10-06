@@ -1,3 +1,5 @@
 {
-    "typescript.tsdk": "node_modules/typescript/lib"
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "vue.autoInsert.dotValue": true,
+    "intellij-idea-keybindings.useCamelHumpsWords": false
 }

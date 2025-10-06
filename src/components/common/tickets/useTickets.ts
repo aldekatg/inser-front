@@ -149,8 +149,10 @@ export function useTickets() {
       key: "technical_task",
       className: "tz-style",
       render: (row: TicketDetails) => {
-        return row.technical_tasks_preview.map((task) =>
-          h(NTag, { type: "info" }, { default: () => task })
+        return (
+          row?.technical_tasks_preview?.map((task) =>
+            h(NTag, { type: "info" }, { default: () => task })
+          ) || "Нет ТЗ"
         )
       },
     },
@@ -162,7 +164,6 @@ export function useTickets() {
       title: "‏‎",
       key: "actions",
       fixed: "right",
-      className: "custom-buttons",
       render: (row: TicketDetails) =>
         h(
           NButton,

@@ -9,6 +9,7 @@ export default defineConfig({
     base: "./",
     server: {
         port: 5137,
+        // Vite автоматически обрабатывает SPA роутинг
     },
     resolve: {
         alias: {
