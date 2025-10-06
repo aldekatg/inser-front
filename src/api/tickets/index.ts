@@ -46,7 +46,7 @@ export const fetchMaterials = async (guid: string) =>
     .then((resp) => resp.data)
 
 // QR Code Confirmation
-export const confirmQRCode = async (id: number, guid: string) =>
+export const confirmQRCode = async (id: string, guid: string) =>
   api
     .post(`${URLS.confirmQR}/${id}/confirm-qr`, { guid })
     .then((resp) => resp.data)
