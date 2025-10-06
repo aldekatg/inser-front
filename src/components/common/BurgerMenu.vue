@@ -25,16 +25,6 @@
         </n-button>
       </div>
 
-      <!-- Menu Items -->
-      <div class="burger-content">
-        <n-menu
-          :router="true"
-          :options="menuOptions"
-          :value="activeKey"
-          @update:value="closeMenu"
-        />
-      </div>
-
       <!-- User Info -->
       <div class="burger-footer">
         <n-dropdown :options="options" trigger="click">
@@ -45,6 +35,16 @@
             {{ authStore.user?.name }}
           </n-button>
         </n-dropdown>
+      </div>
+
+      <!-- Menu Items -->
+      <div class="burger-content">
+        <n-menu
+          :router="true"
+          :options="menuOptions"
+          :value="activeKey"
+          @update:value="closeMenu"
+        />
       </div>
     </div>
   </div>
@@ -107,8 +107,8 @@
 
   .burger-button {
     position: fixed;
-    top: rem(16);
-    left: rem(16);
+    top: rem(20);
+    left: rem(20);
     z-index: 1001;
     background-color: white !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -134,7 +134,7 @@
     top: 0;
     left: 0;
     width: rem(280);
-    height: 100vh;
+    height: calc(100vh - rem(30));
     background-color: white;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
     z-index: 1001;
