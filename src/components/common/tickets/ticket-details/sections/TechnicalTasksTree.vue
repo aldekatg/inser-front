@@ -13,6 +13,8 @@
   import { useDictionaryStore } from "@/store/useDictionary.ts"
   import { TechnicalTaskDetail } from "@/api/tickets/types.ts"
 
+  const dictionaryStore = useDictionaryStore()
+
   const { preselected, isEditMode } = defineProps<{
     preselected?: TechnicalTaskDetail[]
     isEditMode?: boolean
@@ -22,5 +24,9 @@
     (e: "update:selectedKeys", data: TechnicalTaskDetail[]): void
   }>()
 
-  const { technical_tasks } = storeToRefs(useDictionaryStore())
+  const { technical_tasks } = storeToRefs(dictionaryStore)
+
+  onMounted(async () => {
+    if (!technical_tasks.value?.length) await dictionaryStore.initDictionary()
+  })
 </script>

@@ -3,7 +3,6 @@
     <n-form
       ref="formRef"
       :model="filters"
-      label-placement="left"
       label-width="auto"
       :show-feedback="false"
     >
@@ -277,6 +276,7 @@
 
     &__actions {
       display: flex;
+      justify-content: flex-end;
       gap: rem(12);
       margin-top: rem(20);
       padding-top: rem(16);

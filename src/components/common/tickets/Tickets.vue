@@ -8,6 +8,13 @@
       </n-button>
     </header>
 
+    <!-- Filters Section -->
+    <ticket-filters
+      v-model:filters="filters"
+      :loading="loading"
+      @apply="applyFilters"
+    />
+
     <!-- Tabs Section -->
     <n-tabs
       v-model:value="currentTabType"
@@ -36,13 +43,6 @@
           </div>
         </template>
 
-        <!-- Filters Section -->
-        <ticket-filters
-          v-model:filters="filters"
-          :loading="loading"
-          @apply="applyFilters"
-        />
-
         <!-- Table Section -->
         <div class="tickets-component__table-container">
           <base-table
@@ -53,6 +53,7 @@
             :bordered="false"
             :striped="true"
             :hoverable="true"
+            :row-class-name="rowClassName"
             :row-key="(row: any) => row.id"
             class="tickets-table"
           />
@@ -104,6 +105,11 @@
     get: () => filters.value.ticket_type || "customer_call",
     set: (value) => changeTicketType(value as any),
   })
+
+  // Row class name function
+  const rowClassName = (row: any) => {
+    return row.is_sla_80_elapsed ? "sla-elapsed-row" : ""
+  }
 
   // Methods are now handled by the composable
 </script>
@@ -213,6 +219,12 @@
 
   // Специальные стили для колонки действий
   :deep(.n-data-table-td[data-col-key="actions"]) {
-    border-left: 1px solid var(--n-border-color);
+    text-align: center;
+    background-color: white !important;
+  }
+
+  // Стили для строк с истекшим SLA
+  :deep(.sla-elapsed-row td) {
+    background-color: rgba(255, 0, 0, 0.1) !important;
   }
 </style>

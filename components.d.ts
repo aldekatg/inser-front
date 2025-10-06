@@ -67,6 +67,7 @@ declare module 'vue' {
     TechnicalTasksTree: typeof import('./src/components/common/tickets/ticket-details/sections/TechnicalTasksTree.vue')['default']
     TicketCreate: typeof import('./src/components/common/tickets/ticket-details/TicketCreate.vue')['default']
     TicketDetails: typeof import('./src/components/common/tickets/ticket-details/TicketDetails.vue')['default']
+    TicketDetailsSkeleton: typeof import('./src/components/common/tickets/ticket-details/sections/TicketDetailsSkeleton.vue')['default']
     TicketEdit: typeof import('./src/components/common/tickets/ticket-details/TicketEdit.vue')['default']
     TicketFilters: typeof import('./src/components/common/tickets/TicketFilters.vue')['default']
     Tickets: typeof import('./src/components/common/tickets/Tickets.vue')['default']

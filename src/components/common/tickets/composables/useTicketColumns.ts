@@ -105,7 +105,6 @@ export function useTicketColumns() {
       title: "№",
       key: "id",
       width: 80,
-      fixed: "left",
     },
     {
       title: "АЗС",

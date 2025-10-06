@@ -8,6 +8,7 @@
       :data="data"
       :striped="striped"
       :hoverable="hoverable"
+      :row-class-name="rowClassName"
       :row-key="rowKey"
       :scroll-x="scrollX"
       :max-height="maxHeight"
@@ -27,10 +28,12 @@
     bordered = true,
     striped = false,
     hoverable = false,
+    rowClassName,
     rowKey,
     scrollX,
     maxHeight,
   } = defineProps<{
+    rowClassName?: (row: any) => string
     data: any
     columns: any
     loading?: boolean

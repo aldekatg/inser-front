@@ -201,15 +201,18 @@
         <n-button secondary @click="$router.back()">Отмена</n-button>
       </div>
     </div>
-    <div v-else class="skeleton-styles">
-      <n-skeleton text :repeat="12" height="30px" size="medium" />
-      <n-skeleton text round height="60px" size="medium" />
-    </div>
+    <ticket-details-skeleton
+      v-else
+      :is-has-warehouse-guid="!!isHasWarehouseGuid"
+      :is-planned-ticket="isPlannedTicket"
+      :is-update-form="isUpdateForm"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
   import TechnicalTasksTree from "@/components/common/tickets/ticket-details/sections/TechnicalTasksTree.vue"
+  import TicketDetailsSkeleton from "@/components/common/tickets/ticket-details/sections/TicketDetailsSkeleton.vue"
   import {
     TechnicalTaskDetail,
     TicketCreatePayload,
@@ -433,12 +436,5 @@
     align-items: self-start;
     justify-content: flex-start;
     gap: rem(10);
-  }
-
-  .skeleton-styles {
-    display: flex;
-    flex-direction: column;
-    gap: rem(10);
-    margin-bottom: 20px;
   }
 </style>
