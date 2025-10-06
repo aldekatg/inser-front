@@ -60,6 +60,7 @@ export interface RegionType {
 
 export interface ChecklistType {
   technical_task_id: number
+  done?: boolean
   description: string
   id: number
   items: ChecklistItemsType[]
@@ -83,4 +84,5 @@ export interface ChecklistItemsType {
   checklist_id: number
   description: string
   id: number
+  done?: boolean
 }

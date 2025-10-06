@@ -1,10 +1,8 @@
 import axios from "axios"
-// import { ref } from "vue"
+import { ref } from "vue"
 import { config } from "@/config/config"
 import { useAuthStore } from "@/store/useAuthStore.ts"
 import { refreshAccessToken } from "@/api/auth"
-// import { useAuthStore } from "@/store/useAuthStore"
-// import { refreshAccessToken } from "@/api/auth"
 
 export const api = axios.create({
   baseURL: config.BACKEND_URL,
@@ -12,6 +10,13 @@ export const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
+    console.log(
+      "API Request:",
+      config.method?.toUpperCase(),
+      config.url,
+      config.params
+    )
+
     if (config?.url === "/auth") {
       return config
     } else {
@@ -28,7 +33,10 @@ api.interceptors.request.use(
 const isRefreshing = ref(false)
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log("API Response:", response.status, response.config.url)
+    return response
+  },
   async (error) => {
     const {
       config,

@@ -39,6 +39,7 @@ export interface TicketDetails {
   closed_via_qr_at: string
   escalation_timeout_minutes: number
   escalation_due_at: string
+  is_sla_80_elapsed?: boolean
 }
 
 export interface TicketCreatePayload {

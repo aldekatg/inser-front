@@ -117,22 +117,22 @@
             :loading="loading"
           />
         </section>
-        <n-divider />
 
         <section
           id="checkboxes"
-          v-if="formValue.technical_tasks_details.length"
+          v-if="formValue.technical_tasks_details.length && isPlannedTicket"
         >
           <n-divider />
           <n-h2>Чек-листы</n-h2>
           <checklists
             :technical-details="formValue.technical_tasks_details"
             @change="onChecklistsChange"
+            @update:technical-details="updateTechnicalDetails"
           />
         </section>
-        <n-divider />
 
         <section id="service-list" v-if="isUpdateForm">
+          <n-divider />
           <n-h2>Сервисный лист</n-h2>
           <n-grid :y-gap="12" :x-gap="12" cols="1 500:2 800:3">
             <n-form-item-gi label="Номер сервисного листа" path="work_start_at">
@@ -267,6 +267,10 @@
     return formValue.value.employee?.warehouse?.guid
   })
 
+  const isPlannedTicket = computed(() => {
+    return formValue.value.ticket_type === "planned"
+  })
+
   const computedEmployeeId = computed({
     get: () =>
       optionsOfEmployee.value.length ? formValue.value.employee_id : undefined,
@@ -347,10 +351,12 @@
 
   // Получаем изменения чек-листов (id элемента -> done)
   function onChecklistsChange(value: Record<number, boolean>) {
-    // Пока просто логируем/держим локально. При необходимости сохраним в payload.
-    // formValue.value.checklistsDone = value
-    // eslint-disable-next-line no-console
     console.debug("checklists changed", value)
+  }
+
+  // Обновляем технические задания с состоянием чекбоксов
+  function updateTechnicalDetails(updatedDetails: TechnicalTaskDetail[]) {
+    formValue.value.technical_tasks_details = updatedDetails
   }
 
   // Date pickers expect number (timestamp). Convert ISO/string/Date ⇄ number

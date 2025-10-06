@@ -6,10 +6,8 @@ import Components from "unplugin-vue-components/vite";
 import { NaiveUiResolver } from "unplugin-vue-components/resolvers";
 // https://vite.dev/config/
 export default defineConfig({
-    base: "./",
     server: {
         port: 5137,
-        // Vite автоматически обрабатывает SPA роутинг
     },
     resolve: {
         alias: {

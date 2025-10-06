@@ -1,11 +1,16 @@
 <template>
   <n-space vertical :size="12">
     <n-data-table
-      :bordered="true"
+      :bordered="bordered"
       :single-line="singleLine"
       :loading="loading"
       :columns="columns"
       :data="data"
+      :striped="striped"
+      :hoverable="hoverable"
+      :row-key="rowKey"
+      :scroll-x="scrollX"
+      :max-height="maxHeight"
       remote
       @update:sorter="$emit('update:sorter', $event)"
     />
@@ -19,11 +24,23 @@
     columns,
     loading = false,
     singleLine = true,
+    bordered = true,
+    striped = false,
+    hoverable = false,
+    rowKey,
+    scrollX,
+    maxHeight,
   } = defineProps<{
     data: any
     columns: any
     loading?: boolean
     singleLine?: boolean
+    bordered?: boolean
+    striped?: boolean
+    hoverable?: boolean
+    rowKey?: (row: any) => string | number
+    scrollX?: number | string
+    maxHeight?: number | string
   }>()
 </script>
 

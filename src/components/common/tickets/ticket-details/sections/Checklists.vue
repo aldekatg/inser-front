@@ -1,6 +1,12 @@
 <template>
   <div class="checklists">
-    <n-tabs v-model:value="activeTab" type="line" animated>
+    <n-tabs
+      v-model:value="activeTab"
+      type="line"
+      animated
+      ref="tabsRef"
+      style="min-height: 100px"
+    >
       <n-tab-pane
         v-for="tab in tabs"
         :name="tab.code"
@@ -34,6 +40,8 @@
 </template>
 
 <script lang="ts" setup>
+  import { nextTick } from "vue"
+  import type { TabsInst } from "naive-ui"
   import type { TechnicalTaskDetail } from "@/api/tickets/types.ts"
   import type {
     ChecklistType,
@@ -46,10 +54,12 @@
 
   const emit = defineEmits<{
     (e: "change", value: Record<number, boolean>): void
+    (e: "update:technicalDetails", value: TechnicalTaskDetail[]): void
   }>()
 
   type Tab = { code: string; checklists: ChecklistType[] }
 
+  const tabsRef = ref<TabsInst | null>(null)
   const tabs = ref<Tab[]>([])
   const activeTab = ref<string | null>(null)
 
@@ -58,7 +68,7 @@
   // Строим табы из technicalDetails
   watch(
     () => props.technicalDetails,
-    (details) => {
+    async (details) => {
       const prev = new Map<string, Tab>(tabs.value.map((t) => [t.code, t]))
       tabs.value = details
         .map((td) => {
@@ -66,25 +76,47 @@
             (cl: ChecklistType) => (cl.items?.length ?? 0) > 0
           )
           const existing = prev.get(td.code)
-          return existing ?? { code: td.code, checklists: lists }
+          // ВАЖНО: всегда обновляем checklists у существующего таба,
+          // чтобы не тащить устаревшее содержимое между ТЗ
+          return existing
+            ? { ...existing, checklists: lists }
+            : { code: td.code, checklists: lists }
         })
         .filter((t) => t.checklists.length > 0)
         .sort((a, b) => a.code.localeCompare(b.code))
 
+      // поддерживаем актуальный активный таб
       const codes = tabs.value.map((t) => t.code)
+
       if (!codes.length) {
         activeTab.value = null
-      } else if (!activeTab.value || !codes.includes(activeTab.value)) {
+        return
+      }
+      if (!activeTab.value || !codes.includes(activeTab.value)) {
+        await nextTick()
         activeTab.value = codes[0]
+      } else {
+        // триггерим перерасчёт линии при удалении/добавлении
+        await nextTick(() => tabsRef.value?.syncBarPosition())
       }
 
-      // Инициализируем doneState по всем пунктам
+      // Инициализируем/очищаем doneState по текущим пунктам
       const lists: ChecklistType[] = []
       for (const t of tabs.value) lists.push(...t.checklists)
+
+      const currentIds = new Set<number>()
       for (const list of lists) {
         for (const item of list.items as ChecklistItemsType[]) {
-          if (doneState[item.id] === undefined) doneState[item.id] = false
+          currentIds.add(item.id)
+          if (doneState[item.id] === undefined) {
+            doneState[item.id] = item.done ?? false
+          }
         }
+      }
+      // Удаляем состояния для элементов, которых больше нет
+      for (const key of Object.keys(doneState)) {
+        const id = Number(key)
+        if (!currentIds.has(id)) delete doneState[id]
       }
       emit("change", { ...doneState })
     },
@@ -93,7 +125,21 @@
 
   function onToggle(id: number, val: boolean) {
     doneState[id] = val
+
+    // Обновляем технические задания с новым состоянием done
+    const updatedDetails = props.technicalDetails.map((td) => ({
+      ...td,
+      checklists: td.checklists?.map((cl) => ({
+        ...cl,
+        items: cl.items?.map((item) => ({
+          ...item,
+          done: doneState[item.id] ?? false,
+        })),
+      })),
+    }))
+
     emit("change", { ...doneState })
+    emit("update:technicalDetails", updatedDetails)
   }
 </script>
 
@@ -104,6 +150,7 @@
     gap: rem(16);
 
     &__group {
+      margin: rem(16) 0;
       display: flex;
       flex-direction: column;
       gap: rem(8);
