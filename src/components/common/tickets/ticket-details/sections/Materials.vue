@@ -1,48 +1,54 @@
 <template>
-  <n-tabs
-    v-model:value="activeTab"
-    type="line"
-    animated
-    ref="tabsRef"
-    style="min-height: 100px"
-  >
+  <n-tabs v-model:value="activeTab" type="line" animated ref="tabsRef">
     <n-tab-pane
       v-for="tab in tasks"
       :name="tab.code"
       :key="tab.code"
       :tab="tab.code"
     >
-      <n-grid
-        :y-gap="12"
-        :x-gap="12"
-        cols="1 500:2 800:3"
-        v-for="(material, mIdx) in tab.materials"
-        :key="`${tab.code}-${mIdx}`"
-      >
-        <n-form-item-gi label="Материалы" path="materials">
-          <n-select
-            v-model:value="material.nomenclature_guid"
-            :options="materialOptions"
-            :loading="materialsLoading"
-            value-field="nomenclature_guid"
-            label-field="nomenclature_name"
-            @update:value="makeOnUpdate(tab, material)"
-          />
-        </n-form-item-gi>
-        <n-form-item-gi
-          label="Количество расходников"
-          path="materials_quantity"
+      <div class="materials-grid">
+        <div
+          v-for="(material, mIdx) in tab.materials"
+          :key="`${tab.code}-${mIdx}`"
+          class="material-row"
         >
-          <n-input-number
-            style="width: 100%"
-            clearable
-            :max="getRowMax(material)"
-            v-model:value="material.quantity"
-            :loading="loading"
-            @update:value="() => syncSelected()"
-          />
-        </n-form-item-gi>
-      </n-grid>
+          <div class="material-field">
+            <label class="field-label">Материалы</label>
+            <n-select
+              v-model:value="material.nomenclature_guid"
+              :options="materialOptionsWithQuantity"
+              :loading="materialsLoading"
+              value-field="nomenclature_guid"
+              label-field="label"
+              @update:value="makeOnUpdate(tab, material)"
+              placeholder="Выберите материал"
+            />
+          </div>
+          <div class="material-field">
+            <label class="field-label">Количество расходников</label>
+            <n-input-number
+              clearable
+              :max="getRowMax(material)"
+              v-model:value="material.quantity"
+              :loading="loading"
+              @update:value="() => syncSelected()"
+              placeholder="Введите количество"
+            />
+          </div>
+          <div class="material-field" v-if="tab.materials.length > 1">
+            <label class="field-label">&nbsp;</label>
+            <n-button
+              type="error"
+              secondary
+              @click="removeMaterial(tab, mIdx)"
+              :loading="loading"
+            >
+              Удалить
+            </n-button>
+          </div>
+        </div>
+      </div>
+
       <n-button
         style="margin-bottom: 12px"
         size="small"
@@ -154,6 +160,15 @@
 
   const materialOptions = ref<MaterialResponse[]>([])
 
+  // Опции материалов с отображением количества
+  const materialOptionsWithQuantity = computed(() => {
+    return materialOptions.value.map((option) => ({
+      ...option,
+      label: `${option.nomenclature_name} (${option.quantity || 0} шт.)`,
+      originalLabel: option.nomenclature_name,
+    }))
+  })
+
   // Map доступных остатков из materialOptions (guid -> остаток)
   function buildAvailableMap() {
     const map = new Map<string, number>()
@@ -197,15 +212,23 @@
     tab.materials = next
   }
 
+  function removeMaterial(tab: TaskTab, index: number): void {
+    if (tab.materials.length > 1) {
+      tab.materials.splice(index, 1)
+      syncSelected()
+    }
+  }
+
   function applySelection(
     value: string,
-    option: MaterialResponse,
+    option: any,
     tab: TaskTab,
     materialRow: MaterialItem
   ): void {
     materialRow.nomenclature_guid = value
     materialRow.assignment_code = tab?.code ?? ""
-    materialRow.nomenclature_name = option?.nomenclature_name ?? ""
+    materialRow.nomenclature_name =
+      option?.originalLabel ?? option?.nomenclature_name ?? ""
 
     // Пересчитываем лимиты по всем строкам
     syncSelected()
@@ -213,7 +236,7 @@
 
   function onSelect(
     value: string,
-    option: MaterialResponse,
+    option: any,
     tab: TaskTab,
     materialRow: MaterialItem
   ) {
@@ -221,8 +244,7 @@
   }
 
   function makeOnUpdate(tab: TaskTab, materialRow: MaterialItem) {
-    return (val: string, option: MaterialResponse) =>
-      onSelect(val, option, tab, materialRow)
+    return (val: string, option: any) => onSelect(val, option, tab, materialRow)
   }
 
   function syncSelected() {
@@ -270,3 +292,61 @@
     if (guid.value) getMaterialFrom1C()
   })
 </script>
+
+<style lang="scss" scoped>
+  .materials-grid {
+    display: flex;
+    flex-direction: column;
+    gap: rem(16);
+    margin-bottom: rem(16);
+    max-width: rem(800); // Ограничиваем максимальную ширину
+    width: 100%;
+  }
+
+  .material-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: rem(16);
+    align-items: end;
+    border: 1px solid var(--n-border-color);
+    border-radius: var(--n-border-radius);
+    background-color: var(--n-card-color);
+  }
+
+  .material-field {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .field-label {
+    font-size: rem(14);
+    font-weight: 500;
+    color: var(--n-text-color);
+    margin-bottom: rem(8);
+    line-height: 1.2;
+  }
+
+  // Адаптивность
+  @media (max-width: rem(768)) {
+    .materials-grid {
+      max-width: rem(600);
+    }
+
+    .material-row {
+      grid-template-columns: 1fr;
+      gap: rem(12);
+    }
+  }
+
+  @media (max-width: rem(500)) {
+    .materials-grid {
+      max-width: rem(400);
+    }
+
+    .material-row {
+      grid-template-columns: 1fr;
+      gap: rem(8);
+      padding: rem(12);
+    }
+  }
+</style>
