@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     BaseTable: typeof import('./src/components/base/BaseTable.vue')['default']
     BaseTreeSelect: typeof import('./src/components/base/BaseTreeSelect.vue')['default']
+    BurgerMenu: typeof import('./src/components/common/BurgerMenu.vue')['default']
     ChecklistComponent: typeof import('./src/components/common/tariffs/checklists/ChecklistComponent.vue')['default']
     ChecklistItemsModal: typeof import('./src/components/common/tariffs/checklists/ChecklistItemsModal.vue')['default']
     ChecklistModal: typeof import('./src/components/common/tariffs/checklists/ChecklistModal.vue')['default']

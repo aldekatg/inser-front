@@ -5,6 +5,7 @@
       <NButton type="primary" @click="isModalOpen = true">Добавить АЗС</NButton>
     </div>
     <BaseTable
+      scroll-x="800px"
       :data="gasStations"
       :columns="columns"
       :loading="loading"

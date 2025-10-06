@@ -3,10 +3,8 @@ import { NIcon } from "naive-ui"
 import type { MenuOption } from "naive-ui"
 import { RouterLink } from "vue-router"
 import { usePermissionsAccess } from "@/composables/usePermissionsAccess.ts"
-import { router } from "@/router/router.ts"
 
 import {
-  PersonOutline as PersonIcon,
   LogOutOutline as LogoutIcon,
   ClipboardOutline as ClipboardIcon,
   PinOutline as LocationIcon,
@@ -205,16 +203,6 @@ export const useNavHook = () => {
   }
 
   const options = [
-    {
-      label: "Профиль",
-      key: "profile",
-      icon: renderIcon(PersonIcon),
-      props: {
-        onClick: () => {
-          router.push({ name: "Profile" })
-        },
-      },
-    },
     {
       label: "Выход",
       key: "logout",

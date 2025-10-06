@@ -281,6 +281,29 @@
       margin-top: rem(20);
       padding-top: rem(16);
       border-top: 1px solid var(--n-border-color);
+      flex-wrap: wrap;
+
+      // Адаптивность для мобильных устройств
+      @media (max-width: rem(768)) {
+        flex-direction: column;
+        gap: rem(8);
+
+        :deep(.n-button) {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
+      // Адаптивность для очень маленьких экранов
+      @media (max-width: rem(480)) {
+        padding: rem(12) rem(16);
+        margin-top: rem(16);
+
+        :deep(.n-button) {
+          font-size: rem(14);
+          padding: rem(8) rem(16);
+        }
+      }
     }
 
     &__expanded {
