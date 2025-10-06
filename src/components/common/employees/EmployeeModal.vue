@@ -114,7 +114,7 @@
   import { useEmployees } from "@/components/common/employees/useEmployees.ts"
 
   const message = useMessage()
-  const { employees } = useEmployees()
+  const { employees, initEmployees } = useEmployees()
   const { isRegions, isWarehouses } = storeToRefs(useDictionaryStore())
 
   const props = defineProps<{
@@ -214,6 +214,8 @@
     label: value,
     value: key,
   }))
+
+  onMounted(() => initEmployees())
 </script>
 
 <style lang="scss" scoped>
