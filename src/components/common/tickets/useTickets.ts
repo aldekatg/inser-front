@@ -149,10 +149,12 @@ export function useTickets() {
       key: "technical_task",
       className: "tz-style",
       render: (row: TicketDetails) => {
-        return (
-          row?.technical_tasks_preview?.map((task) =>
-            h(NTag, { type: "info" }, { default: () => task })
-          ) || "Нет ТЗ"
+        const tasks = row?.technical_tasks_preview
+        if (!tasks || tasks.length === 0) {
+          return "Нет ТЗ"
+        }
+        return tasks.map((task) =>
+          h(NTag, { type: "info" }, { default: () => task })
         )
       },
     },

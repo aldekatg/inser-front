@@ -14,7 +14,7 @@
             </n-form-item-gi>
             <n-form-item-gi label="Дата подачи заявки" path="submitted_at">
               <n-date-picker
-                v-model:value="formValue.submitted_at"
+                v-model:value="computedSubmittedAt"
                 type="datetime"
                 :default-value="new Date().getTime()"
                 format="dd-MM-yyyy HH:mm:ss"
@@ -119,6 +119,19 @@
         </section>
         <n-divider />
 
+        <section
+          id="checkboxes"
+          v-if="formValue.technical_tasks_details.length"
+        >
+          <n-divider />
+          <n-h2>Чек-листы</n-h2>
+          <checklists
+            :technical-details="formValue.technical_tasks_details"
+            @change="onChecklistsChange"
+          />
+        </section>
+        <n-divider />
+
         <section id="service-list" v-if="isUpdateForm">
           <n-h2>Сервисный лист</n-h2>
           <n-grid :y-gap="12" :x-gap="12" cols="1 500:2 800:3">
@@ -134,7 +147,7 @@
 
             <n-form-item-gi label="Дата начала работ" path="work_started_at">
               <n-date-picker
-                v-model:value="formValue.work_started_at"
+                v-model:value="computedWorkStartedAt"
                 type="datetime"
                 :is-date-disabled="(date: Date) => date > new Date()"
                 format="dd-MM-yyyy HH:mm:ss"
@@ -146,7 +159,7 @@
               path="work_finished_at"
             >
               <n-date-picker
-                v-model:value="formValue.work_finished_at"
+                v-model:value="computedWorkFinishedAt"
                 type="datetime"
                 :is-date-disabled="(date: Date) => date < new Date()"
                 format="dd-MM-yyyy HH:mm:ss"
@@ -207,6 +220,7 @@
   import { criticalityOptions, statusOptions, statusSource } from "@/utils"
   import { TicketStatusDictionary } from "@/utils/types.ts"
   import Materials from "@/components/common/tickets/ticket-details/sections/Materials.vue"
+  import Checklists from "@/components/common/tickets/ticket-details/sections/Checklists.vue"
   import { EmployeeResponse } from "@/api/employees/types.ts"
   import { MaterialItem } from "@/components/common/tickets/types.ts"
 
@@ -314,6 +328,7 @@
   function saveTicket() {
     formValue.value.technical_tasks_preview =
       formValue.value.technical_tasks_details.map((item) => item.code)
+
     if (isUpdateForm.value) {
       emit("update", formValue.value as TicketUpdatePayload)
     } else {
@@ -328,6 +343,60 @@
       nomenclature_guid: material.nomenclature_guid,
       quantity: material.quantity,
     }))
+  }
+
+  // Получаем изменения чек-листов (id элемента -> done)
+  function onChecklistsChange(value: Record<number, boolean>) {
+    // Пока просто логируем/держим локально. При необходимости сохраним в payload.
+    // formValue.value.checklistsDone = value
+    // eslint-disable-next-line no-console
+    console.debug("checklists changed", value)
+  }
+
+  // Date pickers expect number (timestamp). Convert ISO/string/Date ⇄ number
+  const computedSubmittedAt = computed<number | null>({
+    get: () => toTimestamp(formValue.value.submitted_at),
+    set: (val) =>
+      (formValue.value.submitted_at = fromTimestamp(
+        val,
+        formValue.value.submitted_at
+      )),
+  })
+
+  const computedWorkStartedAt = computed<number | null>({
+    get: () => toTimestamp(formValue.value.work_started_at as any),
+    set: (val) =>
+      (formValue.value.work_started_at = fromTimestamp(
+        val,
+        formValue.value.work_started_at as any
+      )),
+  })
+
+  const computedWorkFinishedAt = computed<number | null>({
+    get: () => toTimestamp(formValue.value.work_finished_at as any),
+    set: (val) =>
+      (formValue.value.work_finished_at = fromTimestamp(
+        val,
+        formValue.value.work_finished_at as any
+      )),
+  })
+
+  function toTimestamp(
+    value: string | number | Date | undefined | null
+  ): number | null {
+    if (value === undefined || value === null || value === "") return null
+    if (typeof value === "number") return value
+    if (value instanceof Date) return value.getTime()
+    const parsed = Date.parse(value as string)
+    return Number.isNaN(parsed) ? null : parsed
+  }
+
+  function fromTimestamp(
+    value: number | null,
+    fallback?: string | number | Date
+  ): string | number | Date {
+    if (value === null) return fallback ?? new Date().toISOString()
+    return new Date(value).toISOString()
   }
 
   watch(
@@ -355,9 +424,9 @@
 
   .technical-tasks {
     display: flex;
-    align-items: start;
-    justify-content: space-between;
-    margin-bottom: rem(10);
+    align-items: self-start;
+    justify-content: flex-start;
+    gap: rem(10);
   }
 
   .skeleton-styles {

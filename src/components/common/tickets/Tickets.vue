@@ -101,7 +101,8 @@
   :deep(.tz-style) {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-start;
+    min-height: rem(59);
     gap: rem(10);
   }
 
