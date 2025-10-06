@@ -1,12 +1,6 @@
 <template>
   <div class="checklists">
-    <n-tabs
-      v-model:value="activeTab"
-      type="line"
-      animated
-      ref="tabsRef"
-      style="min-height: 100px"
-    >
+    <n-tabs v-model:value="activeTab" type="line" animated ref="tabsRef">
       <n-tab-pane
         v-for="tab in tabs"
         :name="tab.code"
@@ -150,7 +144,6 @@
     gap: rem(16);
 
     &__group {
-      margin: rem(16) 0;
       display: flex;
       flex-direction: column;
       gap: rem(8);

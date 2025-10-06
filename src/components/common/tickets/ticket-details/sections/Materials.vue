@@ -35,7 +35,7 @@
               placeholder="Введите количество"
             />
           </div>
-          <div class="material-field" v-if="tab.materials.length > 1">
+          <div class="material-field" v-if="material.nomenclature_guid !== ''">
             <label class="field-label">&nbsp;</label>
             <n-button
               type="error"
@@ -214,9 +214,16 @@
 
   function removeMaterial(tab: TaskTab, index: number): void {
     if (tab.materials.length > 1) {
+      // Если материалов больше одного - удаляем строку
       tab.materials.splice(index, 1)
-      syncSelected()
+    } else {
+      // Если это последний материал - очищаем инпуты
+      const material = tab.materials[index]
+      material.nomenclature_guid = ""
+      material.nomenclature_name = ""
+      material.quantity = 0
     }
+    syncSelected()
   }
 
   function applySelection(
