@@ -59,7 +59,7 @@
       // Проверяем авторизацию
       if (!isUserAuthorized) {
         // Сохраняем GUID в sessionStorage для последующего использования
-        sessionStorage.setItem("pendingQRGuid", guid)
+        sessionStorage.setItem("pendingQRGuid", JSON.stringify({ guid, id }))
         // Перенаправляем на страницу авторизации
         router.push("/auth")
         return

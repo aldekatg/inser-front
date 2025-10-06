@@ -52,8 +52,9 @@ export const useAuth = () => {
       // Проверяем наличие pending QR GUID
       const pendingQRGuid = sessionStorage.getItem("pendingQRGuid")
       if (pendingQRGuid) {
+        const { guid, id } = JSON.parse(pendingQRGuid)
         sessionStorage.removeItem("pendingQRGuid")
-        await router.push(`/confirmQR?guid=${pendingQRGuid}`)
+        await router.push(`/confirmQR?guid=${guid}&id=${id}`)
       } else {
         await router.push("/")
       }
