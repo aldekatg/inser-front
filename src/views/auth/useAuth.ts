@@ -48,7 +48,15 @@ export const useAuth = () => {
 
       initAuth(response.payload.access_token, response.payload.refresh_token)
       message.success("Вы успешно авторизованы!")
-      await router.push("/")
+
+      // Проверяем наличие pending QR GUID
+      const pendingQRGuid = sessionStorage.getItem("pendingQRGuid")
+      if (pendingQRGuid) {
+        sessionStorage.removeItem("pendingQRGuid")
+        await router.push(`/confirmQR?guid=${pendingQRGuid}`)
+      } else {
+        await router.push("/")
+      }
     } catch (error) {
       message.error("Ошибка авторизации! Проверьте почту и пароль.")
       throw error

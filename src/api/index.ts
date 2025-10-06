@@ -88,6 +88,15 @@ export const objectToUrlParams = (params: any) =>
       if (typeof params[key] === "boolean") {
         return `${encodeURIComponent(key)}=${params[key] ? "true" : "false"}`
       }
+      if (Array.isArray(params[key])) {
+        // Для массивов отправляем каждый элемент как отдельный параметр
+        return params[key]
+          .map(
+            (item: any) =>
+              `${encodeURIComponent(key)}=${encodeURIComponent(item)}`
+          )
+          .join("&")
+      }
       return `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
     })
     .filter((item) => item !== null && item !== undefined)

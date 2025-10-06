@@ -11,6 +11,7 @@ import {
 const URLS = {
   getTickets: "/tickets",
   getMaterials: "/integrations/onec/warehouses/",
+  confirmQR: "/tickets",
 }
 
 // Tickets
@@ -43,3 +44,7 @@ export const fetchMaterials = async (guid: string) =>
       Response<MaterialResponse[]>
     >(URLS.getMaterials + `${guid}/remaining-goods`)
     .then((resp) => resp.data)
+
+// QR Code Confirmation
+export const confirmQRCode = async (id: number, guid: string) =>
+  api.post(`${URLS.confirmQR}/${id}/confirm-qr`, guid).then((resp) => resp.data)

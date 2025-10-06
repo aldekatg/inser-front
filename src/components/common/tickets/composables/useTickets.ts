@@ -32,7 +32,6 @@ export function useTickets() {
 
     // UI State
     hasData: ticketData.hasData,
-    isEmpty: ticketData.isEmpty,
     currentTab,
 
     // Columns
@@ -48,5 +47,6 @@ export function useTickets() {
     navigateToTicket: ticketData.navigateToTicket,
     navigateToCreate: ticketData.navigateToCreate,
     refreshTickets: () => ticketData.loadTickets(),
+    applyFilters: ticketData.applyFilters,
   }
 }

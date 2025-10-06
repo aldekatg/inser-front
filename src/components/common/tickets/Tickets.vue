@@ -36,6 +36,13 @@
           </div>
         </template>
 
+        <!-- Filters Section -->
+        <ticket-filters
+          v-model:filters="filters"
+          :loading="loading"
+          @apply="applyFilters"
+        />
+
         <!-- Table Section -->
         <div class="tickets-component__table-container">
           <base-table
@@ -49,17 +56,6 @@
             :row-key="(row: any) => row.id"
             class="tickets-table"
           />
-
-          <!-- Empty State -->
-          <div v-if="isEmpty" class="tickets-component__empty">
-            <n-empty description="Нет заявок для отображения">
-              <template #extra>
-                <n-button @click="navigateToCreate">
-                  Создать первую заявку
-                </n-button>
-              </template>
-            </n-empty>
-          </div>
         </div>
 
         <!-- Pagination Section -->
@@ -84,6 +80,7 @@
   import { computed } from "vue"
   import { useTickets } from "./composables/useTickets"
   import BaseTable from "@/components/base/BaseTable.vue"
+  import TicketFilters from "./TicketFilters.vue"
   import { InformationCircleOutline as InfoIcon } from "@vicons/ionicons5"
 
   // Composables
@@ -93,13 +90,13 @@
     pagination,
     filters,
     hasData,
-    isEmpty,
     columns,
     tabs,
     changeTicketType,
     changePage,
     updatePageSize,
     navigateToCreate,
+    applyFilters,
   } = useTickets()
 
   // Computed

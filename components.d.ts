@@ -69,6 +69,7 @@ declare module 'vue' {
     TicketCreate: typeof import('./src/components/common/tickets/ticket-details/TicketCreate.vue')['default']
     TicketDetails: typeof import('./src/components/common/tickets/ticket-details/TicketDetails.vue')['default']
     TicketEdit: typeof import('./src/components/common/tickets/ticket-details/TicketEdit.vue')['default']
+    TicketFilters: typeof import('./src/components/common/tickets/TicketFilters.vue')['default']
     Tickets: typeof import('./src/components/common/tickets/Tickets.vue')['default']
     WarehouseModal: typeof import('./src/components/common/warehouses/WarehouseModal.vue')['default']
     Warehouses: typeof import('./src/components/common/warehouses/Warehouses.vue')['default']

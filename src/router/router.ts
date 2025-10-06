@@ -9,6 +9,11 @@ const routes: Array<RouteRecordRaw> = [
     beforeEnter: [shouldBeNotAuthorized],
   },
   {
+    path: "/confirmQR",
+    name: "ConfirmQR",
+    component: () => import("@/views/ConfirmQR.vue"),
+  },
+  {
     path: "",
     name: "Home",
     component: () => import("@/views/Main.vue"),
