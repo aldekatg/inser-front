@@ -3,6 +3,7 @@
     <n-form
       ref="formRef"
       :model="filters"
+      :key="formKey"
       label-width="auto"
       :show-feedback="false"
     >
@@ -158,12 +159,13 @@
   }>()
 
   const emit = defineEmits<{
-    (e: "update:filters", value: TicketFilters): void
-    (e: "apply"): void
+    "update:filters": [value: TicketFilters]
+    apply: []
   }>()
 
   const formRef = ref<FormInst | null>(null)
   const isExpanded = ref(false)
+  const formKey = ref(0)
 
   // Промежуточные timestamp-значения для date-picker'ов (ожидают number)
   const submittedFromTs = ref<number | null>(null)
@@ -235,16 +237,16 @@
       desc: false,
       limit: 50,
       skip: 0,
-      // Сбрасываем все остальные фильтры
-      q: undefined,
-      statuses: undefined,
-      gas_station_id: undefined,
-      employee_id: undefined,
-      guid: undefined,
-      submitted_from: undefined,
-      submitted_to: undefined,
-      created_from: undefined,
-      created_to: undefined,
+      // Сбрасываем все остальные фильтры - используем null для визуального сброса
+      q: null,
+      statuses: null,
+      gas_station_id: null,
+      employee_id: null,
+      guid: null,
+      submitted_from: null,
+      submitted_to: null,
+      created_from: null,
+      created_to: null,
     }
 
     // Сбрасываем timestamp'ы для date picker'ов
@@ -252,6 +254,9 @@
     submittedToTs.value = null
     createdFromTs.value = null
     createdToTs.value = null
+
+    // Принудительно перерендериваем форму для визуального сброса
+    formKey.value++
 
     emit("update:filters", defaultFilters)
     emit("apply")
