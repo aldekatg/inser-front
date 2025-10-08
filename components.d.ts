@@ -22,7 +22,6 @@ declare module 'vue' {
     GasStationModal: typeof import('./src/components/common/gas-stations/GasStationModal.vue')['default']
     GasStations: typeof import('./src/components/common/gas-stations/GasStations.vue')['default']
     Materials: typeof import('./src/components/common/tickets/ticket-details/sections/Materials.vue')['default']
-    NAlert: typeof import('naive-ui')['NAlert']
     NButton: typeof import('naive-ui')['NButton']
     NCard: typeof import('naive-ui')['NCard']
     NCheckbox: typeof import('naive-ui')['NCheckbox']

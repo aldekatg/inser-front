@@ -15,7 +15,6 @@ import { MaterialItem } from "@/components/common/tickets/types.ts"
 import { fetchChecklistItems, fetchChecklists } from "@/api/tariffs"
 import { ChecklistItemsType, ChecklistType } from "@/api/gas-stations/types.ts"
 import { useRouter } from "vue-router"
-import { log } from "console"
 
 export function useTicketDetailsHelper() {
   const message = useMessage()

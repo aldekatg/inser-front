@@ -65,7 +65,6 @@
 <script setup lang="ts">
   import { useChecklistHelper } from "@/components/common/tariffs/checklists/useChecklistHelper.ts"
   import ChecklistModal from "@/components/common/tariffs/checklists/ChecklistModal.vue"
-  import { h } from "vue"
   import { NButton } from "naive-ui"
   import ChecklistItemsModal from "@/components/common/tariffs/checklists/ChecklistItemsModal.vue"
   import { ActionButtons } from "@/utils"
@@ -73,7 +72,6 @@
     PencilSharp as PencilIcon,
     TrashOutline as TrashIcon,
   } from "@vicons/ionicons5"
-  import { styleText } from "util"
 
   const isModalOpen = ref(false)
   const isItemModalOpen = ref(false)
