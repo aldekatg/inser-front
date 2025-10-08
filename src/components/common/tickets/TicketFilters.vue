@@ -7,151 +7,121 @@
       label-width="auto"
       :show-feedback="false"
     >
-      <!-- Основные фильтры (всегда видны) -->
-      <n-grid cols="1 500:2 800:3" :x-gap="16" :y-gap="16">
-        <!-- Поиск -->
-        <n-form-item-gi label="Поиск" path="q">
-          <n-input
-            v-model:value="filters.q"
-            placeholder="Поиск по тикету/АЗС/сотруднику"
-            clearable
-            class="w-100"
-            @keyup.enter="applyFilters"
-          />
-        </n-form-item-gi>
-
-        <!-- Статусы -->
-        <n-form-item-gi label="Статусы" path="statuses">
-          <n-select
-            v-model:value="filters.statuses"
-            :options="statusOptions"
-            placeholder="Выберите статусы"
-            multiple
-            clearable
-            class="w-100"
-          />
-        </n-form-item-gi>
-
-        <!-- Сортировка -->
-        <n-form-item-gi label="Сортировка" path="order_by">
-          <n-select
-            v-model:value="filters.order_by"
-            :options="orderByOptions"
-            placeholder="Поле сортировки"
-            class="w-100"
-          />
-        </n-form-item-gi>
-      </n-grid>
-
       <!-- Дополнительные фильтры (скрываются/раскрываются) -->
-      <div v-show="isExpanded" class="ticket-filters__expanded">
-        <n-grid cols="1 500:2 800:3" :x-gap="16" :y-gap="16">
-          <!-- АЗС -->
-          <n-form-item-gi label="АЗС ID" path="gas_station_id">
-            <n-input-number
-              v-model:value="filters.gas_station_id"
-              placeholder="ID АЗС"
-              :min="1"
-              clearable
-              class="w-100"
-            />
-          </n-form-item-gi>
+      <n-collapse-transition :show="isExpanded">
+        <div class="ticket-filters__expanded">
+          <n-grid cols="1 500:2 800:3" :x-gap="16" :y-gap="16">
+            <n-form-item-gi label="Поиск" path="q">
+              <n-input
+                v-model:value="filters.q"
+                placeholder="Поиск по тикету/АЗС/сотруднику"
+                clearable
+                class="w-100"
+                @keyup.enter="applyFilters"
+              />
+            </n-form-item-gi>
 
-          <!-- Сотрудник -->
-          <n-form-item-gi label="Сотрудник ID" path="employee_id">
-            <n-input-number
-              v-model:value="filters.employee_id"
-              placeholder="ID сотрудника"
-              :min="1"
-              clearable
-              class="w-100"
-            />
-          </n-form-item-gi>
+            <!-- Статусы -->
+            <n-form-item-gi label="Статусы" path="statuses">
+              <n-select
+                v-model:value="filters.statuses"
+                :options="statusOptions"
+                placeholder="Выберите статусы"
+                multiple
+                clearable
+                class="w-100"
+              />
+            </n-form-item-gi>
 
-          <!-- GUID -->
-          <n-form-item-gi label="GUID" path="guid">
-            <n-input
-              v-model:value="filters.guid"
-              placeholder="GUID"
-              clearable
-              class="w-100"
-            />
-          </n-form-item-gi>
+            <!-- АЗС -->
+            <n-form-item-gi label="АЗС" path="gas_station_id">
+              <n-select
+                v-model:value="filters.gas_station_id"
+                :options="gasStationOptions"
+                placeholder="Выберите АЗС"
+                clearable
+                filterable
+                class="w-100"
+              />
+            </n-form-item-gi>
 
-          <!-- Дата подачи от -->
-          <n-form-item-gi label="Дата подачи от" path="submitted_from">
-            <n-date-picker
-              v-model:value="submittedFromTs"
-              type="datetime"
-              placeholder="Выберите дату"
-              clearable
-              class="w-100"
-            />
-          </n-form-item-gi>
+            <!-- Сотрудник -->
+            <n-form-item-gi label="Сотрудник" path="employee_id">
+              <n-select
+                v-model:value="filters.employee_id"
+                :options="employeeOptions"
+                placeholder="Выберите сотрудника"
+                clearable
+                filterable
+                class="w-100"
+              />
+            </n-form-item-gi>
 
-          <!-- Дата подачи до -->
-          <n-form-item-gi label="Дата подачи до" path="submitted_to">
-            <n-date-picker
-              v-model:value="submittedToTs"
-              type="datetime"
-              placeholder="Выберите дату"
-              clearable
-              class="w-100"
-            />
-          </n-form-item-gi>
+            <!-- Диапазон дат подачи -->
+            <n-form-item-gi label="Дата подачи" path="submitted_range">
+              <n-date-picker
+                v-model:value="submittedRangeTs"
+                type="daterange"
+                placeholder="Выберите диапазон дат"
+                clearable
+                class="w-100"
+              />
+            </n-form-item-gi>
 
-          <!-- Дата создания от -->
-          <n-form-item-gi label="Дата создания от" path="created_from">
-            <n-date-picker
-              v-model:value="createdFromTs"
-              type="datetime"
-              placeholder="Выберите дату"
-              clearable
-              class="w-100"
-            />
-          </n-form-item-gi>
-
-          <!-- Дата создания до -->
-          <n-form-item-gi label="Дата создания до" path="created_to">
-            <n-date-picker
-              v-model:value="createdToTs"
-              type="datetime"
-              placeholder="Выберите дату"
-              clearable
-              class="w-100"
-            />
-          </n-form-item-gi>
-
-          <!-- Порядок сортировки -->
-          <n-form-item-gi label="Порядок" path="desc">
-            <n-select
-              v-model:value="filters.desc"
-              :options="descOptions"
-              placeholder="Порядок сортировки"
-              class="w-100"
-            />
-          </n-form-item-gi>
-        </n-grid>
-      </div>
+            <!-- Диапазон дат создания -->
+            <n-form-item-gi label="Дата создания" path="created_range">
+              <n-date-picker
+                v-model:value="createdRangeTs"
+                type="daterange"
+                placeholder="Выберите диапазон дат"
+                clearable
+                class="w-100"
+              />
+            </n-form-item-gi>
+          </n-grid>
+        </div>
+      </n-collapse-transition>
 
       <!-- Кнопки действий -->
       <div class="ticket-filters__actions">
-        <n-button type="primary" @click="applyFilters" :loading="loading">
+        <n-button type="info" @click="applyFilters" :loading="loading">
           Применить фильтры
         </n-button>
         <n-button @click="resetFilters">Сбросить</n-button>
-        <n-button @click="toggleExpanded" type="tertiary">
-          {{ isExpanded ? "Свернуть" : "Развернуть" }}
-        </n-button>
+        <n-tooltip trigger="hover" placement="top">
+          <template #trigger>
+            <n-switch
+              v-model:value="isExpanded"
+              size="medium"
+              aria-placeholder=""
+              label="Развернуть"
+              :rail-style="railStyle"
+            >
+              <template #checked-icon>
+                <n-icon :component="FilterOutline" />
+              </template>
+              <template #unchecked-icon>
+                <n-icon :component="FilterOutline" />
+              </template>
+            </n-switch>
+          </template>
+          {{ isExpanded ? "Свернуть фильтры" : "Развернуть фильтры" }}
+        </n-tooltip>
       </div>
     </n-form>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { ref, watch } from "vue"
+  import { ref, watch, onMounted } from "vue"
   import type { FormInst } from "naive-ui"
   import type { TicketFilters } from "./types"
+  import { FilterOutline } from "@vicons/ionicons5"
+  import { fetchGasStations } from "@/api/gas-stations"
+  import type { GasStationType } from "@/api/gas-stations/types"
+  import { fetchEmployees } from "@/api/employees"
+  import type { EmployeeResponse } from "@/api/employees/types"
+  import type { CSSProperties } from "vue"
 
   const props = defineProps<{
     filters: TicketFilters
@@ -166,29 +136,104 @@
   const formRef = ref<FormInst | null>(null)
   const isExpanded = ref(false)
   const formKey = ref(0)
+  const gasStations = ref<GasStationType[]>([])
+  const gasStationOptions = ref<Array<{ label: string; value: number }>>([])
+  const employees = ref<EmployeeResponse[]>([])
+  const employeeOptions = ref<Array<{ label: string; value: number }>>([])
 
-  // Промежуточные timestamp-значения для date-picker'ов (ожидают number)
-  const submittedFromTs = ref<number | null>(null)
-  const submittedToTs = ref<number | null>(null)
-  const createdFromTs = ref<number | null>(null)
-  const createdToTs = ref<number | null>(null)
+  // Промежуточные timestamp-значения для date-picker'ов диапазонов (ожидают [number, number] | null)
+  const submittedRangeTs = ref<[number, number] | null>(null)
+  const createdRangeTs = ref<[number, number] | null>(null)
 
-  // Синхронизация: TS -> ISO в фильтры
-  watch(submittedFromTs, (val) => {
-    const iso = val ? new Date(val).toISOString() : undefined
-    emit("update:filters", { ...props.filters, submitted_from: iso })
+  // Синхронизация: TS диапазоны -> ISO в фильтры
+  watch(submittedRangeTs, (val) => {
+    if (val && val.length === 2) {
+      // Используем UTC методы для корректной работы с временными зонами
+      const fromDate = new Date(val[0] + 24 * 60 * 60 * 1000)
+      const toDate = new Date(val[1])
+
+      // Устанавливаем время в UTC: начало дня для "от" и конец дня для "до"
+      const fromIso = new Date(
+        Date.UTC(
+          fromDate.getUTCFullYear(),
+          fromDate.getUTCMonth(),
+          fromDate.getUTCDate(),
+          0,
+          0,
+          0,
+          0
+        )
+      ).toISOString()
+
+      const toIso = new Date(
+        Date.UTC(
+          toDate.getUTCFullYear(),
+          toDate.getUTCMonth(),
+          toDate.getUTCDate() + 1, // Добавляем +1 день
+          23,
+          59,
+          59,
+          999
+        )
+      ).toISOString()
+
+      emit("update:filters", {
+        ...props.filters,
+        submitted_from: fromIso,
+        submitted_to: toIso,
+      })
+    } else {
+      emit("update:filters", {
+        ...props.filters,
+        submitted_from: undefined,
+        submitted_to: undefined,
+      })
+    }
   })
-  watch(submittedToTs, (val) => {
-    const iso = val ? new Date(val).toISOString() : undefined
-    emit("update:filters", { ...props.filters, submitted_to: iso })
-  })
-  watch(createdFromTs, (val) => {
-    const iso = val ? new Date(val).toISOString() : undefined
-    emit("update:filters", { ...props.filters, created_from: iso })
-  })
-  watch(createdToTs, (val) => {
-    const iso = val ? new Date(val).toISOString() : undefined
-    emit("update:filters", { ...props.filters, created_to: iso })
+
+  watch(createdRangeTs, (val) => {
+    if (val && val.length === 2) {
+      // Используем UTC методы для корректной работы с временными зонами
+      const fromDate = new Date(val[0])
+      const toDate = new Date(val[1])
+
+      // Устанавливаем время в UTC: начало дня для "от" и конец дня для "до"
+      const fromIso = new Date(
+        Date.UTC(
+          fromDate.getUTCFullYear(),
+          fromDate.getUTCMonth(),
+          fromDate.getUTCDate() + 1, // Добавляем +1 день
+          0,
+          0,
+          0,
+          0
+        )
+      ).toISOString()
+
+      const toIso = new Date(
+        Date.UTC(
+          toDate.getUTCFullYear(),
+          toDate.getUTCMonth(),
+          toDate.getUTCDate() + 1, // Добавляем +1 день
+          23,
+          59,
+          59,
+          999
+        )
+      ).toISOString()
+
+      emit("update:filters", {
+        ...props.filters,
+        created_from: fromIso,
+        created_to: toIso,
+      })
+    } else {
+      emit("update:filters", {
+        ...props.filters,
+        created_from: undefined,
+        created_to: undefined,
+      })
+    }
   })
 
   // Сброс фильтров при смене типа заявки
@@ -211,18 +256,43 @@
     { label: "Отклонена заказчиком", value: "rejected_by_customer" },
   ]
 
-  const orderByOptions = [
-    { label: "ID", value: "id" },
-    { label: "Дата создания", value: "created_at" },
-    { label: "Дата подачи", value: "submitted_at" },
-    { label: "Плановое время", value: "planned_finish_at" },
-    { label: "Статус", value: "status" },
-  ]
+  // Загрузка gas-stations
+  const loadGasStations = async () => {
+    try {
+      const response = await fetchGasStations()
+      if (response.status === "success") {
+        gasStations.value = response.payload.items
+        gasStationOptions.value = gasStations.value.map((station) => ({
+          label: `${station.object_number}, ${station.company?.name}, ${station.region?.name}`,
+          value: station.id!,
+        }))
+      }
+    } catch (error) {
+      console.error("Ошибка загрузки АЗС:", error)
+    }
+  }
 
-  const descOptions = [
-    { label: "По возрастанию", value: false },
-    { label: "По убыванию", value: true },
-  ]
+  // Загрузка employees
+  const loadEmployees = async () => {
+    try {
+      const response = await fetchEmployees()
+      if (response.status === "success") {
+        employees.value = response.payload.items
+        employeeOptions.value = employees.value.map((employee) => ({
+          label: employee.full_name,
+          value: employee.id,
+        }))
+      }
+    } catch (error) {
+      console.error("Ошибка загрузки сотрудников:", error)
+    }
+  }
+
+  // Загружаем данные при монтировании компонента
+  onMounted(() => {
+    loadGasStations()
+    loadEmployees()
+  })
 
   // Методы
   const applyFilters = () => {
@@ -249,11 +319,9 @@
       created_to: null,
     }
 
-    // Сбрасываем timestamp'ы для date picker'ов
-    submittedFromTs.value = null
-    submittedToTs.value = null
-    createdFromTs.value = null
-    createdToTs.value = null
+    // Сбрасываем timestamp'ы для date picker'ов диапазонов
+    submittedRangeTs.value = null
+    createdRangeTs.value = null
 
     // Принудительно перерендериваем форму для визуального сброса
     formKey.value++
@@ -262,8 +330,22 @@
     emit("apply")
   }
 
-  const toggleExpanded = () => {
-    isExpanded.value = !isExpanded.value
+  // Стилизация для switch - синий цвет как у info кнопки
+  const railStyle = ({
+    focused,
+    checked,
+  }: {
+    focused: boolean
+    checked: boolean
+  }) => {
+    const style: CSSProperties = {}
+    if (checked) {
+      style.background = "#2080f0"
+    }
+    if (focused) {
+      style.boxShadow = "0 0 0 2px #2080f0"
+    }
+    return style
   }
 </script>
 
@@ -277,14 +359,19 @@
     background: var(--n-card-color);
     border: 1px solid var(--n-border-color);
     border-radius: var(--n-border-radius);
-    margin-bottom: rem(20);
+    margin-bottom: rem(10);
+
+    &__expanded {
+      border-top: 1px solid var(--n-border-color);
+    }
 
     &__actions {
       display: flex;
-      justify-content: flex-end;
-      gap: rem(12);
       margin-top: rem(20);
-      padding-top: rem(16);
+      justify-content: flex-end;
+      align-items: center;
+      gap: rem(12);
+      padding-bottom: rem(16);
       border-top: 1px solid var(--n-border-color);
       flex-wrap: wrap;
 
@@ -296,6 +383,15 @@
         :deep(.n-button) {
           width: 100%;
           justify-content: center;
+        }
+
+        :deep(.n-switch) {
+          width: 100%;
+          justify-content: center;
+        }
+
+        :deep(.n-tooltip) {
+          width: 100%;
         }
       }
 
@@ -309,10 +405,6 @@
           padding: rem(8) rem(16);
         }
       }
-    }
-
-    &__expanded {
-      margin-top: rem(20);
     }
   }
 

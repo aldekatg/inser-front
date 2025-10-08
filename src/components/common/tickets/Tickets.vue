@@ -42,38 +42,39 @@
             </n-tooltip>
           </div>
         </template>
-
-        <!-- Table Section -->
-        <div class="tickets-component__table-container">
-          <base-table
-            :data="data"
-            :columns="columns"
-            :loading="loading"
-            :single-line="true"
-            :bordered="true"
-            :striped="true"
-            :hoverable="true"
-            :row-class-name="rowClassName"
-            :row-key="(row: any) => row.id"
-            class="tickets-table"
-          />
-        </div>
-
-        <!-- Pagination Section -->
-        <div v-if="hasData" class="tickets-component__pagination">
-          <n-pagination
-            v-model:page="pagination.page"
-            :item-count="pagination.total"
-            :page-size="pagination.per_page"
-            :show-quick-jumper="true"
-            :show-size-picker="true"
-            :page-sizes="[10, 20, 50, 100]"
-            @update:page="changePage"
-            @update:page-size="updatePageSize"
-          />
-        </div>
       </n-tab-pane>
     </n-tabs>
+
+    <!-- Table Section -->
+    <div class="tickets-component__table-container">
+      <base-table
+        :data="data"
+        :columns="columns"
+        :loading="loading"
+        :single-line="true"
+        :bordered="true"
+        :striped="true"
+        :hoverable="true"
+        :row-class-name="rowClassName"
+        :row-key="(row: any) => row.id"
+        class="tickets-table"
+        @update:sorter="handleSorterChange"
+      />
+    </div>
+
+    <!-- Pagination Section -->
+    <div v-if="hasData" class="tickets-component__pagination">
+      <n-pagination
+        v-model:page="pagination.page"
+        :item-count="pagination.total"
+        :page-size="pagination.per_page"
+        :show-quick-jumper="true"
+        :show-size-picker="true"
+        :page-sizes="[10, 20, 50, 100]"
+        @update:page="changePage"
+        @update:page-size="updatePageSize"
+      />
+    </div>
   </div>
 </template>
 
@@ -96,6 +97,7 @@
     changeTicketType,
     changePage,
     updatePageSize,
+    handleSorterChange,
     navigateToCreate,
     applyFilters,
   } = useTickets()
@@ -122,7 +124,6 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: rem(24);
       padding-bottom: rem(16);
       border-bottom: 1px solid var(--n-border-color);
     }
@@ -139,7 +140,6 @@
     }
 
     &__table-container {
-      max-height: 500px;
       margin-bottom: rem(20);
       overflow-x: auto;
       border: 1px solid var(--n-border-color);

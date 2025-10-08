@@ -105,6 +105,7 @@ export function useTicketColumns() {
       title: "№",
       key: "id",
       width: 80,
+      sorter: true,
     },
     {
       title: "АЗС",
@@ -113,6 +114,7 @@ export function useTicketColumns() {
     {
       title: "Статус",
       key: "status",
+      sorter: true,
       render: (row: TicketDetails) => {
         const meta = getStatusMeta(row.status)
         return h(
@@ -128,6 +130,7 @@ export function useTicketColumns() {
     {
       title: "Критичность",
       key: "criticality",
+      sorter: true,
       render: (row: TicketDetails) => {
         const meta = getCriticalityMeta(row.criticality)
         return h(
@@ -143,21 +146,25 @@ export function useTicketColumns() {
     {
       title: "Дата создания",
       key: "created_at",
+      sorter: true,
       render: (row: TicketDetails) => dateTime(row.created_at),
     },
     {
       title: "Дата подачи",
       key: "submitted_at",
+      sorter: true,
       render: (row: TicketDetails) => dateTime(row.submitted_at),
     },
     {
       title: "Плановое время",
       key: "planned_finish_at",
+      sorter: true,
       render: (row: TicketDetails) => dateTime(row.planned_finish_at),
     },
     {
       title: "Дата закрытия",
       key: "closed_via_qr_at",
+      sorter: true,
       render: (row: TicketDetails) => dateTime(row.closed_via_qr_at),
     },
     {

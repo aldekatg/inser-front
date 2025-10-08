@@ -40,6 +40,7 @@ export interface TicketDetails {
   escalation_timeout_minutes: number
   escalation_due_at: string
   is_sla_80_elapsed?: boolean
+  is_materials_sent?: boolean
 }
 
 export interface TicketCreatePayload {
@@ -105,4 +106,12 @@ export interface MaterialResponse {
   nomenclature_name: string
   nomenclature_guid: string
   quantity: number
+}
+
+export interface MaterialSyncPayload {
+  materials: {
+    assignment_code: string
+    nomenclature_guid: string
+    quantity: number
+  }[]
 }

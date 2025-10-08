@@ -63,7 +63,7 @@
   }
 
   :deep(.n-data-table .n-scrollbar-container) {
-    max-height: calc(100vh - 220px); /* или 70vh чтобы занимало 70% экрана */
+    max-height: calc(100vh - 100px); /* или 70vh чтобы занимало 70% экрана */
     overflow-y: auto; /* включаем скролл */
   }
 

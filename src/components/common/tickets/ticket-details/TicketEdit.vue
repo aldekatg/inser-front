@@ -18,6 +18,7 @@
       :form-data="formValue"
       :loading="loading"
       :ticket="ticketInfo"
+      @syncWarehouse="syncWarehouse"
       :checklists="checklists"
       :checklistItems="checklistItems"
       :rules="rules"
@@ -45,6 +46,7 @@
     initTicketById,
     checklists,
     updateTicket,
+    syncWarehouse,
     checklistItems,
     initCheckLists,
   } = useTicketDetailsHelper()

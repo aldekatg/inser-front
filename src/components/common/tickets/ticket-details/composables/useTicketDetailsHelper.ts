@@ -3,6 +3,7 @@ import { useMessage } from "naive-ui"
 import {
   createTicketReq,
   fetchTicketById,
+  syncMaterials,
   updateTicketById,
 } from "@/api/tickets"
 import {
@@ -10,9 +11,11 @@ import {
   TicketDetails,
   TicketUpdatePayload,
 } from "@/api/tickets/types.ts"
+import { MaterialItem } from "@/components/common/tickets/types.ts"
 import { fetchChecklistItems, fetchChecklists } from "@/api/tariffs"
 import { ChecklistItemsType, ChecklistType } from "@/api/gas-stations/types.ts"
 import { useRouter } from "vue-router"
+import { log } from "console"
 
 export function useTicketDetailsHelper() {
   const message = useMessage()
@@ -174,12 +177,39 @@ export function useTicketDetailsHelper() {
     }
   }
 
+  async function syncWarehouse(data: TicketUpdatePayload) {
+    loading.value = true
+    try {
+      await updateTicket(data)
+
+      const materials = data.materials.map((material: MaterialItem) => ({
+        assignment_code: material.assignment_code,
+        nomenclature_guid: material.nomenclature_guid,
+        quantity: material.quantity,
+      }))
+
+      const response = await syncMaterials(data.id!, { materials })
+
+      if (!response || response.status === "error") {
+        message.error("Не удалось синхронизировать материалы с складом")
+        return
+      }
+
+      message.success("Материалы успешно синхронизированы с складом")
+    } catch (e) {
+      console.error("Error in syncWarehouse:", e)
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     ticketInfo,
     formValue,
     rules,
     loading,
     checklists,
+    syncWarehouse,
     checklistItems,
     createTicket,
     updateTicket,

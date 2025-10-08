@@ -195,10 +195,52 @@
       </n-form>
 
       <div class="ticket-details__action">
-        <n-button type="primary" @click="saveTicket" :loading="loading">
-          Сохранить
-        </n-button>
-        <n-button secondary @click="$router.back()">Отмена</n-button>
+        <div class="buttons-row">
+          <n-tooltip
+            v-if="isUpdateForm"
+            :disabled="
+              isFormCompletelyValid &&
+              hasValidMaterials &&
+              !ticket?.is_materials_sent
+            "
+            trigger="hover"
+            placement="top"
+          >
+            <template #trigger>
+              <n-button
+                type="info"
+                :disabled="
+                  ticket?.is_materials_sent ||
+                  !isFormCompletelyValid ||
+                  !hasValidMaterials
+                "
+                @click="syncWithWarehouse"
+                :loading="loading"
+              >
+                Синхронизация со складом
+              </n-button>
+            </template>
+            <div v-if="ticket?.is_materials_sent">
+              Материалы уже отправлены на склад
+            </div>
+            <div v-else-if="!hasValidMaterials">
+              Для синхронизации со складом необходимо выбрать материалы в
+              разделе "Использованные материалы"
+            </div>
+            <div v-else-if="!isFormCompletelyValid">
+              <div>Для синхронизации со складом необходимо заполнить:</div>
+              <ul class="tooltip-list">
+                <li v-for="field in getMissingFields" :key="field">
+                  {{ field }}
+                </li>
+              </ul>
+            </div>
+          </n-tooltip>
+          <n-button type="primary" @click="saveTicket" :loading="loading">
+            Сохранить
+          </n-button>
+          <n-button secondary @click="$router.back()">Отмена</n-button>
+        </div>
       </div>
     </div>
     <ticket-details-skeleton
@@ -247,6 +289,7 @@
   const emit = defineEmits<{
     (e: "create", data: TicketCreatePayload): void
     (e: "update", data: TicketUpdatePayload): void
+    (e: "syncWarehouse", data: TicketUpdatePayload): void
   }>()
 
   const {
@@ -258,6 +301,118 @@
   } = useAdditionalRequests()
 
   const formValue = ref<TicketCreatePayload | TicketUpdatePayload>(formData)
+  const formRef = ref()
+
+  // Проверка обязательных полей
+  const hasRequiredFields = computed(() => {
+    const requiredFields = [
+      "ticket_number",
+      "gas_station_id",
+      "employee_id",
+      "criticality",
+      "status",
+      "content",
+      "ticket_type",
+    ]
+
+    return requiredFields.every((field) => {
+      const value = formValue.value[field as keyof typeof formValue.value]
+      return value !== null && value !== undefined && value !== ""
+    })
+  })
+
+  // Проверка валидности технических заданий
+  const hasValidTechnicalTasks = computed(() => {
+    return (
+      formValue.value.technical_tasks_details &&
+      formValue.value.technical_tasks_details.length > 0
+    )
+  })
+
+  // Проверка полей сервисного листа для формы редактирования
+  const hasValidServiceFields = computed(() => {
+    if (!isUpdateForm.value) return true
+
+    const serviceFields = [
+      "service_sheet_number",
+      "work_started_at",
+      "work_finished_at",
+    ]
+
+    return serviceFields.every((field) => {
+      const value = formValue.value[field as keyof typeof formValue.value]
+      return value !== null && value !== undefined && value !== ""
+    })
+  })
+
+  // Проверка наличия материалов для синхронизации со складом
+  const hasValidMaterials = computed(() => {
+    if (!isUpdateForm.value) return true
+
+    return (
+      formValue.value.materials &&
+      Array.isArray(formValue.value.materials) &&
+      formValue.value.materials.length > 0
+    )
+  })
+
+  // Общая валидность формы
+  const isFormCompletelyValid = computed(() => {
+    return (
+      hasRequiredFields.value &&
+      hasValidTechnicalTasks.value &&
+      hasValidServiceFields.value
+    )
+  })
+
+  // Получение списка незаполненных полей для отображения пользователю
+  const getMissingFields = computed(() => {
+    const missingFields = []
+
+    if (!hasRequiredFields.value) {
+      const requiredFields = [
+        { key: "ticket_number", label: "Номер заявки" },
+        { key: "gas_station_id", label: "АЗС" },
+        { key: "employee_id", label: "Исполнитель" },
+        { key: "criticality", label: "Критичность" },
+        { key: "status", label: "Статус" },
+        { key: "content", label: "Описание заявки" },
+        { key: "ticket_type", label: "Тип заявки" },
+      ]
+
+      requiredFields.forEach((field) => {
+        const value = formValue.value[field.key as keyof typeof formValue.value]
+        if (value === null || value === undefined || value === "") {
+          missingFields.push(field.label)
+        }
+      })
+    }
+
+    if (!hasValidTechnicalTasks.value) {
+      missingFields.push("Техническое задание")
+    }
+
+    if (!hasValidMaterials.value && isUpdateForm.value) {
+      missingFields.push("Материалы")
+    }
+
+    if (!hasValidServiceFields.value && isUpdateForm.value) {
+      const serviceFields = [
+        { key: "service_sheet_number", label: "Номер сервисного листа" },
+        { key: "work_started_at", label: "Дата начала работ" },
+        { key: "work_finished_at", label: "Дата окончания работ" },
+      ]
+
+      serviceFields.forEach((field) => {
+        const value = formValue.value[field.key as keyof typeof formValue.value]
+        if (value === null || value === undefined || value === "") {
+          missingFields.push(field.label)
+        }
+      })
+    }
+
+    return missingFields
+  })
 
   const getStatusOptions = computed(() => {
     // if (isUpdateForm.value) {
@@ -330,6 +485,12 @@
 
   function getSelectedTasks(selected: TechnicalTaskDetail[]) {
     formValue.value.technical_tasks_details = selected
+  }
+
+  function syncWithWarehouse() {
+    if (isUpdateForm.value) {
+      emit("syncWarehouse", formValue.value as TicketUpdatePayload)
+    }
   }
 
   function saveTicket() {
@@ -425,9 +586,19 @@
 
     &__action {
       display: flex;
-      justify-content: flex-end;
+      flex-direction: column;
       gap: rem(10);
       margin: rem(20) 0;
+
+      .validation-indicator {
+        margin-bottom: rem(10);
+      }
+
+      .buttons-row {
+        display: flex;
+        justify-content: flex-end;
+        gap: rem(10);
+      }
     }
   }
 
@@ -436,5 +607,15 @@
     align-items: self-start;
     justify-content: flex-start;
     gap: rem(10);
+  }
+
+  // Стили для списков в тултипах
+  :deep(.tooltip-list) {
+    margin: 8px 0;
+    padding-left: 16px;
+
+    li {
+      margin-bottom: 2px;
+    }
   }
 </style>

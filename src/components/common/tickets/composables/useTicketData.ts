@@ -150,6 +150,19 @@ export function useTicketData() {
     await loadTickets()
   }
 
+  const handleSorterChange = async (sorter: any) => {
+    if (sorter && sorter.columnKey) {
+      filters.value.order_by = sorter.columnKey
+      filters.value.desc = sorter.order === "descend"
+
+      // Сбрасываем пагинацию при изменении сортировки
+      pagination.value.page = 1
+      filters.value.skip = 0
+
+      await loadTickets()
+    }
+  }
+
   const navigateToTicket = async (id: number) => {
     try {
       loadingBar?.start()
@@ -200,6 +213,7 @@ export function useTicketData() {
     changeTicketType,
     changePage,
     updatePageSize,
+    handleSorterChange,
     navigateToTicket,
     navigateToCreate,
     initializeFromRoute,

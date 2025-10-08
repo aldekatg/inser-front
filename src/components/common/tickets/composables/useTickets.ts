@@ -44,6 +44,7 @@ export function useTickets() {
     changeTicketType: ticketData.changeTicketType,
     changePage: ticketData.changePage,
     updatePageSize: ticketData.updatePageSize,
+    handleSorterChange: ticketData.handleSorterChange,
     navigateToTicket: ticketData.navigateToTicket,
     navigateToCreate: ticketData.navigateToCreate,
     refreshTickets: () => ticketData.loadTickets(),
