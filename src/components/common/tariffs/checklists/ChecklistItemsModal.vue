@@ -10,7 +10,7 @@
     >
       <template #header-extra>Заполните поля</template>
       <n-form :model="props.form" :rules="rules" ref="formRef">
-        <n-form-item label="Код" path="checklist_id">
+        <n-form-item label="ТЗ" path="checklist_id">
           <n-select
             v-model:value="props.form.checklist_id"
             placeholder="Выберите ТЗ"
@@ -20,10 +20,7 @@
           />
         </n-form-item>
         <n-form-item label="Код" path="code">
-          <n-input
-            v-model:value="props.form.code"
-            placeholder="Введите описание"
-          />
+          <n-input v-model:value="props.form.code" placeholder="Введите код" />
         </n-form-item>
         <n-form-item label="Описание" path="description">
           <n-input
@@ -76,7 +73,7 @@
     checklist_id: {
       type: "number",
       required: true,
-      message: "Выберите чеклист",
+      message: "Выберите ТЗ",
       trigger: ["blur", "change"],
     },
     code: {

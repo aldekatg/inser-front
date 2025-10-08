@@ -1,13 +1,12 @@
 import { fetchGasStations } from "@/api/gas-stations"
 import { ref } from "vue"
-import { GasStationType } from "@/api/gas-stations/types.ts"
 import { EmployeeResponse } from "@/api/employees/types.ts"
 import { fetchEmployees } from "@/api/employees"
 
 export function useAdditionalRequests() {
   const message = useMessage()
 
-  const optionsOfGasStations = ref<GasStationType[]>([])
+  const optionsOfGasStations = ref<{ label: string; value: number }[]>([])
   const optionsOfEmployee = ref<EmployeeResponse[]>([])
   const customLoading = reactive({
     gasStationLoading: false,
@@ -23,7 +22,10 @@ export function useAdditionalRequests() {
         message.error(response.message || "Ошибка при загрузке АЗС")
         return []
       }
-      optionsOfGasStations.value = response.payload.items
+      optionsOfGasStations.value = response.payload.items.map((station) => ({
+        label: `${station.object_number}, ${station.company?.name}, ${station.region?.name}`,
+        value: station.id!,
+      }))
     } catch (e) {
       console.error("Error in getGasStations:", e)
     } finally {

@@ -46,8 +46,8 @@ export function useTicketData() {
 
   const filters = ref<TicketFilters>({
     ticket_type: "customer_call",
-    order_by: "id",
-    desc: false,
+    order_by: "submitted_at", // Базовая сортировка по дате подачи
+    desc: true, // Сначала свежие заявки (по убыванию)
     limit: 10,
     skip: 0,
     // Новые фильтры с пустыми значениями

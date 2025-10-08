@@ -108,8 +108,27 @@ export function useTicketColumns() {
       sorter: true,
     },
     {
-      title: "АЗС",
+      title: "Номер заявки",
+      key: "ticket_number",
+      width: 120,
+      sorter: true,
+      render: (row: TicketDetails) => row.ticket_number || "-",
+    },
+    {
+      title: "Компания",
+      key: "gas_station.company.name",
+      width: 180,
+      render: (row: TicketDetails) => row.gas_station?.company?.name || "-",
+    },
+    {
+      title: "Номер объекта",
       key: "gas_station.object_number",
+      width: 120,
+      render: (row: TicketDetails) => {
+        const gasStation = row.gas_station
+        if (!gasStation) return "-"
+        return gasStation.object_number
+      },
     },
     {
       title: "Статус",
@@ -144,12 +163,6 @@ export function useTicketColumns() {
       },
     },
     {
-      title: "Дата создания",
-      key: "created_at",
-      sorter: true,
-      render: (row: TicketDetails) => dateTime(row.created_at),
-    },
-    {
       title: "Дата подачи",
       key: "submitted_at",
       sorter: true,
@@ -169,7 +182,7 @@ export function useTicketColumns() {
     },
     {
       title: "ТЗ",
-      key: "technical_task",
+      key: "technical_tasks_preview",
       width: 250,
       ellipsis: false,
       render: (row: TicketDetails) => {
@@ -193,6 +206,44 @@ export function useTicketColumns() {
       render: (row: TicketDetails) => {
         return row.content.slice(0, 50) || "-"
       },
+    },
+    {
+      title: "ФИО исполнителя",
+      key: "employee.full_name",
+      width: 180,
+      render: (row: TicketDetails) => row.employee?.full_name || "-",
+    },
+    {
+      title: "ФИО подавшего заявку",
+      key: "gas_station.operator_name",
+      width: 180,
+      render: (row: TicketDetails) => row.gas_station?.operator_name || "-",
+    },
+    {
+      title: "Адрес",
+      key: "gas_station.address",
+      width: 200,
+      render: (row: TicketDetails) => row.gas_station?.address || "-",
+    },
+    {
+      title: "Регион",
+      key: "gas_station.region.name",
+      width: 150,
+      render: (row: TicketDetails) => row.gas_station?.region?.name || "-",
+    },
+    {
+      title: "Номер СЛ",
+      key: "service_sheet_number",
+      width: 100,
+      sorter: true,
+      render: (row: TicketDetails) => row.service_sheet_number || "-",
+    },
+    {
+      title: "Комментарий",
+      key: "comment",
+      width: 200,
+      sorter: true,
+      render: (row: TicketDetails) => row.comment || "-",
     },
     {
       title: "Действия",

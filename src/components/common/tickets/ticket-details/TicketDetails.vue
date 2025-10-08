@@ -21,23 +21,24 @@
                 style="width: 100%"
               />
             </n-form-item-gi>
-            <n-form-item-gi label="ФИО подавшего заявку">
+            <n-form-item-gi v-if="isUpdateForm" label="ФИО подавшего заявку">
               <n-input
                 placeholder="Введите ФИО"
                 :value="ticket?.gas_station.operator_name"
-                :disabled="isUpdateForm"
+                disabled
               />
             </n-form-item-gi>
             <n-form-item-gi label="АЗС" path="gas_station_id">
               <n-select
                 v-model:value="computedGasStationId"
-                :default-value="ticket?.gas_station.object_number"
+                :default-value="computedGasStationDefaultValue"
+                :value-field="'value'"
+                placeholder="Выберите АЗС"
+                :label-field="'label'"
                 :options="optionsOfGasStations"
                 filterable
                 @focus="getGasStations"
                 :loading="customLoading.gasStationLoading"
-                :value-field="'id'"
-                :label-field="'object_number'"
               />
             </n-form-item-gi>
             <n-form-item-gi label="Исполнитель" path="employee_id">
@@ -54,24 +55,19 @@
             </n-form-item-gi>
             <n-form-item-gi label="Критичность" path="criticality">
               <n-select
+                placeholder="Выберите критичность"
                 v-model:value="formValue.criticality"
                 :options="criticalityOptions"
                 filterable
                 :loading="loading"
               />
             </n-form-item-gi>
-            <n-form-item-gi label="Статус" path="status">
+            <n-form-item-gi v-if="isUpdateForm" label="Статус" path="status">
               <n-select
+                placeholder="Выберите статус"
                 v-model:value="formValue.status"
                 :options="getStatusOptions"
                 filterable
-                :loading="loading"
-              />
-            </n-form-item-gi>
-            <n-form-item-gi label="Описание заявки" path="content">
-              <n-input
-                v-model:value="formValue.content"
-                type="textarea"
                 :loading="loading"
               />
             </n-form-item-gi>
@@ -79,9 +75,17 @@
               <n-select
                 v-model:value="formValue.ticket_type"
                 :options="statusSource"
-                :default-value="getTicketSource"
                 placeholder="Выберите тип заявки"
+                :default-value="getTicketSource"
                 :disabled="isUpdateForm"
+              />
+            </n-form-item-gi>
+            <n-form-item-gi label="Описание заявки" path="content">
+              <n-input
+                placeholder="Введите описание заявки"
+                v-model:value="formValue.content"
+                type="textarea"
+                :loading="loading"
               />
             </n-form-item-gi>
           </n-grid>
@@ -105,7 +109,11 @@
 
         <section
           id="materials"
-          v-if="formValue.technical_tasks_details?.length && isHasWarehouseGuid"
+          v-if="
+            formValue.technical_tasks_details?.length &&
+            isHasWarehouseGuid &&
+            isUpdateForm
+          "
         >
           <n-divider />
           <n-h2>Использованные материалы</n-h2>
@@ -149,7 +157,6 @@
               <n-date-picker
                 v-model:value="computedWorkStartedAt"
                 type="datetime"
-                :is-date-disabled="(date: Date) => date > new Date()"
                 format="dd-MM-yyyy HH:mm:ss"
                 style="width: 100%"
               />
@@ -161,7 +168,6 @@
               <n-date-picker
                 v-model:value="computedWorkFinishedAt"
                 type="datetime"
-                :is-date-disabled="(date: Date) => date < new Date()"
                 format="dd-MM-yyyy HH:mm:ss"
                 style="width: 100%"
               />
@@ -236,7 +242,39 @@
               </ul>
             </div>
           </n-tooltip>
-          <n-button type="primary" @click="saveTicket" :loading="loading">
+          <n-tooltip
+            v-if="!isFormValid && missingFields.length > 0"
+            trigger="hover"
+            placement="top"
+          >
+            <template #trigger>
+              <n-button
+                type="primary"
+                @click="saveTicket"
+                :loading="loading"
+                :disabled="!isFormValid"
+              >
+                Сохранить
+              </n-button>
+            </template>
+            <div>
+              <div style="font-weight: 600; margin-bottom: 8px">
+                Заполните обязательные поля:
+              </div>
+              <ul style="margin: 0; padding-left: 16px">
+                <li v-for="field in missingFields" :key="field">
+                  {{ field }}
+                </li>
+              </ul>
+            </div>
+          </n-tooltip>
+          <n-button
+            v-else
+            type="primary"
+            @click="saveTicket"
+            :loading="loading"
+            :disabled="!isFormValid"
+          >
             Сохранить
           </n-button>
           <n-button secondary @click="$router.back()">Отмена</n-button>
@@ -302,6 +340,15 @@
 
   const formValue = ref<TicketCreatePayload | TicketUpdatePayload>(formData)
   const formRef = ref()
+
+  const computedGasStationDefaultValue = computed(() => {
+    if (ticket?.gas_station) {
+      return `${ticket?.gas_station.object_number}, ${
+        ticket?.gas_station.company?.name
+      }, ${ticket?.gas_station.region?.name}`
+    }
+    return ""
+  })
 
   // Проверка обязательных полей
   const hasRequiredFields = computed(() => {
@@ -471,6 +518,36 @@
   const isEditModeTZ = ref<boolean>(
     !!formValue.value.technical_tasks_details.length || !isUpdateForm.value
   )
+
+  // Валидация для кнопки "Сохранить"
+  const isFormValid = computed(() => {
+    if (isUpdateForm.value) {
+      // Для редактирования проверяем только основные поля
+      return false
+    } else {
+      // Для создания проверяем все обязательные поля
+      return !!(
+        formValue.value.gas_station_id &&
+        formValue.value.criticality &&
+        formValue.value.ticket_type &&
+        formValue.value.content &&
+        formValue.value.employee_id
+      )
+    }
+  })
+
+  // Получение списка незаполненных полей для подсказки
+  const missingFields = computed(() => {
+    const missing: string[] = []
+
+    if (!formValue.value.gas_station_id) missing.push("АЗС")
+    if (!formValue.value.criticality) missing.push("Критичность")
+    if (!formValue.value.ticket_type) missing.push("Тип заявки")
+    if (!formValue.value.content) missing.push("Описание заявки")
+    if (!formValue.value.employee_id) missing.push("Исполнитель")
+
+    return missing
+  })
 
   const getTicketSource = computed(() => {
     if (ticket?.ticket_type) {

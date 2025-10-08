@@ -3,8 +3,12 @@ import {
   CompanyType,
   RegionType,
   WarehouseType,
+  GasStationType,
 } from "@/api/gas-stations/types.ts"
+import { EmployeeResponse } from "@/api/employees/types.ts"
 import { fetchCompanies, fetchRegions, fetchWarehouses } from "@/api/dictionary"
+import { fetchGasStations } from "@/api/gas-stations"
+import { fetchEmployees } from "@/api/employees"
 import { fetchTechnicalTasks } from "@/api/tariffs"
 import { TechnicalTaskDetail } from "@/api/tickets/types.ts"
 
@@ -12,6 +16,8 @@ interface DictionaryState {
   companies: CompanyType[] | null
   regions: RegionType[] | null
   warehouses: WarehouseType[] | null
+  gas_stations: GasStationType[] | null
+  employees: EmployeeResponse[] | null
   technical_tasks: TechnicalTaskDetail[] | null
 }
 
@@ -20,12 +26,16 @@ export const useDictionaryStore = defineStore("dictionaryStore", {
     companies: null,
     regions: null,
     warehouses: null,
+    gas_stations: null,
+    employees: null,
     technical_tasks: null,
   }),
   getters: {
     isCompanies: (state: DictionaryState) => state.companies,
     isRegions: (state: DictionaryState) => state.regions,
     isWarehouses: (state: DictionaryState) => state.warehouses,
+    isGasStations: (state: DictionaryState) => state.gas_stations,
+    isEmployees: (state: DictionaryState) => state.employees,
     isTechTasks: (state: DictionaryState) => state.technical_tasks,
   },
   actions: {
@@ -35,23 +45,31 @@ export const useDictionaryStore = defineStore("dictionaryStore", {
           companiesResponse,
           regionsResponse,
           warehousesResponse,
+          gasStationsResponse,
+          employeesResponse,
           technicalTasksResponse,
         ] = await Promise.all([
           fetchCompanies(),
           fetchRegions(),
           fetchWarehouses(),
+          fetchGasStations(),
+          fetchEmployees(),
           fetchTechnicalTasks(),
         ])
         if (
           companiesResponse.status === "error" ||
           regionsResponse.status === "error" ||
           warehousesResponse.status === "error" ||
+          gasStationsResponse.status === "error" ||
+          employeesResponse.status === "error" ||
           technicalTasksResponse.status === "error"
         ) {
           throw new Error(
             companiesResponse.message ||
               regionsResponse.message ||
               warehousesResponse.message ||
+              gasStationsResponse.message ||
+              employeesResponse.message ||
               technicalTasksResponse.message ||
               "Unknown error"
           )
@@ -59,10 +77,29 @@ export const useDictionaryStore = defineStore("dictionaryStore", {
         this.companies = companiesResponse.payload.items
         this.regions = regionsResponse.payload.items
         this.warehouses = warehousesResponse.payload.items
+        this.gas_stations = gasStationsResponse.payload.items
+        this.employees = employeesResponse.payload.items
         this.technical_tasks = technicalTasksResponse.payload.items
       } catch (e) {
         console.error("Error fetching:", e)
       }
+    },
+
+    // Геттеры для опций в формате селектов
+    getGasStationOptions() {
+      if (!this.gas_stations) return []
+      return this.gas_stations.map((station) => ({
+        label: `${station.object_number}, ${station.company?.name}, ${station.region?.name}`,
+        value: station.id!,
+      }))
+    },
+
+    getEmployeeOptions() {
+      if (!this.employees) return []
+      return this.employees.map((employee) => ({
+        label: employee.full_name,
+        value: employee.id,
+      }))
     },
   },
 })

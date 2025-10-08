@@ -68,6 +68,12 @@
   import { h } from "vue"
   import { NButton } from "naive-ui"
   import ChecklistItemsModal from "@/components/common/tariffs/checklists/ChecklistItemsModal.vue"
+  import { ActionButtons } from "@/utils"
+  import {
+    PencilSharp as PencilIcon,
+    TrashOutline as TrashIcon,
+  } from "@vicons/ionicons5"
+  import { styleText } from "util"
 
   const isModalOpen = ref(false)
   const isItemModalOpen = ref(false)
@@ -132,33 +138,22 @@
       fixed: "right",
       className: "custom-buttons",
       render(row: any) {
-        return [
-          h(
-            NButton,
-            {
-              strong: true,
-              tertiary: true,
-              style: "margin-right: 8px",
-              size: "small",
-              onClick: () => {
-                checklistForm.value = { ...row }
-                isModalOpen.value = true
-              },
+        return ActionButtons([
+          {
+            icon: PencilIcon,
+            type: "info",
+            onClick: () => {
+              checklistForm.value = { ...row }
+              isModalOpen.value = true
             },
-            { default: () => "Изменить" }
-          ),
-          h(
-            NButton,
-            {
-              strong: true,
-              type: "error",
-              tertiary: true,
-              size: "small",
-              onClick: () => deleteChecklistUniFunc(row, "checklists"),
-            },
-            { default: () => "Удалить" }
-          ),
-        ]
+          },
+          {
+            icon: TrashIcon,
+            type: "error",
+            style: "marginLeft: 8px",
+            onClick: () => deleteChecklistUniFunc(row, "checklists"),
+          },
+        ])
       },
     },
   ]
@@ -181,36 +176,23 @@
       title: "Действия",
       key: "actions",
       fixed: "right",
-      align: "center",
       className: "custom-buttons",
       render(row: any) {
-        return [
-          h(
-            NButton,
-            {
-              strong: true,
-              tertiary: true,
-              style: "margin-right: 8px",
-              size: "small",
-              onClick: () => {
-                checklistItemForm.value = { ...row }
-                isItemModalOpen.value = true
-              },
+        return ActionButtons([
+          {
+            icon: PencilIcon,
+            type: "info",
+            onClick: () => {
+              checklistItemForm.value = { ...row }
+              isItemModalOpen.value = true
             },
-            { default: () => "Изменить" }
-          ),
-          h(
-            NButton,
-            {
-              strong: true,
-              type: "error",
-              tertiary: true,
-              size: "small",
-              onClick: () => deleteChecklistUniFunc(row, "items"),
-            },
-            { default: () => "Удалить" }
-          ),
-        ]
+          },
+          {
+            icon: TrashIcon,
+            type: "error",
+            onClick: () => deleteChecklistUniFunc(row, "items"),
+          },
+        ])
       },
     },
   ]

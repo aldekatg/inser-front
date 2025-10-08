@@ -11,7 +11,7 @@ export function useTicketTabs() {
   const tabs = computed<TabConfig[]>(() => [
     {
       name: "customer_call",
-      label: "Вызовы",
+      label: "Внеплановые",
       description: "Заявки от клиентов",
     },
     {

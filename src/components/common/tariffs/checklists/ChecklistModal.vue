@@ -10,7 +10,7 @@
     >
       <template #header-extra>Заполните поля</template>
       <n-form :model="props.form" :rules="rules" ref="formRef">
-        <n-form-item label="Код" path="technical_task_id">
+        <n-form-item label="ТЗ" path="technical_task_id">
           <n-select
             v-model:value="props.form.technical_task_id"
             placeholder="Выберите ТЗ"
@@ -70,8 +70,7 @@
     technical_task_id: {
       required: true,
       type: "number",
-
-      message: "Код обязателен",
+      message: "Выберите ТЗ",
       trigger: ["blur", "change"],
     },
     description: {

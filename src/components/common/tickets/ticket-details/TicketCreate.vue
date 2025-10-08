@@ -28,7 +28,7 @@
   const loading = ref(false)
   const formValue = ref<TicketCreatePayload>({
     gas_station_id: null,
-    status: "",
+    status: "new", // Всегда "new" для создания
     criticality: "",
     ticket_type: "",
     ticket_number: "",
@@ -50,12 +50,6 @@
       type: "number",
       required: true,
       message: "АЗС обязательна",
-      trigger: ["blur", "change"],
-    },
-    status: {
-      type: "string",
-      required: true,
-      message: "Статус обязателен",
       trigger: ["blur", "change"],
     },
     criticality: {

@@ -39,7 +39,7 @@ export const TicketStatusDictionary = {
     [TicketCriticality.PLANNED_MAINTENANCE]: "Плановое обслуживание",
   },
   TicketSource: {
-    [TicketSource.PLANNED]: "Запланировано",
-    [TicketSource.CUSTOMER_CALL]: "Звонок клиента",
+    [TicketSource.PLANNED]: "Плановая",
+    [TicketSource.CUSTOMER_CALL]: "Внеплановая",
   },
 }

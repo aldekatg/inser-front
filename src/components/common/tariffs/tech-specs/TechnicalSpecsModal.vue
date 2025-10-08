@@ -10,10 +10,17 @@
     >
       <template #header-extra>Заполните поля</template>
       <n-form :model="props.form" :rules="rules" ref="formRef">
-        <n-form-item label="Код" path="code">
+        <n-form-item label="ТЗ" path="code">
           <n-input
             v-model:value="props.form.code"
             placeholder="Введите номер"
+          />
+        </n-form-item>
+        <n-form-item label="Оборудование" path="equipment">
+          <n-input
+            v-model:value="props.form.equipment"
+            type="textarea"
+            placeholder="Введите оборудование"
           />
         </n-form-item>
         <n-form-item label="Описание" path="description">
@@ -64,6 +71,11 @@
     code: {
       required: true,
       message: "Номер обязателен",
+      trigger: ["blur", "input"],
+    },
+    equipment: {
+      required: true,
+      message: "Оборудование обязательно",
       trigger: ["blur", "input"],
     },
     description: {

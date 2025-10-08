@@ -21,6 +21,28 @@
               />
             </n-form-item-gi>
 
+            <!-- Диапазон дат подачи -->
+            <n-form-item-gi label="Дата подачи" path="submitted_range">
+              <n-date-picker
+                v-model:value="submittedRangeTs"
+                type="daterange"
+                placeholder="Выберите диапазон дат"
+                clearable
+                class="w-100"
+              />
+            </n-form-item-gi>
+
+            <!-- Диапазон дат создания -->
+            <n-form-item-gi label="Дата создания" path="created_range">
+              <n-date-picker
+                v-model:value="createdRangeTs"
+                type="daterange"
+                placeholder="Выберите диапазон дат"
+                clearable
+                class="w-100"
+              />
+            </n-form-item-gi>
+
             <!-- Статусы -->
             <n-form-item-gi label="Статусы" path="statuses">
               <n-select
@@ -53,28 +75,6 @@
                 placeholder="Выберите сотрудника"
                 clearable
                 filterable
-                class="w-100"
-              />
-            </n-form-item-gi>
-
-            <!-- Диапазон дат подачи -->
-            <n-form-item-gi label="Дата подачи" path="submitted_range">
-              <n-date-picker
-                v-model:value="submittedRangeTs"
-                type="daterange"
-                placeholder="Выберите диапазон дат"
-                clearable
-                class="w-100"
-              />
-            </n-form-item-gi>
-
-            <!-- Диапазон дат создания -->
-            <n-form-item-gi label="Дата создания" path="created_range">
-              <n-date-picker
-                v-model:value="createdRangeTs"
-                type="daterange"
-                placeholder="Выберите диапазон дат"
-                clearable
                 class="w-100"
               />
             </n-form-item-gi>
@@ -303,9 +303,9 @@
     const currentTicketType = props.filters.ticket_type
     const defaultFilters: TicketFilters = {
       ticket_type: currentTicketType,
-      order_by: "id",
-      desc: false,
-      limit: 50,
+      order_by: "submitted_at", // Базовая сортировка по дате подачи
+      desc: true, // Сначала свежие заявки (по убыванию)
+      limit: 10,
       skip: 0,
       // Сбрасываем все остальные фильтры - используем null для визуального сброса
       q: null,
@@ -362,12 +362,12 @@
     margin-bottom: rem(10);
 
     &__expanded {
+      margin-bottom: rem(20);
       border-top: 1px solid var(--n-border-color);
     }
 
     &__actions {
       display: flex;
-      margin-top: rem(20);
       justify-content: flex-end;
       align-items: center;
       gap: rem(12);

@@ -10,6 +10,15 @@
     >
       <template #header-extra>Заполните поля</template>
       <n-form :model="props.form" :rules="rules" ref="formRef">
+        <n-form-item label="ТЗ" path="description">
+          <n-select
+            placeholder="Выберите ТЗ"
+            v-model:value="props.form.technical_task_id"
+            :options="isTechTasks"
+            :value-field="'id'"
+            :label-field="'code'"
+          />
+        </n-form-item>
         <n-form-item label="Код" path="code">
           <n-input
             v-model:value="props.form.code"
@@ -21,14 +30,6 @@
             v-model:value="props.form.description"
             type="textarea"
             placeholder="Введите описание"
-          />
-        </n-form-item>
-        <n-form-item label="Выберите ТЗ" path="description">
-          <n-select
-            v-model:value="props.form.technical_task_id"
-            :options="isTechTasks"
-            :value-field="'id'"
-            :label-field="'code'"
           />
         </n-form-item>
       </n-form>

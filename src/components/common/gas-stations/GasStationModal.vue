@@ -25,6 +25,19 @@
             placeholder="Введите адрес"
           />
         </n-form-item>
+        <n-form-item label="Уровень SL" path="sl_level">
+          <n-select
+            v-model:value="props.form.sl_level"
+            :options="[
+              { id: 1, name: '1' },
+              { id: 2, name: '2' },
+              { id: 3, name: '3' },
+            ]"
+            :value-field="'id'"
+            :label-field="'name'"
+            placeholder="Введите уровень СЛ"
+          />
+        </n-form-item>
         <n-form-item label="Оператор" path="operator_name">
           <n-input
             v-model:value="props.form.operator_name"
@@ -116,6 +129,12 @@
       required: true,
       message: "Адрес обязателен",
       trigger: ["blur", "input"],
+    },
+    sl_level: {
+      type: "number",
+      required: true,
+      message: "Уровень SL обязателен",
+      trigger: ["blur", "change"],
     },
     region_id: {
       type: "number",

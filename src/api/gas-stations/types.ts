@@ -8,6 +8,7 @@ export interface GasStationPayload {
   object_number: string
   guid?: string
   address: string
+  sl_level?: number | null
   region_id: number | null
   operator_name: string
   email: string
