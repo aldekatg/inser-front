@@ -16,8 +16,11 @@
             placeholder="Введите название склада"
           />
         </n-form-item>
-        <n-form-item label="GUID" path="guid">
-          <n-input v-model:value="props.form.guid" placeholder="Введите GUID" />
+        <n-form-item label="Идентификатор склада в 1С" path="guid">
+          <n-input
+            v-model:value="props.form.guid"
+            placeholder="Введите идентификатор склада в 1С"
+          />
         </n-form-item>
         <n-form-item label="Введите ИИН ответственного" path="responsible_iin">
           <n-input
@@ -71,7 +74,7 @@
     },
     guid: {
       required: true,
-      message: "GUID обязателен",
+      message: "Идентификатор склада в 1С обязателен",
       trigger: ["blur", "input"],
     },
     responsible_iin: {
@@ -84,6 +87,7 @@
   watch(show, (newVal) => {
     if (!newVal) {
       props.form.responsible_iin = ""
+      props.form.guid = ""
       props.form.name = ""
     }
   })

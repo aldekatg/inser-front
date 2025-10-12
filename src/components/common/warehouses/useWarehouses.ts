@@ -119,7 +119,7 @@ export function useWarehouses() {
       await initWarehouses() // Refresh the list after saving
     } catch (e) {
       console.error(e)
-      message.error("Ошибка при сохранении склада")
+      message.error((e as any).response?.data?.message)
     } finally {
       loading.value = false
       await store.initDictionary() // Обновляем словарь в хранилище

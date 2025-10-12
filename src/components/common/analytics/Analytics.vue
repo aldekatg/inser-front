@@ -105,7 +105,6 @@
   .analytics-container {
     padding: 20px;
     margin: 0 auto;
-    max-width: 1200px;
 
     @media (max-width: 768px) {
       padding: 15px;
