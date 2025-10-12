@@ -90,7 +90,7 @@ export function useWorkTypes() {
       const response = await deleteWorkType(id)
       if (response.status === "error") throw new Error(response.message || "")
 
-      message.success("Заправка успешно удалена")
+      message.success("Вид работ успешно удален")
     } catch (e) {
       console.error(e)
     } finally {
@@ -111,13 +111,13 @@ export function useWorkTypes() {
       }
       if (response.status === "error") throw new Error(response.message || "")
 
-      message.success("Заправка успешно сохранена")
+      message.success("Вид работ успешно сохранен")
     } catch (e) {
       console.error(e)
     } finally {
       loading.value = false
       closeModal()
-      await initWorkTypes() // Refresh the list after saving
+      await initWorkTypes()
     }
   }
 

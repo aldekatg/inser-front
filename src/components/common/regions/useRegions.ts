@@ -14,6 +14,7 @@ import {
   TrashOutline as TrashIcon,
 } from "@vicons/ionicons5"
 import { ActionButtons } from "@/utils"
+import { PaginationType, SortedFieldsType } from "@/types.ts"
 
 export function useRegions() {
   const isModalOpen = ref(false)
@@ -29,9 +30,25 @@ export function useRegions() {
 
   const message = useMessage()
 
+  const pagination = ref<PaginationType>({
+    total: 0,
+    page: 0,
+    per_page: 0,
+    has_next: false,
+    has_prev: false,
+  })
+
+  const sortedFields = ref<SortedFieldsType>({
+    order_by: "id",
+    desc: false,
+    limit: 10,
+    skip: 0,
+  })
+
   const columns = ref([
     {
       title: "Название",
+      sorter: "name",
       key: "name",
     },
     {
@@ -72,15 +89,18 @@ export function useRegions() {
     }
   }
 
-  async function initRegions() {
+  async function initRegions(sortedFieldsParam?: SortedFieldsType) {
     loading.value = true
     try {
-      const response = await fetchRegions()
+      const response = await fetchRegions(
+        sortedFieldsParam || sortedFields.value
+      )
 
       if (response.status === "error")
         throw new Error("Ошибка при загрузке регионов")
 
       regions.value = response.payload.items
+      pagination.value = { ...response.payload }
     } catch (error) {
       console.error("Ошибка при загрузке регионов:", error)
       message.error("Ошибка при загрузке регионов")
@@ -128,6 +148,8 @@ export function useRegions() {
 
   return {
     loading,
+    pagination,
+    sortedFields,
 
     regions,
     regionsForm,

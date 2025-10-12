@@ -14,6 +14,7 @@ import {
   TrashOutline as TrashIcon,
 } from "@vicons/ionicons5"
 import { ActionButtons } from "@/utils"
+import { PaginationType, SortedFieldsType } from "@/types.ts"
 
 export function useWarehouses() {
   const isModalOpen = ref(false)
@@ -31,17 +32,35 @@ export function useWarehouses() {
     id: undefined,
   })
 
+  const pagination = ref<PaginationType>({
+    total: 0,
+    page: 0,
+    per_page: 0,
+    has_next: false,
+    has_prev: false,
+  })
+
+  const sortedFields = ref<SortedFieldsType>({
+    order_by: "id",
+    desc: false,
+    limit: 10,
+    skip: 0,
+  })
+
   const columns = ref([
     {
       title: "Название",
+      sorter: "name",
       key: "name",
     },
     {
       title: "GUID",
+      sorter: "guid",
       key: "guid",
     },
     {
       title: "Ответственный",
+      sorter: "responsible_iin",
       key: "responsible_iin",
     },
     {
@@ -84,15 +103,18 @@ export function useWarehouses() {
     }
   }
 
-  async function initWarehouses() {
+  async function initWarehouses(sortedFieldsParam?: SortedFieldsType) {
     loading.value = true
     try {
-      const response = await fetchWarehouses()
+      const response = await fetchWarehouses(
+        sortedFieldsParam || sortedFields.value
+      )
 
       if (response.status === "error")
         throw new Error("Ошибка при загрузке складов")
 
       warehouses.value = response.payload.items
+      pagination.value = { ...response.payload }
     } catch (error) {
       console.error("Ошибка при загрузке складов:", error)
       message.error("Ошибка при загрузке складов")
@@ -140,6 +162,8 @@ export function useWarehouses() {
 
   return {
     loading,
+    pagination,
+    sortedFields,
     warehouses,
     warehouseForm,
     saveWarehouse,

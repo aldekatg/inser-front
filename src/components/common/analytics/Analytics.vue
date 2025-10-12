@@ -4,7 +4,7 @@
     <n-alert
       v-if="!isDateRangeValid"
       type="info"
-      title="Информация"
+      title="Подсказка"
       class="info-alert"
     >
       Пожалуйста, выберите период дат для выгрузки отчетов

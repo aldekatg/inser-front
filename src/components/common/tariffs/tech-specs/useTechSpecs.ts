@@ -90,16 +90,15 @@ export function useTechSpecs() {
   const removeTechTask = async (id: number) => {
     loading.value = true
     try {
-      // Assuming there's a deleteGasStation API function
       const response = await deleteTechnicalTask(id)
       if (response.status === "error") throw new Error(response.message || "")
 
-      message.success("Заправка успешно удалена")
+      message.success("ТЗ успешно удалена")
     } catch (e) {
       console.error(e)
     } finally {
       loading.value = false
-      await initTechTasks() // Refresh the list after deletion
+      await initTechTasks()
     }
   }
 
@@ -118,10 +117,11 @@ export function useTechSpecs() {
       message.success("ТЗ успешно сохранено")
     } catch (e) {
       console.error(e)
+      message.error((e as any).response?.data?.message)
     } finally {
       loading.value = false
       closeModal()
-      await initTechTasks() // Refresh the list after saving
+      await initTechTasks()
     }
   }
 

@@ -18,7 +18,10 @@
       :page="pagination.page"
       :item-count="pagination.total"
       :page-size="pagination.per_page"
+      :page-sizes="[10, 20, 30, 50, 100]"
+      show-size-picker
       @update:page="onPageChange"
+      @update:page-size="onPageSizeChange"
       show-quick-jumper
     />
   </div>
@@ -55,6 +58,14 @@
     sortedFields.value.skip =
       pagination.value.per_page * pagination.value.page -
       pagination.value.per_page
+    initEmployees(sortedFields.value)
+  }
+
+  const onPageSizeChange = (pageSize: number) => {
+    pagination.value.per_page = pageSize
+    sortedFields.value.limit = pageSize
+    pagination.value.page = 1
+    sortedFields.value.skip = 0
     initEmployees(sortedFields.value)
   }
 

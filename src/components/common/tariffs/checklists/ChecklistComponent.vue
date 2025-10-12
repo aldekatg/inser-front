@@ -14,6 +14,18 @@
           :columns="columnChecklists"
           :data="checklists"
         />
+        <NPagination
+          v-if="!loading"
+          class="pagination"
+          :page="checklistsPagination.page"
+          :item-count="checklistsPagination.total"
+          :page-size="checklistsPagination.per_page"
+          :page-sizes="[10, 20, 30, 50, 100]"
+          show-size-picker
+          @update:page="onChecklistsPageChange"
+          @update:page-size="onChecklistsPageSizeChange"
+          show-quick-jumper
+        />
       </n-tab-pane>
       <n-tab-pane name="check-items" tab="Наполнение">
         <n-button
@@ -27,6 +39,18 @@
           :loading="loading"
           :columns="columnChecklistItems"
           :data="checklistItems"
+        />
+        <NPagination
+          v-if="!loading"
+          class="pagination"
+          :page="checklistItemsPagination.page"
+          :item-count="checklistItemsPagination.total"
+          :page-size="checklistItemsPagination.per_page"
+          :page-sizes="[10, 20, 30, 50, 100]"
+          show-size-picker
+          @update:page="onChecklistItemsPageChange"
+          @update:page-size="onChecklistItemsPageSizeChange"
+          show-quick-jumper
         />
       </n-tab-pane>
     </n-tabs>
@@ -116,7 +140,45 @@
     createChecklistItems,
 
     deleteChecklistUniFunc,
+
+    checklistsPagination,
+    checklistsSortedFields,
+    checklistItemsPagination,
+    checklistItemsSortedFields,
   } = useChecklistHelper()
+
+  const onChecklistsPageChange = (page: number) => {
+    checklistsPagination.value.page = page
+    checklistsSortedFields.value.skip =
+      checklistsPagination.value.per_page * checklistsPagination.value.page -
+      checklistsPagination.value.per_page
+    initChecklist(checklistsSortedFields.value)
+  }
+
+  const onChecklistsPageSizeChange = (pageSize: number) => {
+    checklistsPagination.value.per_page = pageSize
+    checklistsSortedFields.value.limit = pageSize
+    checklistsPagination.value.page = 1
+    checklistsSortedFields.value.skip = 0
+    initChecklist(checklistsSortedFields.value)
+  }
+
+  const onChecklistItemsPageChange = (page: number) => {
+    checklistItemsPagination.value.page = page
+    checklistItemsSortedFields.value.skip =
+      checklistItemsPagination.value.per_page *
+        checklistItemsPagination.value.page -
+      checklistItemsPagination.value.per_page
+    initChecklistItems(checklistItemsSortedFields.value)
+  }
+
+  const onChecklistItemsPageSizeChange = (pageSize: number) => {
+    checklistItemsPagination.value.per_page = pageSize
+    checklistItemsSortedFields.value.limit = pageSize
+    checklistItemsPagination.value.page = 1
+    checklistItemsSortedFields.value.skip = 0
+    initChecklistItems(checklistItemsSortedFields.value)
+  }
 
   const columnChecklists = [
     {
@@ -164,7 +226,6 @@
     {
       title: "Код",
       key: "code",
-      width: 50,
     },
     {
       title: "Описание",
@@ -197,7 +258,7 @@
   ]
 
   onMounted(() => {
-    initChecklistItems()
-    initChecklist()
+    initChecklistItems(checklistItemsSortedFields.value)
+    initChecklist(checklistsSortedFields.value)
   })
 </script>

@@ -37,8 +37,12 @@ export const deleteCompany = async (id: number) =>
     .then((resp) => resp.data)
 
 // Regions
-export const fetchRegions = async () =>
-  api.get<Response<any>>(URLS.getRegion).then((resp) => resp.data)
+export const fetchRegions = async (sortedFieldsParam?: SortedFieldsType) =>
+  api
+    .get<
+      Response<any>
+    >(URLS.getRegion + objectToUrlParams(sortedFieldsParam || {}))
+    .then((resp) => resp.data)
 
 export const createRegion = async (body: RegionType) =>
   api.post<Response<any>>(URLS.getRegion, body).then((resp) => resp.data)
@@ -52,8 +56,12 @@ export const deleteRegion = async (id: number) =>
   api.delete<Response<any>>(URLS.getRegion + `/${id}`).then((resp) => resp.data)
 
 // Warehouses
-export const fetchWarehouses = async () =>
-  api.get<Response<any>>(URLS.getWarehouses).then((resp) => resp.data)
+export const fetchWarehouses = async (sortedFieldsParam?: SortedFieldsType) =>
+  api
+    .get<
+      Response<any>
+    >(URLS.getWarehouses + objectToUrlParams(sortedFieldsParam || {}))
+    .then((resp) => resp.data)
 
 export const createWarehouse = async (body: WarehouseType) =>
   api.post<Response<any>>(URLS.getWarehouses, body).then((resp) => resp.data)

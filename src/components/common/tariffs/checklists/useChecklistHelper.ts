@@ -8,7 +8,7 @@ import {
   updateChecklistItemsReq,
   updateChecklistReq,
 } from "@/api/tariffs"
-import { Response } from "@/types.ts"
+import { PaginationType, Response, SortedFieldsType } from "@/types.ts"
 
 import {
   ChecklistItemsPayload,
@@ -36,16 +36,49 @@ export function useChecklistHelper() {
     id: null,
   })
 
-  async function initChecklist() {
+  const checklistsPagination = ref<PaginationType>({
+    total: 0,
+    page: 0,
+    per_page: 0,
+    has_next: false,
+    has_prev: false,
+  })
+
+  const checklistsSortedFields = ref<SortedFieldsType>({
+    order_by: "id",
+    desc: false,
+    limit: 10,
+    skip: 0,
+  })
+
+  const checklistItemsPagination = ref<PaginationType>({
+    total: 0,
+    page: 0,
+    per_page: 0,
+    has_next: false,
+    has_prev: false,
+  })
+
+  const checklistItemsSortedFields = ref<SortedFieldsType>({
+    order_by: "id",
+    desc: false,
+    limit: 10,
+    skip: 0,
+  })
+
+  async function initChecklist(sortedFieldsParam?: SortedFieldsType) {
     loading.value = true
     try {
-      const response = await fetchChecklists()
+      const response = await fetchChecklists(
+        sortedFieldsParam || checklistsSortedFields.value
+      )
       if (response.status === "error") {
         console.log("Ошибка при загрузке чеклистов")
         return
       }
 
       checklists.value = response.payload.items
+      checklistsPagination.value = { ...response.payload }
     } catch (error) {
       console.log(error)
     } finally {
@@ -53,16 +86,19 @@ export function useChecklistHelper() {
     }
   }
 
-  async function initChecklistItems() {
+  async function initChecklistItems(sortedFieldsParam?: SortedFieldsType) {
     loading.value = true
     try {
-      const response = await fetchChecklistItems()
+      const response = await fetchChecklistItems(
+        sortedFieldsParam || checklistItemsSortedFields.value
+      )
       if (response.status === "error") {
         console.log("Ошибка при загрузке элементов чеклистов")
         return
       }
 
       checklistItems.value = response.payload.items
+      checklistItemsPagination.value = { ...response.payload }
     } catch (error) {
       console.log(error)
     } finally {
@@ -171,5 +207,10 @@ export function useChecklistHelper() {
     createChecklistItems,
 
     deleteChecklistUniFunc,
+
+    checklistsPagination,
+    checklistsSortedFields,
+    checklistItemsPagination,
+    checklistItemsSortedFields,
   }
 }
