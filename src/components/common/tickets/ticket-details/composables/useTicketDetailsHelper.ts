@@ -155,7 +155,7 @@ export function useTicketDetailsHelper() {
       console.error("Error in updateTicket:", e)
     } finally {
       loading.value = false
-      await router.push({ name: "Tickets" })
+      router.back()
     }
   }
   async function createTicket(ticket: TicketCreatePayload) {
