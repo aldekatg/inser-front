@@ -15,6 +15,7 @@
             v-model:value="selectedTechTask"
             placeholder="Выберите ТЗ"
             :options="technical_tasks"
+            @focus="initChecklist"
             value-field="id"
             label-field="code"
           />
@@ -160,9 +161,5 @@
         props.form.checklist_id = null
       }
     },
-  })
-
-  onMounted(() => {
-    initChecklist()
   })
 </script>
