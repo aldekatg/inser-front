@@ -33,8 +33,8 @@ export const TicketStatusDictionary = {
   TicketCriticality: {
     [TicketCriticality.CRITICAL]: "Критический",
     [TicketCriticality.SERIOUS]: "Серьезный",
-    [TicketCriticality.SIGNIFICANT]: "Значительный",
-    [TicketCriticality.MINOR]: "Незначительный",
+    [TicketCriticality.SIGNIFICANT]: "Существенный",
+    [TicketCriticality.MINOR]: "Минимальный",
     [TicketCriticality.SERVICE_REQUEST]: "Запрос на обслуживание",
     [TicketCriticality.PLANNED_MAINTENANCE]: "Плановое обслуживание",
   },

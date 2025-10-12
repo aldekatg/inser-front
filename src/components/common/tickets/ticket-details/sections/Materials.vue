@@ -274,10 +274,11 @@
     emit("update:materials", selectedMaterials.value)
   }
 
-  async function getMaterialFrom1C() {
+  async function getMaterialFrom1C(forceReload = false) {
     materialsLoading.value = true
     try {
-      if (materialOptions.value.length) {
+      // Если уже загружены и не форсируем перезагрузку - выходим
+      if (materialOptions.value.length && !forceReload) {
         return
       }
       const response = await fetchMaterials(guid.value)
@@ -294,6 +295,35 @@
       materialsLoading.value = false
     }
   }
+
+  // Следим за изменением guid (смена исполнителя/склада)
+  watch(
+    guid,
+    (newGuid, oldGuid) => {
+      if (newGuid && newGuid !== oldGuid) {
+        console.log("[Materials] Изменился склад, перезагружаем материалы", {
+          oldGuid,
+          newGuid,
+        })
+
+        // Очищаем старые материалы из опций
+        materialOptions.value = []
+
+        // Очищаем выбранные материалы во всех вкладках
+        for (const tab of tasks.value) {
+          tab.materials = [createEmptyRow(tab.code)]
+        }
+
+        // Очищаем выбранные материалы
+        selectedMaterials.value = []
+        emit("update:materials", [])
+
+        // Загружаем новые материалы
+        getMaterialFrom1C(true)
+      }
+    },
+    { immediate: false }
+  )
 
   onMounted(() => {
     if (guid.value) getMaterialFrom1C()

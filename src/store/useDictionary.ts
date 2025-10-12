@@ -19,6 +19,8 @@ interface DictionaryState {
   gas_stations: GasStationType[] | null
   employees: EmployeeResponse[] | null
   technical_tasks: TechnicalTaskDetail[] | null
+  isLoading: boolean
+  isLoaded: boolean
 }
 
 export const useDictionaryStore = defineStore("dictionaryStore", {
@@ -29,6 +31,8 @@ export const useDictionaryStore = defineStore("dictionaryStore", {
     gas_stations: null,
     employees: null,
     technical_tasks: null,
+    isLoading: false,
+    isLoaded: false,
   }),
   getters: {
     isCompanies: (state: DictionaryState) => state.companies,
@@ -40,6 +44,20 @@ export const useDictionaryStore = defineStore("dictionaryStore", {
   },
   actions: {
     async initDictionary() {
+      // Если уже загружается или загружено - не делаем повторный запрос
+      if (this.isLoading || this.isLoaded) {
+        console.log(
+          "[Dictionary] Запрос пропущен: уже загружается или загружено",
+          {
+            isLoading: this.isLoading,
+            isLoaded: this.isLoaded,
+          }
+        )
+        return
+      }
+
+      console.log("[Dictionary] Начало загрузки справочников...")
+      this.isLoading = true
       try {
         const [
           companiesResponse,
@@ -80,8 +98,12 @@ export const useDictionaryStore = defineStore("dictionaryStore", {
         this.gas_stations = gasStationsResponse.payload.items
         this.employees = employeesResponse.payload.items
         this.technical_tasks = technicalTasksResponse.payload.items
+        this.isLoaded = true
+        console.log("[Dictionary] Справочники успешно загружены")
       } catch (e) {
-        console.error("Error fetching:", e)
+        console.error("[Dictionary] Ошибка загрузки справочников:", e)
+      } finally {
+        this.isLoading = false
       }
     },
 

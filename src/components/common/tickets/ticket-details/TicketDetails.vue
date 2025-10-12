@@ -249,7 +249,10 @@
             @click="handleGeneratePDF"
             :loading="loading"
           >
-            Генерировать pdf
+            <n-icon style="margin-right: 8px">
+              <DocumentOutline />
+            </n-icon>
+            Сгенерировать PDF
           </n-button>
           <n-tooltip
             v-if="!isFormValid && missingFields.length > 0"
@@ -309,6 +312,7 @@
     TicketDetails,
     TicketUpdatePayload,
   } from "@/api/tickets/types.ts"
+  import { DocumentOutline } from "@vicons/ionicons5"
   import { useAdditionalRequests } from "@/components/common/tickets/ticket-details/composables/useAdditionalRequests.ts"
   import { usePdfGenerator } from "@/components/common/tickets/ticket-details/composables/usePdfGenerator.ts"
   import { criticalityOptions, statusOptions, statusSource } from "@/utils"

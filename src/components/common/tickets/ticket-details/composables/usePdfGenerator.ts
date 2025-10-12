@@ -1,6 +1,7 @@
 import { PDFDocument, rgb } from "pdf-lib"
 import { TicketDetails } from "@/api/tickets/types"
 import fontkit from "@pdf-lib/fontkit"
+import { TicketStatusDictionary } from "@/utils/types"
 
 export function usePdfGenerator() {
   /**
@@ -67,12 +68,37 @@ export function usePdfGenerator() {
   function getCriticalityText(criticality: string | null | undefined): string {
     if (!criticality) return "Не указано"
 
-    const criticalityMap: Record<string, string> = {
-      critical: "Критичный",
-      not_critical: "Не критичный",
-    }
+    return (
+      TicketStatusDictionary.TicketCriticality[
+        criticality as keyof typeof TicketStatusDictionary.TicketCriticality
+      ] || criticality
+    )
+  }
 
-    return criticalityMap[criticality] || criticality
+  /**
+   * Получает текстовое значение статуса
+   */
+  function getStatusText(status: string | null | undefined): string {
+    if (!status) return "Не указано"
+
+    return (
+      TicketStatusDictionary.StatusType[
+        status as keyof typeof TicketStatusDictionary.StatusType
+      ] || status
+    )
+  }
+
+  /**
+   * Получает текстовое значение типа заявки
+   */
+  function getTicketTypeText(ticketType: string | null | undefined): string {
+    if (!ticketType) return "Не указано"
+
+    return (
+      TicketStatusDictionary.TicketSource[
+        ticketType as keyof typeof TicketStatusDictionary.TicketSource
+      ] || ticketType
+    )
   }
 
   /**
@@ -160,8 +186,7 @@ export function usePdfGenerator() {
     let yPosition = height - margin
 
     // Заголовок организации
-    const companyName =
-      "Общество с ограниченной ответственностью «Местон-Сервис»"
+    const companyName = "Общество с ограниченной ответственностью «ИНСЕР»"
     const companyNameWidth = fontBold.widthOfTextAtSize(companyName, 11)
     page.drawText(companyName, {
       x: (width - companyNameWidth) / 2,
@@ -245,6 +270,40 @@ export function usePdfGenerator() {
       color: rgb(0, 0, 0),
     })
     page.drawText(getCriticalityText(ticket.criticality), {
+      x: margin + 200,
+      y: yPosition,
+      size: 10,
+      font: font,
+      color: rgb(0, 0, 0),
+    })
+    yPosition -= 25
+
+    // Статус заявки
+    page.drawText("Статус:", {
+      x: margin,
+      y: yPosition,
+      size: 10,
+      font: fontBold,
+      color: rgb(0, 0, 0),
+    })
+    page.drawText(getStatusText(ticket.status), {
+      x: margin + 200,
+      y: yPosition,
+      size: 10,
+      font: font,
+      color: rgb(0, 0, 0),
+    })
+    yPosition -= 25
+
+    // Тип заявки
+    page.drawText("Тип заявки:", {
+      x: margin,
+      y: yPosition,
+      size: 10,
+      font: fontBold,
+      color: rgb(0, 0, 0),
+    })
+    page.drawText(getTicketTypeText(ticket.ticket_type), {
       x: margin + 200,
       y: yPosition,
       size: 10,
@@ -498,6 +557,7 @@ export function usePdfGenerator() {
       yPosition -= 30
 
       for (const task of ticket.technical_tasks_details) {
+        if (task.checklists && task.checklists.length === 0) continue
         if (yPosition < 80) {
           // Добавляем новую страницу, если место закончилось
           page = pdfDoc.addPage([595.28, 841.89])

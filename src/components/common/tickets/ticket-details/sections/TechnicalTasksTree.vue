@@ -26,7 +26,8 @@
 
   const { technical_tasks } = storeToRefs(dictionaryStore)
 
+  // Загружаем данные, если они еще не загружены
   onMounted(async () => {
-    if (!technical_tasks.value?.length) await dictionaryStore.initDictionary()
+    await dictionaryStore.initDictionary()
   })
 </script>

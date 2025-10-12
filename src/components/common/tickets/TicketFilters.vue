@@ -14,7 +14,7 @@
             <n-form-item-gi label="Поиск" path="q">
               <n-input
                 v-model:value="filters.q"
-                placeholder="Поиск по тикету/АЗС/сотруднику"
+                placeholder="Поиск по заявке/АЗС/сотруднику"
                 clearable
                 class="w-100"
                 @keyup.enter="applyFilters"
@@ -113,15 +113,13 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, watch, onMounted } from "vue"
+  import { ref, watch, onMounted, computed } from "vue"
   import type { FormInst } from "naive-ui"
   import type { TicketFilters } from "./types"
   import { FilterOutline } from "@vicons/ionicons5"
-  import { fetchGasStations } from "@/api/gas-stations"
-  import type { GasStationType } from "@/api/gas-stations/types"
-  import { fetchEmployees } from "@/api/employees"
-  import type { EmployeeResponse } from "@/api/employees/types"
   import type { CSSProperties } from "vue"
+  import { useDictionaryStore } from "@/store/useDictionary.ts"
+  import { storeToRefs } from "pinia"
 
   const props = defineProps<{
     filters: TicketFilters
@@ -136,10 +134,25 @@
   const formRef = ref<FormInst | null>(null)
   const isExpanded = ref(false)
   const formKey = ref(0)
-  const gasStations = ref<GasStationType[]>([])
-  const gasStationOptions = ref<Array<{ label: string; value: number }>>([])
-  const employees = ref<EmployeeResponse[]>([])
-  const employeeOptions = ref<Array<{ label: string; value: number }>>([])
+
+  const dictionaryStore = useDictionaryStore()
+  const { gas_stations, employees } = storeToRefs(dictionaryStore)
+
+  const gasStationOptions = computed(() => {
+    if (!gas_stations.value) return []
+    return gas_stations.value.map((station) => ({
+      label: `${station.object_number}, ${station.company?.name}, ${station.region?.name}`,
+      value: station.id!,
+    }))
+  })
+
+  const employeeOptions = computed(() => {
+    if (!employees.value) return []
+    return employees.value.map((employee) => ({
+      label: employee.full_name,
+      value: employee.id,
+    }))
+  })
 
   // Промежуточные timestamp-значения для date-picker'ов диапазонов (ожидают [number, number] | null)
   const submittedRangeTs = ref<[number, number] | null>(null)
@@ -256,42 +269,9 @@
     { label: "Отклонена заказчиком", value: "rejected_by_customer" },
   ]
 
-  // Загрузка gas-stations
-  const loadGasStations = async () => {
-    try {
-      const response = await fetchGasStations()
-      if (response.status === "success") {
-        gasStations.value = response.payload.items
-        gasStationOptions.value = gasStations.value.map((station) => ({
-          label: `${station.object_number}, ${station.company?.name}, ${station.region?.name}`,
-          value: station.id!,
-        }))
-      }
-    } catch (error) {
-      console.error("Ошибка загрузки АЗС:", error)
-    }
-  }
-
-  // Загрузка employees
-  const loadEmployees = async () => {
-    try {
-      const response = await fetchEmployees()
-      if (response.status === "success") {
-        employees.value = response.payload.items
-        employeeOptions.value = employees.value.map((employee) => ({
-          label: employee.full_name,
-          value: employee.id,
-        }))
-      }
-    } catch (error) {
-      console.error("Ошибка загрузки сотрудников:", error)
-    }
-  }
-
-  // Загружаем данные при монтировании компонента
-  onMounted(() => {
-    loadGasStations()
-    loadEmployees()
+  // Загружаем данные из store при монтировании компонента
+  onMounted(async () => {
+    await dictionaryStore.initDictionary()
   })
 
   // Методы

@@ -1,56 +1,55 @@
-import { fetchGasStations } from "@/api/gas-stations"
-import { ref } from "vue"
-import { EmployeeResponse } from "@/api/employees/types.ts"
-import { fetchEmployees } from "@/api/employees"
+import { useDictionaryStore } from "@/store/useDictionary.ts"
+import { storeToRefs } from "pinia"
+import { computed } from "vue"
+
+// Глобальное состояние для предотвращения дублирования запросов
+const loadingState = reactive({
+  gasStationLoading: false,
+  employeeLoading: false,
+})
 
 export function useAdditionalRequests() {
-  const message = useMessage()
+  const dictionaryStore = useDictionaryStore()
+  const { gas_stations, employees } = storeToRefs(dictionaryStore)
 
-  const optionsOfGasStations = ref<{ label: string; value: number }[]>([])
-  const optionsOfEmployee = ref<EmployeeResponse[]>([])
-  const customLoading = reactive({
-    gasStationLoading: false,
-    employeeLoading: false,
+  const optionsOfGasStations = computed(() => {
+    if (!gas_stations.value) return []
+    return gas_stations.value.map((station) => ({
+      label: `${station.object_number}, ${station.company?.name}, ${station.region?.name}`,
+      value: station.id!,
+    }))
+  })
+
+  const optionsOfEmployee = computed(() => {
+    return employees.value || []
   })
 
   async function getGasStations() {
-    customLoading.gasStationLoading = true
+    // Если уже загружено или загружается - не делаем запрос
+    if (gas_stations.value?.length || loadingState.gasStationLoading) return
+
+    loadingState.gasStationLoading = true
     try {
-      if (optionsOfGasStations.value.length) return
-      const response = await fetchGasStations()
-      if (response.status === "error") {
-        message.error(response.message || "Ошибка при загрузке АЗС")
-        return []
-      }
-      optionsOfGasStations.value = response.payload.items.map((station) => ({
-        label: `${station.object_number}, ${station.company?.name}, ${station.region?.name}`,
-        value: station.id!,
-      }))
-    } catch (e) {
-      console.error("Error in getGasStations:", e)
+      await dictionaryStore.initDictionary()
     } finally {
-      customLoading.gasStationLoading = false
+      loadingState.gasStationLoading = false
     }
   }
 
   const getEmployee = async () => {
+    // Если уже загружено или загружается - не делаем запрос
+    if (employees.value?.length || loadingState.employeeLoading) return
+
+    loadingState.employeeLoading = true
     try {
-      customLoading.employeeLoading = true
-      if (optionsOfEmployee.value.length) return
-      const response = await fetchEmployees()
-      if (response.status === "error") {
-        throw new Error("Ошибка при загрузке сотрудников")
-      }
-      optionsOfEmployee.value = response.payload.items
-    } catch (error) {
-      console.error("Не удалось загрузить сотрудников:", error)
+      await dictionaryStore.initDictionary()
     } finally {
-      customLoading.employeeLoading = false
+      loadingState.employeeLoading = false
     }
   }
 
   return {
-    customLoading,
+    customLoading: loadingState,
     getGasStations,
     optionsOfGasStations,
     optionsOfEmployee,
