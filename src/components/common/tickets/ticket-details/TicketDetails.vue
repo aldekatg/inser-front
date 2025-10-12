@@ -309,7 +309,6 @@
     TicketDetails,
     TicketUpdatePayload,
   } from "@/api/tickets/types.ts"
-  import { useRouter } from "vue-router"
   import { useAdditionalRequests } from "@/components/common/tickets/ticket-details/composables/useAdditionalRequests.ts"
   import { usePdfGenerator } from "@/components/common/tickets/ticket-details/composables/usePdfGenerator.ts"
   import { criticalityOptions, statusOptions, statusSource } from "@/utils"
@@ -341,8 +340,6 @@
     (e: "update", data: TicketUpdatePayload): void
     (e: "syncWarehouse", data: TicketUpdatePayload): void
   }>()
-
-  const router = useRouter()
 
   const {
     getGasStations,

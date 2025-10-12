@@ -1,5 +1,9 @@
 import { api } from "@/api"
-import type { TicketsReportResponse, WorkHoursReportResponse } from "./types"
+import type {
+  TicketsReportResponse,
+  WorkHoursReportResponse,
+  SlaReportResponse,
+} from "./types"
 
 export const getTicketsReport = async (
   dateFrom: string,
@@ -30,5 +34,18 @@ export const getWorkHoursReport = async (
       },
     }
   )
+  return response.data
+}
+
+export const getSlaReport = async (
+  dateFrom: string,
+  dateTo: string
+): Promise<SlaReportResponse> => {
+  const response = await api.get<SlaReportResponse>(`/analytics/sla`, {
+    params: {
+      date_from: dateFrom,
+      date_to: dateTo,
+    },
+  })
   return response.data
 }

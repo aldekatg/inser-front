@@ -5,7 +5,7 @@
       v-if="!isDateRangeValid"
       type="info"
       title="Информация"
-      style="margin-top: 20px; width: 400px"
+      class="info-alert"
     >
       Пожалуйста, выберите период дат для выгрузки отчетов
     </n-alert>
@@ -17,8 +17,8 @@
             v-model:value="dateRange"
             type="daterange"
             clearable
-            :placeholder="['Дата с', 'Дата по']"
-            style="width: 400px"
+            :placeholder="['Дата начала', 'Дата окончания']"
+            class="date-picker"
             format="dd.MM.yyyy"
           />
         </n-space>
@@ -33,6 +33,7 @@
               type="primary"
               size="large"
               :disabled="!isDateRangeValid || loading"
+              ghost
               :loading="loading"
               @click="exportTicketsReport"
             >
@@ -42,6 +43,24 @@
                 </n-icon>
               </template>
               Выгрузить отчет по заявкам
+            </n-button>
+          </div>
+
+          <div class="button-group">
+            <n-button
+              type="primary"
+              size="large"
+              :disabled="!isDateRangeValid || loading"
+              :loading="loading"
+              @click="exportSlaReport"
+              ghost
+            >
+              <template #icon>
+                <n-icon>
+                  <DocumentAttachOutline />
+                </n-icon>
+              </template>
+              Выгрузить отчет по SLA
             </n-button>
           </div>
 
@@ -77,6 +96,7 @@
     dateRange,
     exportTicketsReport,
     exportWorkHoursReport,
+    exportSlaReport,
     isDateRangeValid,
   } = useAnalytics()
 </script>
@@ -84,8 +104,42 @@
 <style scoped lang="scss">
   .analytics-container {
     padding: 20px;
-    max-width: 1200px;
     margin: 0 auto;
+    max-width: 1200px;
+
+    @media (max-width: 768px) {
+      padding: 15px;
+    }
+
+    @media (max-width: 480px) {
+      padding: 10px;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+
+      @media (max-width: 768px) {
+        font-size: 24px;
+        margin-bottom: 15px;
+      }
+
+      @media (max-width: 480px) {
+        font-size: 20px;
+        margin-bottom: 10px;
+      }
+    }
+  }
+
+  .info-alert {
+    margin-top: 20px;
+    width: 100%;
+    max-width: 600px;
+
+    @media (max-width: 768px) {
+      margin-top: 15px;
+      max-width: 100%;
+    }
   }
 
   .analytics-card {
@@ -94,10 +148,19 @@
 
   .analytics-content {
     padding: 20px 0;
+
+    @media (max-width: 768px) {
+      padding: 15px 0;
+    }
   }
 
   .date-picker-section {
     margin-bottom: 20px;
+    width: 100%;
+
+    @media (max-width: 768px) {
+      margin-bottom: 15px;
+    }
   }
 
   .date-label {
@@ -106,10 +169,31 @@
     color: #333;
     margin-bottom: 10px;
     display: block;
+
+    @media (max-width: 480px) {
+      font-size: 14px;
+    }
+  }
+
+  .date-picker {
+    width: 100%;
+    max-width: 600px;
+
+    @media (max-width: 768px) {
+      max-width: 100%;
+    }
+
+    :deep(.n-input) {
+      width: 100%;
+    }
   }
 
   .export-buttons-section {
     margin-top: 20px;
+
+    @media (max-width: 768px) {
+      margin-top: 15px;
+    }
   }
 
   .button-group {
@@ -119,9 +203,22 @@
 
     :deep(.n-button) {
       width: 100%;
-      max-width: 400px;
+      max-width: 600px;
       height: 50px;
       font-size: 16px;
+      justify-content: center;
+
+      @media (max-width: 768px) {
+        max-width: 100%;
+        height: 48px;
+        font-size: 15px;
+      }
+
+      @media (max-width: 480px) {
+        height: 44px;
+        font-size: 14px;
+        padding: 0 12px;
+      }
     }
   }
 </style>

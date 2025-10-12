@@ -151,11 +151,12 @@ export function useTicketDetailsHelper() {
       }
       message.success("Заявка успешно обновлена")
       ticketInfo.value = { ...response.payload }
+      router.back()
     } catch (e) {
       console.error("Error in updateTicket:", e)
+      message.error((e as any).response?.data?.message)
     } finally {
       loading.value = false
-      router.back()
     }
   }
   async function createTicket(ticket: TicketCreatePayload) {
@@ -168,11 +169,12 @@ export function useTicketDetailsHelper() {
       }
       message.success("Заявка успешно создана")
       ticketInfo.value = { ...response.payload }
+      router.back()
     } catch (e) {
       console.error("Error in updateTicket:", e)
+      message.error((e as any).response?.data?.message)
     } finally {
       loading.value = false
-      await router.push({ name: "Tickets" })
     }
   }
 

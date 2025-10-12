@@ -64,3 +64,67 @@ export interface WorkHoursReportResponse {
     days_worked: number
   }
 }
+
+export interface SlaReportResponse {
+  period: {
+    from: string
+    to: string
+  }
+  totals: {
+    all: number
+    unclosed: number
+    completed_customer_call: number
+    uncompleted_customer_call: number
+    completed_customer_call_sla: number
+    completed_planned: number
+    completed_planned_sla: number
+  }
+  avg_duration_hours: {
+    planned_maintenance?: {
+      sl1?: number
+      sl2?: number
+      sl3?: number
+    }
+    serious?: {
+      sl1?: number
+      sl2?: number
+      sl3?: number
+    }
+    significant?: {
+      sl1?: number
+      sl2?: number
+      sl3?: number
+    }
+    critical?: {
+      sl1?: number
+      sl2?: number
+      sl3?: number
+    }
+    minor?: {
+      sl1?: number
+      sl2?: number
+      sl3?: number
+    }
+  }
+  sla_percent: {
+    planned?: {
+      sl1?: number
+      sl2?: number
+      sl3?: number
+    }
+    customer_call?: {
+      sl1?: number
+      sl2?: number
+      sl3?: number
+    }
+    overall?: {
+      sl1?: number
+      sl2?: number
+      sl3?: number
+    }
+  }
+  meta: {
+    generated_at: string
+    timezone: string
+  }
+}

@@ -1,6 +1,10 @@
 import { ref, computed } from "vue"
 import { useMessage } from "naive-ui"
-import { getTicketsReport, getWorkHoursReport } from "@/api/analytics"
+import {
+  getTicketsReport,
+  getWorkHoursReport,
+  getSlaReport,
+} from "@/api/analytics"
 import type {
   TicketReportItem,
   WorkHoursEmployee,
@@ -350,6 +354,396 @@ export const useAnalytics = () => {
     }
   }
 
+  const exportSlaReport = async () => {
+    if (!dateRange.value) {
+      message.error("Пожалуйста, выберите период дат")
+      return
+    }
+
+    loading.value = true
+    try {
+      const dateFrom = formatDate(dateRange.value[0])
+      const dateTo = formatDate(dateRange.value[1])
+
+      // Ожидаем структуру как ты прислал в примере
+      const response = await getSlaReport(dateFrom, dateTo)
+
+      const workbook = new ExcelJS.Workbook()
+      const ws = workbook.addWorksheet("Отчет по SLA")
+
+      // Утилиты
+      const fmtDate = (s: string) => {
+        const d = new Date(s)
+        const dd = String(d.getDate()).padStart(2, "0")
+        const mm = String(d.getMonth() + 1).padStart(2, "0")
+        const yy = d.getFullYear()
+        return `${dd}.${mm}.${yy}`
+      }
+      const borderThin = {
+        top: { style: "thin" as const },
+        left: { style: "thin" as const },
+        bottom: { style: "thin" as const },
+        right: { style: "thin" as const },
+      }
+      const headFill = {
+        type: "pattern" as const,
+        pattern: "solid" as const,
+        fgColor: { argb: "FFD9D9D9" },
+      }
+      const setWrap = (cell: ExcelJS.Cell, center = true) => {
+        cell.alignment = {
+          wrapText: true,
+          vertical: "middle",
+          horizontal: center ? "center" : "left",
+        }
+      }
+      const pick = (obj: any, path: string[], digits = 2): string => {
+        try {
+          const val = path.reduce((acc, k) => acc?.[k] ?? undefined, obj)
+          if (val === undefined || val === null) return "–"
+          if (typeof val === "number") return val.toFixed(digits)
+          return `${val}`
+        } catch {
+          return "–"
+        }
+      }
+
+      // Заголовок
+      ws.mergeCells("A1:L1")
+      const title = ws.getCell("A1")
+      title.value = `Отчет по ТО и Р с учетом требуемого уровня сервиса за ${fmtDate(response.period.from)} - ${fmtDate(response.period.to)}`
+      title.font = { bold: true, size: 14 }
+      title.alignment = { horizontal: "center", vertical: "middle" }
+      ws.getRow(1).height = 24
+
+      // Блок totals
+      let r = 3
+      const totalsRows: Array<[string, string]> = [
+        ["Общее количество заявок за период", `${response.totals.all} шт.`],
+        [
+          "Общее количество незакрытых заявок за период",
+          `${response.totals.unclosed} шт.`,
+        ],
+        [
+          "Количество выполненных внеплановых заявок",
+          `${response.totals.completed_customer_call} шт.`,
+        ],
+        [
+          "Количество невыполненных внеплановых заявок",
+          `${response.totals.uncompleted_customer_call} шт.`,
+        ],
+        [
+          "Количество выполненных внеплановых заявок с требуемым уровнем сервиса",
+          `${response.totals.completed_customer_call_sla} шт.`,
+        ],
+        [
+          "Количество выполненных плановых заявок",
+          `${response.totals.completed_planned} шт.`,
+        ],
+        [
+          "Количество невыполненных плановых заявок",
+          `${(response?.totals?.all ?? 0) - (response?.totals?.completed_planned ?? 0)} шт.`,
+        ], // если нужно именно «невыполненных плановых»
+        [
+          "Количество выполненных плановых заявок с требуемым уровнем сервиса",
+          `${response.totals.completed_planned_sla} шт.`,
+        ],
+      ]
+
+      // Колонки под totals: A (текст) и B (значение)
+      ws.getColumn(1).width = 55
+      ws.getColumn(2).width = 22
+
+      totalsRows.forEach(([label, val]) => {
+        ws.getCell(`A${r}`).value = label
+        ws.getCell(`B${r}`).value = val
+        ws.getCell(`B${r}`).border = borderThin
+        setWrap(ws.getCell(`A${r}`), false)
+        setWrap(ws.getCell(`B${r}`))
+        r++
+      })
+
+      r += 2 // отступ перед основной таблицей
+
+      // Шапка основной таблицы
+      const headerTop = r
+      // Название параметра
+      ws.mergeCells(`A${headerTop}:A${headerTop + 1}`)
+      ws.getCell(`A${headerTop}`).value =
+        "Наименование параметра оценки работы СТОPO/ сторонней сервисной организации"
+      // Метод расчета
+      ws.mergeCells(`B${headerTop}:B${headerTop + 1}`)
+      ws.getCell(`B${headerTop}`).value = "Метод расчета"
+      // Плановое значение
+      ws.mergeCells(`C${headerTop}:E${headerTop}`)
+      ws.getCell(`C${headerTop}`).value = "Плановое значение*"
+      // Допустимое отклонение
+      ws.mergeCells(`F${headerTop}:H${headerTop}`)
+      ws.getCell(`F${headerTop}`).value = "Допустимое отклонение"
+      // Фактическое
+      ws.mergeCells(`I${headerTop}:K${headerTop}`)
+      ws.getCell(`I${headerTop}`).value = "Фактическое значение"
+      // Вес
+      ws.mergeCells(`L${headerTop}:L${headerTop + 1}`)
+      ws.getCell(`L${headerTop}`).value = "Вес"
+
+      // Подзаголовки SL1..SL3
+      const labels = ["SL1", "SL2", "SL3"]
+      ;["C", "D", "E"].forEach(
+        (col, i) => (ws.getCell(`${col}${headerTop + 1}`).value = labels[i])
+      )
+      ;["F", "G", "H"].forEach(
+        (col, i) => (ws.getCell(`${col}${headerTop + 1}`).value = labels[i])
+      )
+      ;["I", "J", "K"].forEach(
+        (col, i) => (ws.getCell(`${col}${headerTop + 1}`).value = labels[i])
+      )
+
+      // Стили шапки
+      for (let c = 1; c <= 12; c++) {
+        ;[headerTop, headerTop + 1].forEach((rr) => {
+          const cell = ws.getCell(rr, c)
+          cell.fill = headFill
+          cell.font = { bold: true }
+          cell.border = borderThin
+          setWrap(cell)
+        })
+      }
+
+      r = headerTop + 2
+
+      // Таблица (группы)
+      type RowDef = {
+        method: string
+        planned: [string, string, string]
+        deviation: [string, string, string]
+        actualPaths: [string[], string[], string[]]
+        info?: string
+      }
+      type Group = {
+        name: string
+        weight: string
+        rows: RowDef[]
+      }
+
+      const dash = "–"
+      const group1: Group = {
+        name: "Среднее время выполнения внеплановых заявок по категориям",
+        weight: "0,25",
+        rows: [
+          {
+            method:
+              "Частное суммы времени выполнения внеплановых запросов с приоритетом «Критический» к общему количеству запросов с приоритетом «Критический»",
+            planned: ["3 ч", "5 ч", "8 ч"],
+            deviation: ["10%", dash, dash],
+            actualPaths: [
+              ["avg_duration_hours", "critical", "sl1"],
+              ["avg_duration_hours", "critical", "sl2"],
+              ["avg_duration_hours", "critical", "sl3"],
+            ],
+          },
+          {
+            method:
+              "Частное суммы времени выполнения внеплановых запросов с приоритетом «Серьезный» к общему количеству запросов с приоритетом «Серьезный»",
+            planned: ["5 ч", "7 ч", "10 ч"],
+            deviation: ["10%", dash, dash],
+            actualPaths: [
+              ["avg_duration_hours", "serious", "sl1"],
+              ["avg_duration_hours", "serious", "sl2"],
+              ["avg_duration_hours", "serious", "sl3"],
+            ],
+          },
+          {
+            method:
+              "Частное суммы времени выполнения внеплановых запросов с приоритетом «Существенный» к общему количеству запросов с приоритетом «Существенный»",
+            planned: ["7 ч", "9 ч", "12 ч"],
+            deviation: ["10%", dash, dash],
+            actualPaths: [
+              ["avg_duration_hours", "significant", "sl1"],
+              ["avg_duration_hours", "significant", "sl2"],
+              ["avg_duration_hours", "significant", "sl3"],
+            ],
+          },
+          {
+            method:
+              "Частное суммы времени выполнения внеплановых запросов с приоритетом «Минимальный» к общему количеству запросов с приоритетом «Минимальный»",
+            planned: [dash, dash, dash],
+            deviation: ["10%", dash, dash],
+            actualPaths: [
+              ["avg_duration_hours", "minor", "sl1"],
+              ["avg_duration_hours", "minor", "sl2"],
+              ["avg_duration_hours", "minor", "sl3"],
+            ],
+            info: "Нормативное время выполнения – по согласованию с Заказчиком, но не более 120 часов. Нормативные сервисные часы – с 6:00 до 18:00, пн.-пт.",
+          },
+        ],
+      }
+
+      const group2: Group = {
+        name: "Среднее время выполнения планового обслуживания",
+        weight: "0,25",
+        rows: [
+          {
+            method:
+              "Частное суммы времени выполнения планового ТО и Р к общему количеству плановых заявок на ТО и Р",
+            planned: [dash, dash, dash],
+            deviation: ["10%", dash, dash],
+            actualPaths: [
+              ["avg_duration_hours", "planned_maintenance", "sl1"],
+              ["avg_duration_hours", "planned_maintenance", "sl2"],
+              ["avg_duration_hours", "planned_maintenance", "sl3"],
+            ],
+            info: "План-график – ежемесячный с привязкой к декаде месяца. Нормативные сервисные часы – с 6:00 до 18:00, пн.-пт.",
+          },
+        ],
+      }
+
+      const group3: Group = {
+        name: "% выполнения внеплановых заявок в соответствии с необходимым уровнем сервиса",
+        weight: "0,25",
+        rows: [
+          {
+            method:
+              "Частное количества выполненных внеплановых заявок в соответствии с необходимым уровнем сервиса к количеству выполненных внеплановых заявок × 100",
+            planned: ["100%", dash, dash],
+            deviation: ["10%", dash, dash],
+            actualPaths: [
+              ["sla_percent", "customer_call", "sl1"],
+              ["sla_percent", "customer_call", "sl2"],
+              ["sla_percent", "customer_call", "sl3"],
+            ],
+          },
+        ],
+      }
+
+      const group4: Group = {
+        name: "% выполнения плановых заявок в соответствии с необходимым уровнем сервиса",
+        weight: "0,25",
+        rows: [
+          {
+            method:
+              "Частное количества выполненных плановых заявок в соответствии с необходимым уровнем сервиса к количеству выполненных плановых заявок × 100",
+            planned: ["100%", dash, dash],
+            deviation: [dash, dash, dash],
+            actualPaths: [
+              ["sla_percent", "planned", "sl1"],
+              ["sla_percent", "planned", "sl2"],
+              ["sla_percent", "planned", "sl3"],
+            ],
+          },
+        ],
+      }
+
+      const group5: Group = {
+        name: "Общий процент выполнения SLA по всем типам тикетов",
+        weight: "",
+        rows: [
+          {
+            method: "Общий процент выполнения SLA по всем типам заявок",
+            planned: [dash, dash, dash],
+            deviation: [dash, dash, dash],
+            actualPaths: [
+              ["sla_percent", "overall", "sl1"],
+              ["sla_percent", "overall", "sl2"],
+              ["sla_percent", "overall", "sl3"],
+            ],
+          },
+        ],
+      }
+
+      const groups = [group1, group2, group3, group4, group5]
+
+      // Подготовим ширины колонок под основную таблицу
+      ws.getColumn(1).width = 40 // A
+      ws.getColumn(2).width = 50 // B
+      for (let c = 3; c <= 11; c++) ws.getColumn(c).width = 12 // C..K
+      ws.getColumn(12).width = 10 // L
+
+      for (const g of groups) {
+        const start = r
+        g.rows.forEach((row, idx) => {
+          if (idx === 0) ws.getCell(`A${r}`).value = g.name
+          ws.getCell(`B${r}`).value = row.method
+
+          // План
+          ws.getCell(`C${r}`).value = row.planned[0]
+          ws.getCell(`D${r}`).value = row.planned[1]
+          ws.getCell(`E${r}`).value = row.planned[2]
+
+          // Допуск
+          ws.getCell(`F${r}`).value = row.deviation[0]
+          ws.getCell(`G${r}`).value = row.deviation[1]
+          ws.getCell(`H${r}`).value = row.deviation[2]
+
+          // Факт (подставим только SL1 из данных, остальное «–»)
+          const a1 = row.actualPaths[0].length
+            ? pick(response, row.actualPaths[0])
+            : "–"
+          const a2 = row.actualPaths[1].length
+            ? pick(response, row.actualPaths[1])
+            : "–"
+          const a3 = row.actualPaths[2].length
+            ? pick(response, row.actualPaths[2])
+            : "–"
+          ws.getCell(`I${r}`).value = a1
+          ws.getCell(`J${r}`).value = a2
+          ws.getCell(`K${r}`).value = a3
+
+          if (idx === 0) ws.getCell(`L${r}`).value = g.weight
+
+          // Стили строки
+          for (let c = 1; c <= 12; c++) {
+            const cell = ws.getCell(r, c)
+            cell.border = borderThin
+            setWrap(cell, c !== 2 ? true : false) // метод расчета выравниваем по левому краю
+          }
+
+          r++
+
+          // Строка info (если есть)
+          if (row.info) {
+            ws.mergeCells(`C${r}:K${r}`)
+            ws.getCell(`C${r}`).value = row.info
+            ws.getCell(`C${r}`).font = { size: 9, italic: true }
+            setWrap(ws.getCell(`C${r}`), false)
+            // границы на всю строку
+            for (let c = 1; c <= 12; c++) ws.getCell(r, c).border = borderThin
+            r++
+          }
+        })
+
+        // Объединения по группе
+        if (g.rows.length > 1) {
+          ws.mergeCells(`A${start}:A${r - 1}`)
+          ws.mergeCells(`L${start}:L${start + g.rows.length - 1}`)
+        }
+
+        // Пустая строка между группами
+        r++
+      }
+
+      // Генерация файла
+      const fileName = `Отчет_SLA_${dateFrom}_${dateTo}.xlsx`
+      const buffer = await workbook.xlsx.writeBuffer()
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      })
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement("a")
+      link.href = url
+      link.download = fileName
+      link.click()
+      window.URL.revokeObjectURL(url)
+
+      message.success("Отчет по SLA успешно выгружен")
+    } catch (e) {
+      console.error("Ошибка при выгрузке отчета SLA:", e)
+      message.error("Ошибка при выгрузке отчета SLA")
+    } finally {
+      loading.value = false
+    }
+  }
+
   const isDateRangeValid = computed(() => {
     return dateRange.value !== null && dateRange.value.length === 2
   })
@@ -359,6 +753,7 @@ export const useAnalytics = () => {
     dateRange,
     exportTicketsReport,
     exportWorkHoursReport,
+    exportSlaReport,
     isDateRangeValid,
   }
 }
