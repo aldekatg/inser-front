@@ -572,7 +572,7 @@
 
   function saveTicket() {
     formValue.value.technical_tasks_preview =
-      formValue.value.technical_tasks_details.map((item) => item.code)
+      formValue.value.technical_tasks_details?.map((item) => item.code) || []
 
     if (isUpdateForm.value) {
       emit("update", formValue.value as TicketUpdatePayload)
@@ -675,6 +675,7 @@
         display: flex;
         justify-content: flex-end;
         gap: rem(10);
+        flex-wrap: wrap;
       }
     }
   }
@@ -693,6 +694,21 @@
 
     li {
       margin-bottom: 2px;
+    }
+  }
+
+  // Медиа-запрос для маленьких экранов
+  @media (max-width: 470px) {
+    .ticket-details {
+      &__action {
+        .buttons-row {
+          flex-direction: column;
+
+          :deep(.n-button) {
+            width: 100%;
+          }
+        }
+      }
     }
   }
 </style>

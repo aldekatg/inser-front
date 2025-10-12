@@ -84,6 +84,11 @@ const routes: Array<RouteRecordRaw> = [
             "@/components/common/tariffs/checklists/ChecklistComponent.vue"
           ),
       },
+      {
+        path: "/analytics",
+        name: "Analytics",
+        component: () => import("@/components/common/analytics/Analytics.vue"),
+      },
     ],
   },
 ]

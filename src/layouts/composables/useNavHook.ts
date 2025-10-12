@@ -17,6 +17,7 @@ import {
   DocumentAttachOutline as OrdersIcon,
   BuildOutline as JobIcon,
   CheckboxOutline,
+  StatsChartOutline as AnalyticsIcon,
 } from "@vicons/ionicons5"
 import { useAuthStore } from "@/store/useAuthStore.ts"
 
@@ -74,6 +75,21 @@ export const useNavHook = () => {
         ),
       key: "Employees",
       icon: renderIcon(PersonAddIcon),
+      show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
+    },
+    {
+      label: () =>
+        h(
+          RouterLink,
+          {
+            to: {
+              name: "Analytics",
+            },
+          },
+          { default: () => "Аналитика" }
+        ),
+      key: "Analytics",
+      icon: renderIcon(AnalyticsIcon),
       show: usePermissionsAccess(["superadmin", "admin", "callCenter"]),
     },
     {

@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Analytics: typeof import('./src/components/common/analytics/Analytics.vue')['default']
     BaseTable: typeof import('./src/components/base/BaseTable.vue')['default']
     BaseTreeSelect: typeof import('./src/components/base/BaseTreeSelect.vue')['default']
     BurgerMenu: typeof import('./src/components/common/BurgerMenu.vue')['default']
@@ -22,6 +23,7 @@ declare module 'vue' {
     GasStationModal: typeof import('./src/components/common/gas-stations/GasStationModal.vue')['default']
     GasStations: typeof import('./src/components/common/gas-stations/GasStations.vue')['default']
     Materials: typeof import('./src/components/common/tickets/ticket-details/sections/Materials.vue')['default']
+    NAlert: typeof import('naive-ui')['NAlert']
     NButton: typeof import('naive-ui')['NButton']
     NCard: typeof import('naive-ui')['NCard']
     NCheckbox: typeof import('naive-ui')['NCheckbox']
@@ -36,6 +38,7 @@ declare module 'vue' {
     NFormItem: typeof import('naive-ui')['NFormItem']
     NFormItemGi: typeof import('naive-ui')['NFormItemGi']
     NGrid: typeof import('naive-ui')['NGrid']
+    NH1: typeof import('naive-ui')['NH1']
     NH2: typeof import('naive-ui')['NH2']
     NH3: typeof import('naive-ui')['NH3']
     NIcon: typeof import('naive-ui')['NIcon']

@@ -2,7 +2,7 @@
   <div class="tickets-component">
     <!-- Header Section -->
     <header class="tickets-component__header">
-      <h1 class="tickets-component__title">Заявки</h1>
+      <h1>Заявки</h1>
       <n-button type="primary" @click="navigateToCreate" :loading="loading">
         Добавить заявку
       </n-button>
@@ -126,13 +126,6 @@
       justify-content: space-between;
       padding-bottom: rem(16);
       border-bottom: 1px solid var(--n-border-color);
-    }
-
-    &__title {
-      margin: 0;
-      font-size: rem(24);
-      font-weight: 600;
-      color: var(--n-text-color);
     }
 
     &__tabs {
