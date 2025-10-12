@@ -19,8 +19,6 @@
       :loading="loading"
       :ticket="ticketInfo"
       @syncWarehouse="syncWarehouse"
-      :checklists="checklists"
-      :checklistItems="checklistItems"
       :rules="rules"
       @update="updateTicket"
       type="change"
@@ -44,10 +42,8 @@
     formValue,
     ticketInfo,
     initTicketById,
-    checklists,
     updateTicket,
     syncWarehouse,
-    checklistItems,
     initCheckLists,
   } = useTicketDetailsHelper()
 

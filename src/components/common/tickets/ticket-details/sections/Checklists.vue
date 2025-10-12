@@ -37,6 +37,7 @@
   import { nextTick } from "vue"
   import type { TabsInst } from "naive-ui"
   import type { TechnicalTaskDetail } from "@/api/tickets/types.ts"
+  import { useTicketDetailsHelper } from "@/components/common/tickets/ticket-details/composables/useTicketDetailsHelper.ts"
   import type {
     ChecklistType,
     ChecklistItemsType,
@@ -59,17 +60,58 @@
 
   const doneState = reactive<Record<number, boolean>>({})
 
-  // Строим табы из technicalDetails
+  const { checklists: allChecklists, initCheckLists } = useTicketDetailsHelper()
+
+  // Функция для получения всех доступных чек-листов для ТЗ
+  function getAllChecklistsForTechnicalTask(
+    tdId: number,
+    existingChecklists: ChecklistType[] = []
+  ): ChecklistType[] {
+    // Получаем все доступные чек-листы для данного ТЗ из useTicketDetailsHelper
+    const availableChecklists = (allChecklists.value ?? []).filter(
+      (cl) => cl.technical_task_id === tdId
+    )
+
+    // Создаём карту существующих чек-листов по id (чтобы сохранить состояние done)
+    const existingMap = new Map<number, ChecklistType>()
+    existingChecklists.forEach((cl) => {
+      existingMap.set(cl.id, cl)
+    })
+
+    // Объединяем: берём все доступные чек-листы и дополняем их состоянием из существующих
+    const merged = availableChecklists.map((availableCl) => {
+      const existing = existingMap.get(availableCl.id)
+      if (existing) {
+        // Чек-лист уже был в заявке - берём его с состоянием done
+        return existing
+      } else {
+        // Чек-лист доступен, но ещё не был заполнен - добавляем с пустым состоянием
+        return {
+          ...availableCl,
+          items: (availableCl.items ?? []).map((item) => ({
+            ...item,
+            done: false,
+          })),
+        }
+      }
+    })
+
+    return merged.filter((cl) => (cl.items?.length ?? 0) > 0)
+  }
+
+  // Строим табы из technicalDetails и всех доступных чек-листов
   watch(
-    () => props.technicalDetails,
-    async (details) => {
+    () => [props.technicalDetails, allChecklists.value],
+    async () => {
+      const details = props.technicalDetails
       const prev = new Map<string, Tab>(tabs.value.map((t) => [t.code, t]))
+
       tabs.value = details
         .map((td) => {
-          const lists = (td.checklists ?? []).filter(
-            (cl: ChecklistType) => (cl.items?.length ?? 0) > 0
-          )
+          // Получаем ВСЕ доступные чек-листы для этого ТЗ, не только те что в пропсах
+          const lists = getAllChecklistsForTechnicalTask(td.id!, td.checklists)
           const existing = prev.get(td.code)
+
           // ВАЖНО: всегда обновляем checklists у существующего таба,
           // чтобы не тащить устаревшее содержимое между ТЗ
           return existing
@@ -121,20 +163,33 @@
     doneState[id] = val
 
     // Обновляем технические задания с новым состоянием done
-    const updatedDetails = props.technicalDetails.map((td) => ({
-      ...td,
-      checklists: td.checklists?.map((cl) => ({
+    // Важно: берём ВСЕ чек-листы для каждого ТЗ, не только те что были в пропсах
+    const updatedDetails = props.technicalDetails.map((td) => {
+      const allChecklistsForTd = getAllChecklistsForTechnicalTask(
+        td.id!,
+        td.checklists
+      )
+
+      const updatedChecklists = allChecklistsForTd.map((cl) => ({
         ...cl,
         items: cl.items?.map((item) => ({
           ...item,
           done: doneState[item.id] ?? false,
         })),
-      })),
-    }))
+      }))
+
+      return {
+        ...td,
+        checklists: updatedChecklists,
+      }
+    })
 
     emit("change", { ...doneState })
     emit("update:technicalDetails", updatedDetails)
   }
+  onMounted(() => {
+    initCheckLists()
+  })
 </script>
 
 <style lang="scss" scoped>
