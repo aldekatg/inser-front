@@ -130,9 +130,9 @@ export const useAnalytics = () => {
       }
 
       // Добавление данных с цветной стилизацией
-      tickets.forEach((ticket: TicketReportItem, index: number) => {
+      tickets.forEach((ticket: TicketReportItem, _: number) => {
         const row = worksheet.addRow({
-          ticket: ticket.ticket_number,
+          ticket: ticket,
           region: ticket.region_name || "",
           object: ticket.gas_station_number || "",
           status: getStatusLabel(ticket.status),
