@@ -50,6 +50,7 @@ export interface CompanyType {
 
 export interface WarehouseType {
   id?: number
+  guid: string
   name: string
   responsible_iin: string
 }

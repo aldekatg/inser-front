@@ -16,6 +16,9 @@
             placeholder="Введите название склада"
           />
         </n-form-item>
+        <n-form-item label="GUID" path="guid">
+          <n-input v-model:value="props.form.guid" placeholder="Введите GUID" />
+        </n-form-item>
         <n-form-item label="Введите ИИН ответственного" path="responsible_iin">
           <n-input
             v-model:value="props.form.responsible_iin"
@@ -64,6 +67,11 @@
     name: {
       required: true,
       message: "Название обязательно",
+      trigger: ["blur", "input"],
+    },
+    guid: {
+      required: true,
+      message: "GUID обязателен",
       trigger: ["blur", "input"],
     },
     responsible_iin: {

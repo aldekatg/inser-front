@@ -55,7 +55,7 @@ export function useRegions() {
       },
       {
         icon: TrashIcon,
-        popconfirmText: "Вы уверены, что хотите удалить эту компанию?",
+        popconfirmText: "Вы уверены, что хотите удалить этот регион?",
         type: "error",
         onClick: () => removeRegion(row.id!),
       },
@@ -78,12 +78,12 @@ export function useRegions() {
       const response = await fetchRegions()
 
       if (response.status === "error")
-        throw new Error("Ошибка при загрузке компаний")
+        throw new Error("Ошибка при загрузке регионов")
 
       regions.value = response.payload.items
     } catch (error) {
-      console.error("Ошибка при загрузке компаний:", error)
-      message.error("Ошибка при загрузке компаний")
+      console.error("Ошибка при загрузке регионов:", error)
+      message.error("Ошибка при загрузке регионов")
     } finally {
       loading.value = false
     }
@@ -102,12 +102,12 @@ export function useRegions() {
       }
       if (response.status === "error") throw new Error(response.message || "")
 
-      message.success("Компания успешно сохранена")
+      message.success("Регион успешно сохранен")
       closeModal()
       await initRegions()
     } catch (e) {
       console.error(e)
-      message.error("Ошибка при сохранении компании")
+      message.error("Ошибка при сохранении региона")
     } finally {
       loading.value = false
       await store.initDictionary() // Обновляем словарь в хранилище

@@ -13,7 +13,7 @@
         <n-form-item label="Название" path="name">
           <n-input
             v-model:value="props.form.name"
-            placeholder="Введите название компании"
+            placeholder="Введите название региона"
           />
         </n-form-item>
       </n-form>

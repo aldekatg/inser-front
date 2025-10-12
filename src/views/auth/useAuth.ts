@@ -1,4 +1,4 @@
-import { ref } from "vue"
+import { ref, onMounted } from "vue"
 import type { FormInst } from "naive-ui"
 import { useAuthStore } from "@/store/useAuthStore.ts"
 import { login } from "@/api/auth"
@@ -16,6 +16,7 @@ export const useAuth = () => {
     password: "",
   })
   const loading = ref<boolean>(false)
+  const rememberMe = ref<boolean>(false)
 
   const rules = {
     mail: {
@@ -36,6 +37,19 @@ export const useAuth = () => {
     },
   }
 
+  // Загрузка сохраненных данных при монтировании
+  onMounted(() => {
+    const savedEmail = localStorage.getItem("rememberedEmail")
+    const savedPassword = localStorage.getItem("rememberedPassword")
+    const savedRemember = localStorage.getItem("rememberMe")
+
+    if (savedEmail && savedPassword && savedRemember === "true") {
+      formValue.value.mail = savedEmail
+      formValue.value.password = savedPassword
+      rememberMe.value = true
+    }
+  })
+
   const loginHandler = async (email: string, password: string) => {
     loading.value = true
     console.log(email, password)
@@ -44,6 +58,17 @@ export const useAuth = () => {
 
       if (!response || response.status === "error") {
         throw new Error("No access token in response")
+      }
+
+      // Сохранение или удаление данных в зависимости от чекбокса
+      if (rememberMe.value) {
+        localStorage.setItem("rememberedEmail", email)
+        localStorage.setItem("rememberedPassword", password)
+        localStorage.setItem("rememberMe", "true")
+      } else {
+        localStorage.removeItem("rememberedEmail")
+        localStorage.removeItem("rememberedPassword")
+        localStorage.removeItem("rememberMe")
       }
 
       initAuth(response.payload.access_token, response.payload.refresh_token)
@@ -72,5 +97,6 @@ export const useAuth = () => {
     formRef,
     formValue,
     loading,
+    rememberMe,
   }
 }

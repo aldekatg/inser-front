@@ -27,6 +27,7 @@ export function useWarehouses() {
   const warehouseForm = ref<WarehouseType>({
     name: "",
     responsible_iin: "",
+    guid: "",
     id: undefined,
   })
 
@@ -34,6 +35,10 @@ export function useWarehouses() {
     {
       title: "Название",
       key: "name",
+    },
+    {
+      title: "GUID",
+      key: "guid",
     },
     {
       title: "Ответственный",
@@ -73,6 +78,7 @@ export function useWarehouses() {
     isModalOpen.value = false
     warehouseForm.value = {
       name: "",
+      guid: "",
       responsible_iin: "",
       id: undefined,
     }
@@ -84,12 +90,12 @@ export function useWarehouses() {
       const response = await fetchWarehouses()
 
       if (response.status === "error")
-        throw new Error("Ошибка при загрузке компаний")
+        throw new Error("Ошибка при загрузке складов")
 
       warehouses.value = response.payload.items
     } catch (error) {
-      console.error("Ошибка при загрузке компаний:", error)
-      message.error("Ошибка при загрузке компаний")
+      console.error("Ошибка при загрузке складов:", error)
+      message.error("Ошибка при загрузке складов")
     } finally {
       loading.value = false
     }
@@ -108,12 +114,12 @@ export function useWarehouses() {
       }
       if (response.status === "error") throw new Error(response.message || "")
 
-      message.success("Компания успешно сохранена")
+      message.success("Склад успешно сохранен")
       closeModal()
       await initWarehouses() // Refresh the list after saving
     } catch (e) {
       console.error(e)
-      message.error("Ошибка при сохранении компании")
+      message.error("Ошибка при сохранении склада")
     } finally {
       loading.value = false
       await store.initDictionary() // Обновляем словарь в хранилище
@@ -125,8 +131,8 @@ export function useWarehouses() {
       const response = await deleteWarehouse(id)
       if (response.status === "error") throw new Error(response.message || "")
 
-      message.success("Компания успешно удален")
-      await initWarehouses() // Refresh the list after deletion
+      message.success("Склад успешно удален")
+      await initWarehouses()
     } catch (e) {
       console.error(e)
     }

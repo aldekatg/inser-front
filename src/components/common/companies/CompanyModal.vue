@@ -13,7 +13,7 @@
         <n-form-item label="Название" path="name">
           <n-input
             v-model:value="props.form.name"
-            placeholder="Введите название региона"
+            placeholder="Введите название компании"
           />
         </n-form-item>
         <n-form-item label="БИН" path="bin">
@@ -68,7 +68,7 @@
     },
     bin: {
       required: true,
-      message: "BIN обязателен",
+      message: "БИН обязателен",
       trigger: ["blur", "input"],
     },
   }

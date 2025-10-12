@@ -22,6 +22,11 @@
           />
         </n-form-item>
         <n-form-item>
+          <n-checkbox v-model:checked="rememberMe" :disabled="loading">
+            Запомнить меня
+          </n-checkbox>
+        </n-form-item>
+        <n-form-item>
           <n-button
             block
             type="primary"
@@ -39,7 +44,8 @@
 <script setup lang="ts">
   import { useAuth } from "@/views/auth/useAuth.ts"
 
-  const { loginHandler, rules, formRef, formValue, loading } = useAuth()
+  const { loginHandler, rules, formRef, formValue, loading, rememberMe } =
+    useAuth()
 
   const handleValidateClick = async (e: MouseEvent) => {
     e.preventDefault()
