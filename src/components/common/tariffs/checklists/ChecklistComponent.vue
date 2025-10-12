@@ -162,6 +162,11 @@
       width: 50,
     },
     {
+      title: "Код",
+      key: "code",
+      width: 50,
+    },
+    {
       title: "Описание",
       width: "60%",
       key: "description",

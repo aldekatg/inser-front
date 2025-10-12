@@ -242,6 +242,15 @@
               </ul>
             </div>
           </n-tooltip>
+          <n-button
+            strong
+            secondary
+            v-if="isUpdateForm"
+            @click="handleGeneratePDF"
+            :loading="loading"
+          >
+            Генерировать pdf
+          </n-button>
           <n-tooltip
             v-if="!isFormValid && missingFields.length > 0"
             trigger="hover"
@@ -277,6 +286,7 @@
           >
             Сохранить
           </n-button>
+
           <n-button secondary @click="$router.back()">Отмена</n-button>
         </div>
       </div>
@@ -300,6 +310,7 @@
     TicketUpdatePayload,
   } from "@/api/tickets/types.ts"
   import { useAdditionalRequests } from "@/components/common/tickets/ticket-details/composables/useAdditionalRequests.ts"
+  import { usePdfGenerator } from "@/components/common/tickets/ticket-details/composables/usePdfGenerator.ts"
   import { criticalityOptions, statusOptions, statusSource } from "@/utils"
   import { TicketStatusDictionary } from "@/utils/types.ts"
   import Materials from "@/components/common/tickets/ticket-details/sections/Materials.vue"
@@ -337,6 +348,8 @@
     optionsOfEmployee,
     getEmployee,
   } = useAdditionalRequests()
+
+  const { generatePDF } = usePdfGenerator()
 
   const formValue = ref<TicketCreatePayload | TicketUpdatePayload>(formData)
   const formRef = ref()
@@ -598,6 +611,19 @@
   // Обновляем технические задания с состоянием чекбоксов
   function updateTechnicalDetails(updatedDetails: TechnicalTaskDetail[]) {
     formValue.value.technical_tasks_details = updatedDetails
+  }
+
+  async function handleGeneratePDF() {
+    if (!formValue.value) {
+      console.error("Нет данных заявки для генерации PDF")
+      return
+    }
+
+    try {
+      await generatePDF(formValue.value as TicketDetails)
+    } catch (error) {
+      console.error("Ошибка при генерации PDF:", error)
+    }
   }
 
   // Date pickers expect number (timestamp). Convert ISO/string/Date ⇄ number

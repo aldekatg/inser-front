@@ -144,9 +144,9 @@
     gap: rem(16);
 
     &__group {
+      margin-bottom: rem(15);
       display: flex;
       flex-direction: column;
-      gap: rem(8);
     }
 
     &__items {
