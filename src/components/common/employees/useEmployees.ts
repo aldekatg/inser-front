@@ -15,7 +15,7 @@ import {
   TrashOutline as TrashIcon,
 } from "@vicons/ionicons5"
 import { ActionButtons } from "@/utils"
-import { useMessage, useNotification } from "naive-ui"
+import { useMessage } from "naive-ui"
 import { PaginationType, SortedFieldsType } from "@/types.ts"
 
 export function useEmployees() {
@@ -53,7 +53,6 @@ export function useEmployees() {
   const loading = ref(false)
 
   const message = useMessage()
-  const notification = useNotification()
 
   const columns = ref([
     {
