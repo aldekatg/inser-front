@@ -237,6 +237,10 @@
 </script>
 
 <style scoped lang="scss">
+  :deep(.n-tree) {
+    max-height: rem(500) !important;
+    overflow-y: auto !important;
+  }
   .tree-component {
     flex-direction: column;
     display: flex;
