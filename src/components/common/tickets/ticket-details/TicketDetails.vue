@@ -523,7 +523,7 @@
   const isFormValid = computed(() => {
     if (isUpdateForm.value) {
       // Для редактирования проверяем только основные поля
-      return false
+      return true
     } else {
       // Для создания проверяем все обязательные поля
       return !!(

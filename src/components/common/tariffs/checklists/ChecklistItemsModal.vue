@@ -10,11 +10,20 @@
     >
       <template #header-extra>Заполните поля</template>
       <n-form :model="props.form" :rules="rules" ref="formRef">
-        <n-form-item label="ТЗ" path="checklist_id">
+        <n-form-item label="ТЗ">
+          <n-select
+            v-model:value="selectedTechTask"
+            placeholder="Выберите ТЗ"
+            :options="technical_tasks"
+            value-field="id"
+            label-field="code"
+          />
+        </n-form-item>
+        <n-form-item label="Чек-листы" path="checklist_id">
           <n-select
             v-model:value="props.form.checklist_id"
-            placeholder="Выберите ТЗ"
-            :options="checklists"
+            placeholder="Выберите чек-лист"
+            :options="filteredChecklists"
             value-field="id"
             label-field="description"
           />
@@ -51,6 +60,8 @@
   import { defineProps, defineEmits } from "vue"
   import { useMessage, FormInst } from "naive-ui"
   import { ChecklistItemsPayload } from "@/api/gas-stations/types.ts"
+  import { storeToRefs } from "pinia"
+  import { useDictionaryStore } from "@/store/useDictionary.ts"
   import { useChecklistHelper } from "@/components/common/tariffs/checklists/useChecklistHelper.ts"
 
   const message = useMessage()
@@ -61,19 +72,27 @@
   }>()
 
   const { checklists, initChecklist } = useChecklistHelper()
+  const { technical_tasks } = storeToRefs(useDictionaryStore())
 
   const emit = defineEmits(["save", "cancel"])
 
   const show = computed(() => props.modelValue)
+  const isSubmitting = ref(false)
+  const selectedTT = ref<number | null>(null)
 
   const formRef = ref<FormInst | null>(null)
-  const isSubmitting = ref(false)
+
+  const filteredChecklists = computed(() => {
+    return checklists.value?.filter(
+      (c) => c.technical_task_id === selectedTT.value
+    )
+  })
 
   const rules = {
     checklist_id: {
       type: "number",
       required: true,
-      message: "Выберите ТЗ",
+      message: "Выберите чек-лист",
       trigger: ["blur", "change"],
     },
     code: {
@@ -89,10 +108,20 @@
   }
 
   watch(show, (newVal) => {
-    if (!newVal) {
+    if (newVal && props.isEdit && props.form.checklist_id) {
+      // При открытии в режиме редактирования устанавливаем ТЗ из чек-листа
+      const checklist = checklists.value?.find(
+        (c) => c.id === props.form.checklist_id
+      )
+      if (checklist) {
+        selectedTT.value = checklist.technical_task_id
+      }
+    } else if (!newVal) {
+      // При закрытии очищаем форму
       props.form.checklist_id = null
       props.form.code = ""
       props.form.description = ""
+      selectedTT.value = null
     }
   })
 
@@ -110,5 +139,30 @@
     })
   }
 
-  onMounted(() => initChecklist())
+  const selectedTechTask = computed({
+    get() {
+      // Если уже выбран чек-лист, берем его technical_task_id
+      if (props.form.checklist_id) {
+        const checklist = checklists.value?.find(
+          (c) => c.id === props.form.checklist_id
+        )
+        if (checklist) {
+          return checklist.technical_task_id
+        }
+      }
+      // Иначе возвращаем текущее выбранное значение
+      return selectedTT.value
+    },
+    set(value) {
+      selectedTT.value = value
+      // При изменении ТЗ сбрасываем выбранный чек-лист
+      if (props.form.checklist_id) {
+        props.form.checklist_id = null
+      }
+    },
+  })
+
+  onMounted(() => {
+    initChecklist()
+  })
 </script>
