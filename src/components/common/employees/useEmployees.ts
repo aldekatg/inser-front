@@ -162,19 +162,11 @@ export function useEmployees() {
       if (response.status === "error") throw new Error(response.message || "")
 
       message.success("Сотрудник успешно сохранен")
-      console.log("Сотрудник успешно сохранен")
       closeModal()
       await initEmployees()
     } catch (e: any) {
       console.log(e.response.data.message)
-      if (e.response.data.message)
-        notification.error({
-          content: e.response.data.message,
-        })
-
-      if (e?.response?.data?.message === "IIN already exists") {
-        message.error("Сотрудник с таким ИИН уже существует")
-      }
+      if (e.response.data.message) message.error(e.response.data.message)
     } finally {
       loading.value = false // Refresh the list after saving
     }

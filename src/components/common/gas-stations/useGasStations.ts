@@ -112,13 +112,14 @@ export function useGasStations() {
       }
       if (response.status === "error") throw new Error(response.message || "")
 
-      message.success("Заправка успешно сохранена")
+      message.success("АЗС успешно сохранен")
+      closeModal()
+      await initGasStations()
     } catch (e) {
       console.error(e)
+      message.error((e as any).response?.data?.message)
     } finally {
       loading.value = false
-      closeModal()
-      await initGasStations() // Refresh the list after saving
     }
   }
 
@@ -129,12 +130,12 @@ export function useGasStations() {
       const response = await deleteGasStation(id)
       if (response.status === "error") throw new Error(response.message || "")
 
-      message.success("Заправка успешно удалена")
+      message.success("АЗС успешно удалена")
+      await initGasStations()
     } catch (e) {
       console.error(e)
     } finally {
       loading.value = false
-      await initGasStations() // Refresh the list after deletion
     }
   }
 
@@ -151,7 +152,7 @@ export function useGasStations() {
       {
         icon: TrashIcon,
         type: "error",
-        popconfirmText: "Вы уверены, что хотите удалить эту заправку?",
+        popconfirmText: "Вы уверены, что хотите удалить эту АЗС?",
         onClick: () => removeGasStation(row.id!),
       },
     ]
