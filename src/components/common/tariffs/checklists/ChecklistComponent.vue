@@ -188,13 +188,13 @@
     },
     {
       title: "Описание",
-      width: "70%",
       key: "description",
     },
     {
       title: "Действия",
       key: "actions",
       align: "center",
+      width: 100,
       fixed: "right",
       className: "custom-buttons",
       render(row: any) {
@@ -225,16 +225,17 @@
     },
     {
       title: "Код",
+      width: 100,
       key: "code",
     },
     {
       title: "Описание",
-      width: "60%",
       key: "description",
     },
     {
       title: "Действия",
       key: "actions",
+      width: 100,
       fixed: "right",
       className: "custom-buttons",
       render(row: any) {

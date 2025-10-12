@@ -55,6 +55,7 @@
         <n-form-item label="Регион" path="region_id">
           <n-select
             v-model:value="props.form.region_id"
+            clearable
             :options="isRegions"
             :value-field="'id'"
             :label-field="'name'"
@@ -65,6 +66,7 @@
           <n-select
             v-model:value="props.form.warehouse_id"
             :options="isWarehouses"
+            clearable
             :value-field="'id'"
             :label-field="'name'"
             placeholder="Выберите склад"
@@ -75,6 +77,7 @@
             v-model:value="props.form.parent_id"
             :options="isParentId"
             :value-field="'id'"
+            clearable
             :label-field="'full_name'"
             placeholder="Выберите руководителя"
           />
@@ -137,8 +140,14 @@
   const rules = {
     iin: {
       max: 12,
+      min: 12,
       required: true,
       message: "ИИН обязателен",
+      validator(_: unknown, value: string) {
+        if (value && value.length !== 12) {
+          return new Error("ИИН должен содержать 12 цифр")
+        }
+      },
       trigger: ["blur", "input"],
     },
     phone: {

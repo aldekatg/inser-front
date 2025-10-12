@@ -105,7 +105,7 @@ export function useEmployees() {
       {
         icon: TrashIcon,
         type: "error",
-        popconfirmText: "Вы уверены, что хотите удалить эту сотрудника?",
+        popconfirmText: "Вы уверены, что хотите удалить этого сотрудника?",
         onClick: () => removeEmployee(row.id!),
       },
     ]
@@ -151,11 +151,13 @@ export function useEmployees() {
       let isEdit = form.id !== null
       loading.value = true
       let response
+      let formData = { ...form, phone: form.phone.replace(/[\s+]/g, "") }
+
       if (isEdit) {
         console.log("loading")
-        response = await updateEmployee(form.id!, form)
+        response = await updateEmployee(formData.id!, formData)
       } else {
-        response = await createEmployee(form)
+        response = await createEmployee(formData)
       }
       if (response.status === "error") throw new Error(response.message || "")
 
