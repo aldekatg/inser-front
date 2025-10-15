@@ -15,6 +15,7 @@
           <div class="material-field">
             <label class="field-label">Материалы</label>
             <n-select
+              :disabled="disabled"
               v-model:value="material.nomenclature_guid"
               :options="materialOptionsWithQuantity"
               :loading="materialsLoading"
@@ -28,6 +29,7 @@
             <label class="field-label">Количество расходников</label>
             <n-input-number
               clearable
+              :disabled="disabled"
               :max="getRowMax(material)"
               v-model:value="material.quantity"
               :loading="loading"
@@ -40,6 +42,7 @@
             <n-button
               type="error"
               secondary
+              :disabled="disabled"
               @click="removeMaterial(tab, mIdx)"
               :loading="loading"
             >
@@ -52,6 +55,7 @@
       <n-button
         style="margin-bottom: 12px"
         size="small"
+        :disabled="disabled"
         @click="addMaterial(tab)"
       >
         Добавить материал
@@ -71,9 +75,11 @@
     materials: MaterialItem[]
     selectedTechTasks: TechnicalTaskDetail[]
     guid: string
+    disabled?: boolean
     loading?: boolean
   }>()
-  const { materials, selectedTechTasks, guid, loading } = toRefs(props)
+  const { materials, selectedTechTasks, guid, loading, disabled } =
+    toRefs(props)
 
   const message = useMessage()
   const tabsRef = ref<TabsInst | null>(null)

@@ -91,14 +91,14 @@ export const useAnalytics = () => {
 
       // Определение колонок
       worksheet.columns = [
-        { header: "Элемент №", key: "ticket", width: 12 },
+        { header: "№ заявки", key: "ticket", width: 12 },
         { header: "Участок", key: "region", width: 20 },
         { header: "Объект", key: "object", width: 15 },
         { header: "Статус", key: "status", width: 25 },
         { header: "Критичность", key: "criticality", width: 25 },
         { header: "Дата подачи заявки", key: "submitted", width: 20 },
         { header: "Дата закрытия заявки", key: "closed", width: 20 },
-        { header: "Заявки", key: "tasks", width: 30 },
+        { header: "ТЗ", key: "tasks", width: 30 },
         { header: "Содержание записи", key: "content", width: 30 },
         { header: "№ СЛ", key: "service_sheet", width: 10 },
         { header: "Исполнитель", key: "employee", width: 25 },
@@ -132,7 +132,7 @@ export const useAnalytics = () => {
       // Добавление данных с цветной стилизацией
       tickets.forEach((ticket: TicketReportItem, _: number) => {
         const row = worksheet.addRow({
-          ticket: ticket,
+          ticket: ticket.ticket_number,
           region: ticket.region_name || "",
           object: ticket.gas_station_number || "",
           status: getStatusLabel(ticket.status),

@@ -186,7 +186,7 @@ export function usePdfGenerator() {
     let yPosition = height - margin
 
     // Заголовок организации
-    const companyName = "Общество с ограниченной ответственностью «ИНСЕР»"
+    const companyName = "Товарищество с ограниченной ответственностью «ИНСЕР»"
     const companyNameWidth = fontBold.widthOfTextAtSize(companyName, 11)
     page.drawText(companyName, {
       x: (width - companyNameWidth) / 2,
@@ -239,6 +239,32 @@ export function usePdfGenerator() {
     })
     yPosition -= 25
 
+    // Номер объекта
+    page.drawText("Номер объекта:", {
+      x: margin,
+      y: yPosition,
+      size: 10,
+      font: fontBold,
+      color: rgb(0, 0, 0),
+    })
+
+    const gasStationLines = wrapText(
+      `${ticket.gas_station.object_number}, ${ticket.gas_station.address}` ||
+        "Не указано",
+      50
+    )
+    for (const line of gasStationLines) {
+      page.drawText(line, {
+        x: margin + 200,
+        y: yPosition,
+        size: 10,
+        font: font,
+        color: rgb(0, 0, 0),
+      })
+      yPosition -= 12
+    }
+    yPosition -= 15
+
     // Описание заявки
     page.drawText("Описание заявки:", {
       x: margin,
@@ -248,7 +274,7 @@ export function usePdfGenerator() {
       color: rgb(0, 0, 0),
     })
 
-    const contentLines = wrapText(ticket.content || "Не указано", 65)
+    const contentLines = wrapText(ticket.content || "Не указано", 55)
     for (const line of contentLines) {
       page.drawText(line, {
         x: margin + 200,
@@ -293,6 +319,26 @@ export function usePdfGenerator() {
       font: font,
       color: rgb(0, 0, 0),
     })
+    yPosition -= 25
+
+    // Склад
+    page.drawText("Авто склад:", {
+      x: margin,
+      y: yPosition,
+      size: 10,
+      font: fontBold,
+      color: rgb(0, 0, 0),
+    })
+    page.drawText(
+      getStatusText(ticket.employee.warehouse.name || "Не указано"),
+      {
+        x: margin + 200,
+        y: yPosition,
+        size: 10,
+        font: font,
+        color: rgb(0, 0, 0),
+      }
+    )
     yPosition -= 25
 
     // Тип заявки
@@ -408,23 +454,6 @@ export function usePdfGenerator() {
     })
     yPosition -= 25
 
-    // Результат диагностики
-    page.drawText("Результат диагностики:", {
-      x: margin,
-      y: yPosition,
-      size: 10,
-      font: fontBold,
-      color: rgb(0, 0, 0),
-    })
-    page.drawText(ticket.diagnostic_result || "Не указано", {
-      x: margin + 200,
-      y: yPosition,
-      size: 10,
-      font: font,
-      color: rgb(0, 0, 0),
-    })
-    yPosition -= 25
-
     // Оборудование - собираем из всех технических заданий
     const equipmentList =
       ticket.technical_tasks_details
@@ -454,8 +483,25 @@ export function usePdfGenerator() {
     }
     yPosition -= 13
 
-    // Перечень работ
-    page.drawText("Перечень работ:", {
+    // Результат диагностики
+    page.drawText("Результат диагностики и работ:", {
+      x: margin,
+      y: yPosition,
+      size: 10,
+      font: fontBold,
+      color: rgb(0, 0, 0),
+    })
+    page.drawText(ticket.diagnostic_result || "Не указано", {
+      x: margin + 200,
+      y: yPosition,
+      size: 10,
+      font: font,
+      color: rgb(0, 0, 0),
+    })
+    yPosition -= 25
+
+    // Комментарий от заказчика
+    page.drawText("Комментарий от заказчика:", {
       x: margin,
       y: yPosition,
       size: 10,
@@ -463,6 +509,23 @@ export function usePdfGenerator() {
       color: rgb(0, 0, 0),
     })
     page.drawText(ticket.work_result || "Не указано", {
+      x: margin + 200,
+      y: yPosition,
+      size: 10,
+      font: font,
+      color: rgb(0, 0, 0),
+    })
+    yPosition -= 25
+
+    // Комментарий от сотрудника
+    page.drawText("Комментарий от сотрудника:", {
+      x: margin,
+      y: yPosition,
+      size: 10,
+      font: fontBold,
+      color: rgb(0, 0, 0),
+    })
+    page.drawText(ticket.comment || "Не указано", {
       x: margin + 200,
       y: yPosition,
       size: 10,
@@ -547,17 +610,17 @@ export function usePdfGenerator() {
       ticket.technical_tasks_details &&
       ticket.technical_tasks_details.length > 0
     ) {
-      page.drawText("Чек-листы", {
-        x: margin,
-        y: yPosition,
-        size: 12,
-        font: fontBold,
-        color: rgb(0, 0, 0),
-      })
-      yPosition -= 30
-
       for (const task of ticket.technical_tasks_details) {
         if (task.checklists && task.checklists.length === 0) continue
+        page.drawText("Чек-листы", {
+          x: margin,
+          y: yPosition,
+          size: 12,
+          font: fontBold,
+          color: rgb(0, 0, 0),
+        })
+        yPosition -= 30
+
         if (yPosition < 80) {
           // Добавляем новую страницу, если место закончилось
           page = pdfDoc.addPage([595.28, 841.89])

@@ -9,6 +9,7 @@
                 v-model:value="formValue.ticket_number"
                 clearable
                 :loading="loading"
+                :disabled="isRoleServiceManager"
                 placeholder="Введите номер заявки"
               />
             </n-form-item-gi>
@@ -17,6 +18,7 @@
                 v-model:value="computedSubmittedAt"
                 type="datetime"
                 :default-value="new Date().getTime()"
+                :disabled="isRoleServiceManager"
                 format="dd-MM-yyyy HH:mm:ss"
                 style="width: 100%"
               />
@@ -25,7 +27,7 @@
               <n-input
                 placeholder="Введите ФИО"
                 :value="ticket?.gas_station.operator_name"
-                disabled
+                :disabled="isRoleServiceManager"
               />
             </n-form-item-gi>
             <n-form-item-gi label="АЗС" path="gas_station_id">
@@ -36,6 +38,7 @@
                 placeholder="Выберите АЗС"
                 :label-field="'label'"
                 :options="optionsOfGasStations"
+                :disabled="isRoleServiceManager"
                 filterable
                 @focus="getGasStations"
                 :loading="customLoading.gasStationLoading"
@@ -46,6 +49,7 @@
                 v-model:value="computedEmployeeId"
                 :default-value="ticket?.employee?.full_name"
                 :options="optionsOfEmployee"
+                :disabled="isRoleServiceManager"
                 filterable
                 @focus="getEmployee"
                 :loading="customLoading.employeeLoading"
@@ -58,6 +62,7 @@
                 placeholder="Выберите критичность"
                 v-model:value="formValue.criticality"
                 :options="criticalityOptions"
+                :disabled="isRoleServiceManager"
                 filterable
                 :loading="loading"
               />
@@ -67,6 +72,7 @@
                 placeholder="Выберите статус"
                 v-model:value="formValue.status"
                 :options="getStatusOptions"
+                :disabled="isRoleServiceManager"
                 filterable
                 :loading="loading"
               />
@@ -77,7 +83,7 @@
                 :options="statusSource"
                 placeholder="Выберите тип заявки"
                 :default-value="getTicketSource"
-                :disabled="isUpdateForm"
+                :disabled="isUpdateForm || isRoleServiceManager"
               />
             </n-form-item-gi>
             <n-form-item-gi label="Описание заявки" path="content">
@@ -85,6 +91,7 @@
                 placeholder="Введите описание заявки"
                 v-model:value="formValue.content"
                 type="textarea"
+                :disabled="isRoleServiceManager"
                 :loading="loading"
               />
             </n-form-item-gi>
@@ -95,7 +102,10 @@
         <section id="technical-tasks">
           <div class="technical-tasks">
             <n-h2>Техническое задание</n-h2>
-            <n-switch v-model:value="isEditModeTZ">
+            <n-switch
+              v-model:value="isEditModeTZ"
+              :disabled="isRoleServiceManager"
+            >
               <template #checked>Просмотр</template>
               <template #unchecked>Редактировать</template>
             </n-switch>
@@ -118,6 +128,7 @@
           <n-divider />
           <n-h2>Использованные материалы</n-h2>
           <materials
+            :disabled="isRoleServiceManager"
             :materials="hasMaterials"
             :guid="isHasWarehouseGuid || ''"
             :selected-tech-tasks="formValue.technical_tasks_details"
@@ -149,6 +160,7 @@
                 clearable
                 placeholder="Введите номер сервисного листа"
                 v-model:value="formValue.service_sheet_number"
+                :disabled="isRoleServiceManager"
                 :loading="loading"
               />
             </n-form-item-gi>
@@ -157,6 +169,7 @@
               <n-date-picker
                 v-model:value="computedWorkStartedAt"
                 type="datetime"
+                :disabled="isRoleServiceManager"
                 format="dd-MM-yyyy HH:mm:ss"
                 style="width: 100%"
               />
@@ -168,31 +181,35 @@
               <n-date-picker
                 v-model:value="computedWorkFinishedAt"
                 type="datetime"
+                :disabled="isRoleServiceManager"
                 format="dd-MM-yyyy HH:mm:ss"
                 style="width: 100%"
               />
             </n-form-item-gi>
-            <n-form-item-gi label="Комментарий по сотрудника" path="comment">
+            <n-form-item-gi label="Комментарий от сотрудника" path="comment">
               <n-input
                 type="textarea"
                 v-model:value="formValue.comment"
+                :disabled="isRoleServiceManager"
                 :loading="loading"
               />
             </n-form-item-gi>
             <n-form-item-gi
-              label="Результат диагностики"
+              label="Результат диагностики и работ"
               path="diagnostic_result"
             >
               <n-input
                 type="textarea"
                 v-model:value="formValue.diagnostic_result"
+                :disabled="isRoleServiceManager"
                 :loading="loading"
               />
             </n-form-item-gi>
-            <n-form-item-gi label="Результат работ" path="work_result">
+            <n-form-item-gi label="Комментарий от заказчика" path="work_result">
               <n-input
                 type="textarea"
                 v-model:value="formValue.work_result"
+                :disabled="isRoleServiceManager"
                 :loading="loading"
               />
             </n-form-item-gi>
@@ -216,6 +233,7 @@
               <n-button
                 type="info"
                 :disabled="
+                  isRoleServiceManager ||
                   ticket?.is_materials_sent ||
                   !isFormCompletelyValid ||
                   !hasValidMaterials
@@ -321,6 +339,7 @@
   import Checklists from "@/components/common/tickets/ticket-details/sections/Checklists.vue"
   import { EmployeeResponse } from "@/api/employees/types.ts"
   import { MaterialItem } from "@/components/common/tickets/types.ts"
+  import { useAuthStore } from "@/store/useAuthStore.ts"
 
   const { type, formData, loading, rules, ticket } = defineProps<
     | {
@@ -345,6 +364,8 @@
     (e: "syncWarehouse", data: TicketUpdatePayload): void
   }>()
 
+  const authStore = useAuthStore()
+
   const {
     getGasStations,
     optionsOfGasStations,
@@ -365,6 +386,13 @@
       }, ${ticket?.gas_station.region?.name}`
     }
     return ""
+  })
+
+  const isRoleServiceManager = computed(() => {
+    return (
+      authStore.user?.role === "SERVICE_EMPLOYEE" &&
+      (ticket?.status === "done_unchecked" || ticket?.status === "done_checked")
+    )
   })
 
   // Проверка обязательных полей
