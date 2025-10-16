@@ -150,6 +150,9 @@ export function useCompanies() {
       await initCompanies() // Refresh the list after deletion
     } catch (e) {
       console.error(e)
+    } finally {
+      isLoading.value = false
+      await store.initDictionary() // Обновляем словарь в хранилище
     }
   }
 

@@ -84,6 +84,10 @@
   import BaseTable from "@/components/base/BaseTable.vue"
   import TicketFilters from "./TicketFilters.vue"
   import { InformationCircleOutline as InfoIcon } from "@vicons/ionicons5"
+  import { onMounted } from "vue"
+  import { useDictionaryStore } from "@/store/useDictionary.ts"
+
+  const dictionaryStore = useDictionaryStore()
 
   // Composables
   const {
@@ -113,7 +117,10 @@
     return row.is_sla_80_elapsed ? "sla-elapsed-row" : ""
   }
 
-  // Methods are now handled by the composable
+  onMounted(async () => {
+    console.log("Tickets mounted")
+    await dictionaryStore.initDictionary()
+  })
 </script>
 
 <style lang="scss" scoped>

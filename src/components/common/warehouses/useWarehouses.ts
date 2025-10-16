@@ -150,6 +150,7 @@ export function useWarehouses() {
 
   async function removeWarehouse(id: number) {
     try {
+      loading.value = true
       const response = await deleteWarehouse(id)
       if (response.status === "error") throw new Error(response.message || "")
 
@@ -157,6 +158,9 @@ export function useWarehouses() {
       await initWarehouses()
     } catch (e) {
       console.error(e)
+    } finally {
+      loading.value = false
+      await store.initDictionary() // Обновляем словарь в хранилище
     }
   }
 

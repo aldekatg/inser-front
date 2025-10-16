@@ -269,11 +269,6 @@
     { label: "Отклонена заказчиком", value: "rejected_by_customer" },
   ]
 
-  // Загружаем данные из store при монтировании компонента
-  onMounted(async () => {
-    await dictionaryStore.initDictionary()
-  })
-
   // Методы
   const applyFilters = () => {
     emit("apply")

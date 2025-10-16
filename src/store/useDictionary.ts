@@ -44,18 +44,6 @@ export const useDictionaryStore = defineStore("dictionaryStore", {
   },
   actions: {
     async initDictionary() {
-      // Если уже загружается или загружено - не делаем повторный запрос
-      if (this.isLoading || this.isLoaded) {
-        console.log(
-          "[Dictionary] Запрос пропущен: уже загружается или загружено",
-          {
-            isLoading: this.isLoading,
-            isLoaded: this.isLoaded,
-          }
-        )
-        return
-      }
-
       console.log("[Dictionary] Начало загрузки справочников...")
       this.isLoading = true
       try {

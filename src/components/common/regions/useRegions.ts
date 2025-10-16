@@ -136,6 +136,7 @@ export function useRegions() {
 
   async function removeRegion(id: number) {
     try {
+      loading.value = true
       const response = await deleteRegion(id)
       if (response.status === "error") throw new Error(response.message || "")
 
@@ -143,6 +144,9 @@ export function useRegions() {
       await initRegions() // Refresh the list after deletion
     } catch (e) {
       console.error(e)
+    } finally {
+      loading.value = false
+      await store.initDictionary() // Обновляем словарь в хранилище
     }
   }
 
