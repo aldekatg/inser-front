@@ -113,7 +113,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, watch, onMounted, computed } from "vue"
+  import { ref, watch, computed } from "vue"
   import type { FormInst } from "naive-ui"
   import type { TicketFilters } from "./types"
   import { FilterOutline } from "@vicons/ionicons5"
