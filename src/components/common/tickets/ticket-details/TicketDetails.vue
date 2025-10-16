@@ -86,6 +86,20 @@
                 :disabled="isUpdateForm || isRoleServiceManager"
               />
             </n-form-item-gi>
+            <n-form-item-gi
+              v-if="isPlannedTicket"
+              label="Плановое время выполнения"
+              path="planned_finish_at"
+            >
+              <n-date-picker
+                v-model:value="computedPlannedFinishAt"
+                type="datetime"
+                placeholder="Выберите плановое время выполнения"
+                :disabled="isRoleServiceManager"
+                style="width: 100%"
+                clearable
+              />
+            </n-form-item-gi>
             <n-form-item-gi label="Описание заявки" path="content">
               <n-input
                 placeholder="Введите описание заявки"
@@ -684,6 +698,15 @@
       (formValue.value.work_finished_at = fromTimestamp(
         val,
         formValue.value.work_finished_at as any
+      )),
+  })
+
+  const computedPlannedFinishAt = computed<number | null>({
+    get: () => toTimestamp(formValue.value.planned_finish_at as any),
+    set: (val) =>
+      (formValue.value.planned_finish_at = fromTimestamp(
+        val,
+        formValue.value.planned_finish_at as any
       )),
   })
 

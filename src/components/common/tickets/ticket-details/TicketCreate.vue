@@ -37,6 +37,7 @@
     diagnostic_result: "",
     work_result: "",
     submitted_at: new Date().getTime(),
+    planned_finish_at: undefined,
     technical_tasks_preview: [],
     technical_tasks_details: [],
     content: "",

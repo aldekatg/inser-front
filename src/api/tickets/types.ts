@@ -50,6 +50,7 @@ export interface TicketCreatePayload {
   ticket_type: string
   ticket_number: string | null
   submitted_at: string | number | Date
+  planned_finish_at?: string | number | Date
   technical_tasks_preview: string[]
   technical_tasks_details: TechnicalTaskDetail[]
   content: string

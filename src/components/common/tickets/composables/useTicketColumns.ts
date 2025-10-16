@@ -20,6 +20,18 @@ import {
 export function useTicketColumns() {
   const router = useRouter()
 
+  // Функция для добавления +5 часов к дате
+  const add5Hours = (dateStr: string) => {
+    if (!dateStr) return "..."
+    try {
+      const date = new Date(dateStr)
+      const adjustedDate = new Date(date.getTime() + 5 * 60 * 60 * 1000)
+      return dateTime(adjustedDate.toISOString())
+    } catch {
+      return dateTime(dateStr)
+    }
+  }
+
   const getStatusMeta = (status: string) => {
     const label =
       TicketStatusDictionary.StatusType[
@@ -166,19 +178,19 @@ export function useTicketColumns() {
       title: "Дата подачи",
       key: "submitted_at",
       sorter: true,
-      render: (row: TicketDetails) => dateTime(row.submitted_at),
+      render: (row: TicketDetails) => add5Hours(row.submitted_at),
     },
     {
       title: "Плановое время",
       key: "planned_finish_at",
       sorter: true,
-      render: (row: TicketDetails) => dateTime(row.planned_finish_at),
+      render: (row: TicketDetails) => add5Hours(row.planned_finish_at),
     },
     {
       title: "Дата закрытия",
       key: "closed_via_qr_at",
       sorter: true,
-      render: (row: TicketDetails) => dateTime(row.closed_via_qr_at),
+      render: (row: TicketDetails) => add5Hours(row.closed_at),
     },
     {
       title: "ТЗ",
