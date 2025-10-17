@@ -330,7 +330,7 @@ export function usePdfGenerator() {
       color: rgb(0, 0, 0),
     })
     page.drawText(
-      getStatusText(ticket.employee.warehouse.name || "Не указано"),
+      getStatusText(ticket.employee?.warehouse?.name || "Не указано"),
       {
         x: margin + 200,
         y: yPosition,
@@ -517,23 +517,6 @@ export function usePdfGenerator() {
     })
     yPosition -= 25
 
-    // Комментарий от сотрудника
-    page.drawText("Комментарий от сотрудника:", {
-      x: margin,
-      y: yPosition,
-      size: 10,
-      font: fontBold,
-      color: rgb(0, 0, 0),
-    })
-    page.drawText(ticket.comment || "Не указано", {
-      x: margin + 200,
-      y: yPosition,
-      size: 10,
-      font: font,
-      color: rgb(0, 0, 0),
-    })
-    yPosition -= 25
-
     // Использованные материалы
     const materialsText = Array.isArray(ticket.materials)
       ? ticket.materials
@@ -560,6 +543,23 @@ export function usePdfGenerator() {
       })
       yPosition -= 12
     }
+    yPosition -= 25
+
+    // Комментарий от сотрудника
+    page.drawText("Комментарий от сотрудника:", {
+      x: margin,
+      y: yPosition,
+      size: 10,
+      font: fontBold,
+      color: rgb(0, 0, 0),
+    })
+    page.drawText(ticket.comment || "Не указано", {
+      x: margin + 200,
+      y: yPosition,
+      size: 10,
+      font: font,
+      color: rgb(0, 0, 0),
+    })
     yPosition -= 25
 
     // Представитель заказчика
